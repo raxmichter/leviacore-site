@@ -51,6 +51,19 @@ This is boilerplate legal text carried in from a template whose internal cross-r
 
 > Related context: the migration was prompted in part by the privacy policy being out of date because updating it was too cumbersome. This is the same problem showing up a second way. Whichever option is chosen, it is worth asking counsel whether the policy needs a content review at the same time — the cost of editing it after this migration is a text file edit.
 
+### 6. 🆕 Satoshi renders as faux-bold on the live site — replicate, or license the real weights?
+**Gates:** nothing. **Default is already implemented.** This is a redesign question parked here so it isn't lost.
+
+The compiled CSS requests Satoshi at weights **300, 500, 600, and 700** — 57 `<strong>` tags, 27 `<label>` tags, rich-text `strong` and `blockquote`, and the mobile menu among them. Only `Satoshi-Regular.woff` (400) exists, and **both** `@font-face` blocks in the source CSS declare `font-weight: 400` pointing at that one file.
+
+**So the live site has never had real Satoshi bold.** Those `<strong>` tags are browser-synthesised faux-bold in production today.
+
+**What the build does (default, already in place):** replicate it exactly — one `@font-face` at 400, synthesis left to the browser. This is what pixel-identical *means* here.
+
+**The alternative:** license and self-host real Satoshi 300/500/600/700. Genuinely better typography — real bold is cleaner than synthesised bold. But it **changes the design**, would diverge from the Phase G visual-regression reference, and is out of scope for a migration that is explicitly not a redesign.
+
+**Recommendation: keep the default and revisit at redesign time.** No action needed now. Flagged only because "the site's bold text isn't real bold" is the kind of thing that is invisible until someone notices it and assumes the migration caused it. It did not.
+
 ### 4. Google Search Console baseline ⏰ TIME-SENSITIVE
 **Gates:** meaningful post-cutover verification.
 Roughly ten minutes of work, and it **must happen before cutover**. Without a pre-migration snapshot of rankings and coverage there is no way to distinguish a migration-caused change from normal fluctuation. This is the difference between diagnosing a problem and arguing about one. It becomes unrecoverable the moment DNS flips.
@@ -73,7 +86,7 @@ Roughly ten minutes of work, and it **must happen before cutover**. Without a pr
 
 Not blocking, but will cause a defect if forgotten.
 
-- **Satoshi weight coverage** — only `Satoshi-Regular.woff` (400) shipped. If the compiled CSS uses another weight, the source file must be found. Answered by `token-extractor` in Phase A.
+- ~~**Satoshi weight coverage**~~ ✅ **Resolved — see item 6 below.** Not a blocker.
 - **OG/Twitter card image is hosted on `i.imgur.com`** — an external host for the site's primary social preview. Localize into the repo.
 - **Footer reads "© Leviathan Core, LLC 2025"** — already stale. Make the year dynamic at build time.
 - **GA4 tag `G-EG4F7ZLTZQ`** — present in every page head. Must survive migration.

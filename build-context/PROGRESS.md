@@ -35,7 +35,7 @@ Violating these is how a session dies mid-phase.
 | Phase | Work | Model | Status |
 |---|---|---|---|
 | — | Recon: export inspected, interactions inventoried, font risk closed | Opus 5 | ✅ Complete |
-| **A** | Scaffold, token/component/interaction extraction, asset localization | Opus 5 + 3 subagents | 🔄 **In progress** |
+| **A** | Scaffold, token/component/interaction extraction, asset localization | Opus 5 + 3 subagents | ✅ **Complete** |
 | B | Layout shell and components | Sonnet 5 | ⬜ Not started |
 | C1 | Static pages — home, services, projects shell, team, contact | Sonnet 5 | ⬜ Not started |
 | C2 | Legal and utility pages — privacy, CCPA, notice-at-collection, 404, 401 | Sonnet 5 | ⬜ Not started |
@@ -73,14 +73,22 @@ Violating these is how a session dies mid-phase.
 - **Assets localized** via `scripts/localize-assets.mjs` (re-runnable): 34 originals copied, 17 Webflow responsive variants deliberately skipped — Astro regenerates those with AVIF/WebP and correct `srcset`. Manifest written to `assets.md`.
 - `Satoshi-Regular.woff` copied to `public/fonts/`.
 
-**In flight — three subagents running in parallel:**
-- `token-extractor` (Opus 5) → `tokens.md`
-- `component-mapper` (Sonnet 5) → `components.md`
-- `ix-decoder` (Opus 5) → `interactions.md`
+- **Fonts self-hosted.** `src/styles/fonts.css` + `public/fonts/`. Syne (variable, 400–800 in one file), Roboto Mono 400, Satoshi 400. **WebFont.js dropped** — the render-blocking third-party loader is gone.
+- **All three extraction artifacts delivered:** `tokens.md` (1000+ lines), `components.md` (~23 components), `interactions.md` (~500 lines, all 19 action lists decoded with real values).
+
+### ⚠️ Verification matrix changed — 5 breakpoints, not 4
+
+The plan specified 375 / 768 / 1280 / 1920. `tokens.md` found the site's real media queries break at max-width **479 / 767 / 991** and min-width **1440 / 1920**. **768 falls inside the `≤991` tablet band, not `≤767`** — so capturing at 768 leaves the entire mobile-landscape block untested.
+
+**Phase G must capture at 375 / 767 / 768 / 1280 / 1920.** Keeping both 767 and 768 is deliberate: they sit on opposite sides of a breakpoint boundary, which is exactly where layout breaks.
+
+Expect one pre-existing bug at the 375 capture: `.navbar-dropdown { width: 390px }` at `≤767` overflows a 375px viewport (effective content box is 351px after `.body` padding). **This is a live-site defect, so a faithful rebuild reproduces it.** Phase G decides whether to match it or fix it — fixing it will register as a visual diff.
 
 **Cross-checks run in the main thread (findings that no single subagent could see):**
 
-- **`Accordion [Open]` and `Accordion [Close]` are DEAD.** The IX2 data defines both, but `grep -i accordion` returns **zero matches** across `index`, `services`, `team`, `projects`, `contact`, and `detail_project`. They are residue from the purchased template, bound to pages we are not migrating. **Phase E scope drops from 19 action lists to 17.** The block `component-mapper` initially read as an accordion (site values) is a static list with no expand/collapse markup — confirmed independently from both sides.
+- **`Accordion [Open]` and `Accordion [Close]` are DEAD.** The IX2 data defines both, but `grep -i accordion` returns **zero matches** across `index`, `services`, `team`, `projects`, `contact`, and `detail_project`. They are residue from the purchased template, bound to pages we are not migrating. The block `component-mapper` initially read as an accordion (site values) is a static list with no expand/collapse markup — confirmed independently from both sides.
+
+- **Phase E scope: 19 action lists → 13 to port.** The two dead accordions above, plus four more the `ix-decoder` found with values but no live DOM (`a-34`/`a-169` Button Text Hover, `a-159` About Gallery Scroll, `a-154` Blog Post Image Parallax — three of which resolve to an empty target list and were already silent no-ops on the live site). **Full breakdown and the two "preserve, don't fix" behaviours are at the top of `interactions.md` — read that before starting Phase E.**
 - **`Blog Post Image Parallax` is dormant, not dead** — it belongs to the article template built in D3 and shipped disabled. Reimplement it in E only if it shares the `Image Parallax` primitive (it should); do not build it standalone.
 
 **Component-mapper gotchas to carry into later phases:**
@@ -93,13 +101,25 @@ Violating these is how a session dies mid-phase.
 | Homepage has two divergent CMS placeholder lists (likely featured + grid), both empty | D1 — the split can't be confirmed until the CSV arrives |
 | "We're Hiring" card is structurally identical to a real team card | D2 — a boolean toggle on the same component, not a separate one |
 
-**Remaining in Phase A:**
-- Confirm Satoshi weight coverage (answered by `token-extractor`); self-host Syne + Roboto Mono, subset, preload, drop the render-blocking WebFont.js
-- Astro config: static output, site URL, image service
-- Verify dev server renders a shell using extracted tokens
+**Token-extractor findings that change how Phase B must be built:**
+
+| Finding | Why it matters |
+|---|---|
+| **`.margin-bottom.margin-*` combos break the spacing scale.** In that two-class context `margin-xxhuge` resolves to `1rem`, not `12rem`; `margin-xhuge` to `2rem`, not `8rem`. These rules are never restated in any media query, so they're frozen at every viewport while single-class rules scale. `margin-bottom` appears **223×** in the HTML | **Port resolved values, not the nominal scale table.** Building from the nominal table produces spacing that is wrong almost everywhere and wrong by a lot |
+| Type scale **inverts** at narrow widths — `.heading-small` goes 3.125rem @≤767 → **3.25rem** @≤479, larger on smaller screens, and exceeds `.heading-medium` at both | Deliberate-looking or not, it is the live design. **Reproduce it.** Same pattern on `.text-rich-text blockquote` |
+| `.max-width-medium` and `.max-width-xlarge` declare **no `max-width` at all** | Values are unrecoverable from source. If either is load-bearing in a layout, it needs the design owner — flag rather than invent |
+| 5-value near-duplicate dark-ink cluster; 28 colors total (18 site-layer, 10 commerce residue) | Listed, **not** collapsed. Collapsing is a design decision, deferred |
+| `Syne:500` is fetched on every page and never referenced | Already moot — the variable Syne file covers 400–800 in one request |
+| Zero `!important` in the site CSS (all 49 are framework) | The cascade is clean. Good news for the rebuild |
 
 ## Handoff note
 
 *Written at each phase exit for a reader with no memory of the session.*
 
-**Phase A (in progress):** Scaffold and asset localization are complete and idempotent — re-running `node scripts/localize-assets.mjs` is safe. The three extraction subagents own `tokens.md`, `components.md`, and `interactions.md` respectively; if any of those files is missing or thin, re-run that single agent rather than extracting inline, or the context cost lands in the main thread. Phase A does not exit until all four artifacts (including `assets.md`, already written) are non-trivial.
+**Phase A — COMPLETE.** All five artifacts exist and are substantial: `tokens.md`, `components.md`, `interactions.md`, `assets.md`, plus this ledger, `DECISIONS.md`, and `OPEN.md`. Scaffold builds clean (`npm run build`). Asset localization is idempotent — re-running `node scripts/localize-assets.mjs` is safe.
+
+**Two artifact corrections were applied in the main thread; both are marked inline. Trust the corrections over the original text.**
+1. `tokens.md` §2b and BLOCKER-1 declared the Satoshi weight gap a "confirmed build blocker." **It is not.** Both `@font-face` blocks in the source CSS declare weight 400 against one file, so the live site already renders faux-bold. The rebuild replicates it. Sourcing real weights would *cause* a regression, not fix one.
+2. `interactions.md` now opens with a reconciled Phase E scope: **13 lists to port, not 19.**
+
+**Starting Phase B?** Read `tokens.md` and `components.md`. Do not open the export's CSS or `webflow.js` — everything needed is already distilled. The single most important thing to get right is the resolved-vs-nominal spacing issue in the table above; it silently affects 223 call sites.

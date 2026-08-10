@@ -1,0 +1,201 @@
+/* =========================================================================
+   leviacore.com — design tokens
+   Derived from leviathan-core-2023-r1.webflow.css. Values verbatim.
+   1rem = 16px (root never overridden).
+   ========================================================================= */
+:root {
+  /* ---------- Color: core ---------- */
+  --color-ink:              #191919;  /* 56 uses — text, ALL hairlines, primary surfaces */
+  --color-bg:               #fdfbf5;  /* warm off-white page background */
+  --color-on-ink:           #fff;     /* text on primary/dark surfaces */
+  --color-transparent:      #0000;    /* rgba(0,0,0,0) — border/bg resets */
+  --color-text-muted:       #19191999;/* ink @60% — .text-color-muted */
+  --color-overlay-hover:    #ffffff1a;/* white @10% — nav hover wash */
+  --color-scrim:            #0009;    /* black @60% — cart drawer backdrop */
+  --color-field-focus-bg:   #0000000d;/* black @5% — .form-input:focus */
+
+  /* ---------- Color: near-duplicates of --color-ink (DO NOT auto-collapse) ---------- */
+  --color-ink-pure:         #000;     /* 16× .text-color-default, .label-2, form borders */
+  --color-ink-button:       #121416;  /*  3× .button text + hover borders */
+  --color-ink-hover-alt:    #1a191e;  /*  2× hover borders on unused button variants */
+  /* --color-ink-legacy:    #333;  — bare <body>, dead: .body class always wins */
+
+  /* ---------- Color: table component ---------- */
+  --color-border-table:     #d3d3d3;
+  --color-surface-alt:      #f3f3f3;  /* zebra row */
+  --color-border-subtle:    #e8e8e8;  /* cart qty input sides */
+
+  /* ---------- Color: Webflow commerce boilerplate (quarantine) ---------- */
+  --wf-blue:                #3898ec;
+  --wf-input-bg:            #fafafa;
+  --wf-input-border:        #ddd;
+  --wf-placeholder:         #999;
+  --wf-block-border:        #e6e6e6;
+  --wf-page-bg:             #f5f5f5;
+  --wf-error-bg:            #ffdede;
+  --wf-disabled-fg:         #666;
+  --wf-control-border:      #ccc;
+  --shadow-color:           #0000001a;
+
+  /* ---------- Typography: families ---------- */
+  --font-display:  Syne, sans-serif;         /* headings only — weight 400 */
+  --font-mono:     "Roboto Mono", sans-serif;/* nav, buttons, labels, meta — weight 400 */
+  --font-body:     Satoshi, sans-serif;      /* everything else */
+
+  /* ---------- Typography: weights ----------
+     Satoshi ships ONE real file: Regular (400). Weights 300/500/600/700 below are
+     synthesised by the browser.
+
+     This is intentional and matches production. The live Webflow site declares both
+     of its @font-face blocks at weight 400 against that same single file, so its
+     <strong> tags have always rendered as faux-bold. Reproducing that is what makes
+     the rebuild pixel-identical.
+
+     DO NOT "fix" this by sourcing real Satoshi weights — it would change the design
+     and fail the Phase G visual regression gate. See build-context/OPEN.md item 6. */
+  --fw-light:     300;  /* synthesised — .form-radio-label */
+  --fw-regular:   400;  /* the one real Satoshi face */
+  --fw-medium:    500;  /* synthesised — blockquote, label, mobile nav */
+  --fw-semibold:  600;  /* synthesised — .text-rich-text strong */
+  --fw-bold:      700;  /* synthesised — <strong> (57 in export) */
+
+  /* ---------- Typography: display scale (Syne) ---------- */
+  --fs-display-3xl:  8rem;    /* .heading-xlarge  (10rem @>=1440) */
+  --fs-display-2xl:  6rem;    /* .heading-large   ( 8rem @>=1440) */
+  --fs-display-xl:   5rem;    /* .heading-medium  ( 6rem @>=1440) */
+  --fs-display-lg:   4.5rem;  /* .heading-small   ( 5rem @>=1440) */
+  --fs-h1:           4rem;
+  --fs-h2:           3rem;
+  --fs-h3:           2rem;
+  --fs-h4:           1.5rem;
+  --fs-h5-tag:       1.375rem; /* <h5> element */
+  --fs-h5-class:     1.25rem;  /* .heading-h5 — NOTE: differs from <h5> */
+  --fs-h6:           1.125rem;
+
+  /* ---------- Typography: body scale ---------- */
+  --fs-body:         18px;    /* .body — 16px @<=991 */
+  --fs-xl:           1.75rem; /* .text-size-xlarge, .accordion-title */
+  --fs-lg:           1.4rem;  /* .text-size-large */
+  --fs-md:           1.25rem; /* .text-size-medium */
+  --fs-base:         1rem;    /* .text-size-regular, .text-size-small */
+  --fs-sm:           .875rem;
+  --fs-xs:           .75rem;  /* .text-size-tiny */
+
+  /* ---------- Typography: mono / UI scale (px in source — kept verbatim) ---------- */
+  --fs-mono-lg:      16px;  /* .form-input, .cart-item-quantity */
+  --fs-mono-md:      15px;  /* .text-meta, .button, nav links — 14 uses, the UI default */
+  --fs-mono-sm:      14px;  /* .cart-item-remove-text */
+  --fs-mono-xs:      13px;  /* .text-meta-small, .label, .form-label */
+
+  /* ---------- Typography: line heights (source uses %) ---------- */
+  --lh-tightest: 90%;   /* .heading-xlarge */
+  --lh-tighter:  100%;  /* .heading-large, .heading-medium, .badge, .accordion-icon */
+  --lh-tight:    110%;  /* .heading-small, .heading-h2, .label, .button */
+  --lh-snug:     120%;  /* h1-h3, .heading-h1/h3, nav links, .button-text */
+  --lh-normal:   130%;  /* h4-h6, .heading-h4/h5/h6, .text-meta-small, prices */
+  --lh-relaxed:  140%;  /* .text-meta, blockquotes, .form-checkbox-label */
+  --lh-loose:    150%;  /* .text-size-xlarge, .form-input */
+  --lh-looser:   160%;  /* .text-size-large/medium/regular/small/tiny, .form-label */
+  --lh-body:     170%;  /* .body */
+
+  /* ---------- Typography: letter spacing ---------- */
+  --ls-wide:  1px;   /* every uppercase Roboto Mono selector (14 uses) */
+  --ls-tight: .5px;  /* .button-5 only (unused) */
+
+  /* ---------- Spacing scale (base / >=992px) ---------- */
+  --space-tiny:     .125rem; /*   2px */
+  --space-xxs:      .25rem;  /*   4px */
+  --space-xs:       .5rem;   /*   8px */
+  --space-sm:       1rem;    /*  16px */
+  --space-md:       2rem;    /*  32px */
+  --space-lg:       3rem;    /*  48px */
+  --space-xl:       4rem;    /*  64px */
+  --space-2xl:      5rem;    /*  80px */
+  --space-3xl:      6rem;    /*  96px */
+  --space-4xl:      8rem;    /* 128px */
+  --space-5xl:      12rem;   /* 192px */
+
+  /* ---------- Gutters ---------- */
+  --page-padding:   3rem;    /* .page-padding */
+  --frame-padding:  1rem;    /* .body outer frame */
+
+  /* ---------- Radii ---------- */
+  --radius-xs:      .125rem;
+  --radius-sm:      6px;     /* .label, .button */
+  --radius-md:      8px;     /* .cursor */
+  --radius-card:    1rem;    /* every image/media wrapper — 11 uses */
+  --radius-shell:   4rem;    /* .main-wrapper @<=991 (none at base) */
+  --radius-gallery: 6rem;    /* .about-gallery */
+  --radius-pill:    500px;
+  --radius-circle:  50%;
+
+  /* ---------- Motion ---------- */
+  --duration-fast:  .2s;
+  --duration-base:  .3s;
+  --ease-default:   ease;    /* source declares NO custom easing anywhere */
+
+  /* ---------- Elevation ---------- */
+  --z-below:      0;
+  --z-base:       1;
+  --z-raised:     2;
+  --z-sticky:     15;
+  --z-header:     100;
+  --z-navbar:     1000;   /* becomes 10 @<=767 */
+  --z-overlay:    9999;   /* navbar-wrapper, menu, dropdown, cursor */
+
+  /* ---------- Containers ---------- */
+  --container-xs:   37.5rem;  /*  600px */
+  --container-sm:   50rem;    /*  800px */
+  --container-md:   62.5rem;  /* 1000px */
+  --container-lg:   75rem;    /* 1200px */
+  --container-xl:   87.5rem;  /* 1400px */
+  --container-2xl:  100rem;   /* 1600px */
+  --container-3xl:  112.5rem; /* 1800px — the page shell, 80 uses */
+
+  /* ---------- Content widths ---------- */
+  --width-xxs:  12rem;
+  --width-xs:   16rem;
+  --width-sm:   22rem;
+  --width-lg:   40rem;
+  --width-2xl:  80rem;
+  /* NOTE: .max-width-medium and .max-width-xlarge declare NO max-width in source. */
+
+  /* ---------- Structure ---------- */
+  --divider-width:  1px;       /* the 1px grid track / hairline border */
+  --divider-color:  #191919;   /* == --color-ink */
+}
+
+/* ---------- Responsive scale overrides ---------- */
+@media screen and (max-width: 991px) {
+  :root {
+    --fs-body:      16px;
+    --page-padding: 2.5rem;
+    --space-md: 1.5rem; --space-lg: 2.5rem; --space-xl: 3rem;
+    --space-2xl: 4rem; --space-3xl: 5rem; --space-4xl: 6rem; --space-5xl: 8rem;
+    --radius-shell: 4rem; --radius-gallery: 4rem;
+  }
+}
+@media screen and (max-width: 767px) {
+  :root {
+    --page-padding: 2rem;
+    --space-md: 1.25rem; --space-lg: 1.5rem; --space-xl: 2rem;
+    --space-2xl: 3rem; --space-3xl: 3.5rem; --space-4xl: 4rem; --space-5xl: 4.5rem;
+    --radius-shell: 3rem;
+  }
+}
+@media screen and (max-width: 479px) {
+  :root {
+    --page-padding:  1.5rem;
+    --frame-padding: 12px;   /* top/left/right only; bottom stays 1rem in source */
+    --radius-shell:  2rem;
+    --radius-gallery: 1.5rem;
+  }
+}
+@media screen and (min-width: 1440px) {
+  :root {
+    --fs-display-3xl: 10rem;
+    --fs-display-2xl:  8rem;
+    --fs-display-xl:   6rem;
+    --fs-display-lg:   5rem;
+  }
+}

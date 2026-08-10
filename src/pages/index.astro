@@ -1,17 +1,112 @@
 ---
-
+/*
+ * PHASE A SHELL — placeholder.
+ *
+ * This exists only to satisfy the Phase A exit criterion: prove the extracted
+ * design tokens and self-hosted fonts actually render. Phase C1 replaces this
+ * file entirely with the real homepage.
+ *
+ * Do not build on this page. Build on the layout and components from Phase B.
+ */
+import '../styles/tokens.css'
+import '../styles/fonts.css'
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phase A shell — Leviathan Core</title>
+    <link
+      rel="preload"
+      href="/fonts/syne-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/Satoshi-Regular.woff"
+      as="font"
+      type="font/woff"
+      crossorigin
+    />
+  </head>
+  <body>
+    <main>
+      <p class="meta">Phase A — token &amp; font smoke test</p>
+      <h1>Leviathan Core</h1>
+      <h2>Design tokens are live</h2>
+      <p>
+        Body copy in Satoshi at <code>--fs-body</code>, <code>--lh-body</code>. This paragraph
+        contains <strong>bold text</strong>, which is browser-synthesised — matching the live
+        site exactly, by design.
+      </p>
+      <div class="swatches">
+        <span style="background: var(--color-ink)"></span>
+        <span style="background: var(--color-bg); outline: 1px solid var(--color-ink)"></span>
+        <span style="background: var(--color-ink-button)"></span>
+        <span style="background: var(--color-text-muted)"></span>
+      </div>
+      <hr />
+      <p class="meta">Syne · Roboto Mono · Satoshi — all self-hosted, no third-party font loader</p>
+    </main>
+  </body>
 </html>
+
+<style>
+  body {
+    margin: 0;
+    padding: var(--page-padding);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+  main {
+    max-width: var(--container-md);
+    margin-inline: auto;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: var(--fs-display-lg);
+    line-height: var(--lh-tight);
+    font-weight: var(--fw-regular);
+    margin: 0 0 var(--space-sm);
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    line-height: var(--lh-snug);
+    font-weight: var(--fw-regular);
+    margin: 0 0 var(--space-md);
+  }
+  .meta {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    line-height: var(--lh-relaxed);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .swatches {
+    display: flex;
+    gap: var(--space-xs);
+    margin: var(--space-md) 0;
+  }
+  .swatches span {
+    inline-size: var(--space-xl);
+    block-size: var(--space-xl);
+    border-radius: var(--radius-sm);
+  }
+  hr {
+    border: 0;
+    border-top: var(--divider-width) solid var(--divider-color);
+    margin: var(--space-lg) 0;
+  }
+  code {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+  }
+</style>
