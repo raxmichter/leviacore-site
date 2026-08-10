@@ -1,0 +1,373 @@
+---
+/**
+ * Dev-only component gallery — Phase B3.
+ *
+ * Renders every component in src/components/ with realistic sample props so
+ * each can be visually verified in isolation, outside of any real page.
+ *
+ * NOT linked from site navigation. Kept out of search indexes via the
+ * robots meta tag below (BaseLayout has no prop for this, so it's added
+ * directly here — noted rather than changing BaseLayout).
+ *
+ * Rule for this file: it is a test harness, not a refactor. Where a
+ * component needed odd or awkward props to render at all, or has a bug,
+ * that is reported alongside the build (see B3 summary) — nothing is
+ * patched here or in the components themselves.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+// Components under test
+import Button from '../../components/Button.astro'
+import ClientLogoStrip from '../../components/ClientLogoStrip.astro'
+import ContactCTA from '../../components/ContactCTA.astro'
+import ContactForm from '../../components/ContactForm.astro'
+import Divider from '../../components/Divider.astro'
+import Eyebrow from '../../components/Eyebrow.astro'
+import MobileMenu from '../../components/MobileMenu.astro'
+import ProjectCard from '../../components/ProjectCard.astro'
+import SectionHeading from '../../components/SectionHeading.astro'
+import SectionShell from '../../components/SectionShell.astro'
+import ServiceDetailBlock from '../../components/ServiceDetailBlock.astro'
+import SocialBadge from '../../components/SocialBadge.astro'
+import TeamMemberCard from '../../components/TeamMemberCard.astro'
+import ValuesList from '../../components/ValuesList.astro'
+// SiteHeader and SiteFooter are exercised automatically by BaseLayout below
+// (see the note in their section) rather than instantiated a second time —
+// SiteHeader embeds MobileMenu internally, and MobileMenu hardcodes
+// id="mobile-menu" with no override prop, so a second direct instance would
+// collide with the header's own. Reported, not fixed.
+
+// Sample images (confirmed present in src/assets/images/ via `ls`)
+import georgePhoto from '../../assets/images/GeorgeDePree-FINAL.jpg'
+import alexPhoto from '../../assets/images/AlexOwen-FINAL.jpg'
+import hiringPhoto from '../../assets/images/were-hiring.jpg'
+import lcTeamPhoto from '../../assets/images/LC-Team-Final.jpg'
+import icon01 from '../../assets/images/icon-01.svg'
+import icon02 from '../../assets/images/icon-02.svg'
+import amazonGames from '../../assets/images/amazon_games.png'
+import bungie from '../../assets/images/bungie.png'
+import thunderLotus from '../../assets/images/thunder_lotus.png'
+import digitalExtremes from '../../assets/images/digital_extremes.png'
+import grindingGear from '../../assets/images/grinding_gear.png'
+import northBeach from '../../assets/images/north_beach.png'
+import twoK from '../../assets/images/2K_2021_Logo.png'
+import privateDivision from '../../assets/images/private_division.png'
+
+const clientLogos = [
+  { src: amazonGames, alt: 'Amazon Games' },
+  { src: bungie, alt: 'Bungie' },
+  { src: thunderLotus, alt: 'Thunder Lotus Games' },
+  { src: digitalExtremes, alt: 'Digital Extremes' },
+  { src: grindingGear, alt: 'Grinding Gear Games' },
+  { src: northBeach, alt: 'North Beach Games' },
+  { src: twoK, alt: '2K' },
+  { src: privateDivision, alt: 'Private Division' },
+]
+
+const contactSocialLinks = [
+  { platform: 'twitter' as const, href: 'https://twitter.com/leviacore', label: 'Tw' },
+  { platform: 'linkedin' as const, href: '#', label: 'IN' },
+]
+
+const projectTags = ['Influencer Marketing', 'Campaign Strategy', 'Content']
+
+const serviceTags = ['Strategy', 'Negotiation', 'Reporting']
+
+const valuesItems = [
+  { number: '01', title: 'Transparency', description: 'We share the numbers, good or bad, as soon as we have them.' },
+  { number: '02', title: 'Craft', description: 'Every campaign gets the same care as our first one did.' },
+  { number: '03', title: 'Speed', description: 'Gaming moves fast — our process is built to keep pace with it.' },
+  { number: '04', title: 'Partnership', description: 'We work inside your team, not around it.' },
+]
+
+const sectionHeadingVariants = [
+  { as: 'h1' as const, variant: 'display-2xl' as const, label: 'display-2xl (.heading-large)' },
+  { as: 'h1' as const, variant: 'display-xl' as const, label: 'display-xl (.heading-medium)' },
+  { as: 'h1' as const, variant: 'display-lg' as const, label: 'display-lg (.heading-small)' },
+  { as: 'h1' as const, variant: 'h1' as const, label: 'h1 / .heading-h1' },
+  { as: 'h2' as const, variant: 'h2' as const, label: 'h2 (bare tag, 120% lh)' },
+  { as: 'h2' as const, variant: 'heading-h2' as const, label: '.heading-h2 (110% lh)' },
+  { as: 'h3' as const, variant: 'h3' as const, label: 'h3 / .heading-h3' },
+  { as: 'h4' as const, variant: 'h4' as const, label: 'h4 / .heading-h4' },
+  { as: 'h5' as const, variant: 'h5' as const, label: 'h5 (bare tag)' },
+  { as: 'h5' as const, variant: 'heading-h5' as const, label: '.heading-h5 (class variant)' },
+  { as: 'h6' as const, variant: 'h6' as const, label: 'h6 / .heading-h6' },
+]
+---
+
+<BaseLayout
+  title="Component Gallery (dev)"
+  description="Internal, dev-only rendering of every Phase B component with sample props."
+  canonicalPath="/dev/components"
+  noindex
+>
+  <div class="gallery">
+    <header class="gallery-intro">
+      <p class="gallery-kicker">Phase B3 — internal only, not linked from site nav</p>
+      <h1>Component Gallery</h1>
+      <p>
+        Every component in <code>src/components/</code>, rendered with realistic sample props. SiteHeader
+        and SiteFooter render as this page's own chrome (via BaseLayout) rather than being duplicated
+        below.
+      </p>
+    </header>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">SiteHeader.astro / SiteFooter.astro</h2>
+      <p class="gallery-note">
+        Rendered once each, automatically, by BaseLayout — see the top and bottom of this page. Not
+        re-instantiated here because SiteHeader embeds MobileMenu internally (id="mobile-menu"), and a
+        second direct instance below would collide with that id.
+      </p>
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">MobileMenu.astro</h2>
+      <p class="gallery-note">
+        Ships with a hardcoded <code>hidden</code> attribute and no prop to override it or its id, so it
+        is normally invisible until SiteHeader's own toggle script runs. Forced visible below purely
+        with page-level CSS so its markup can be reviewed; note this instance's <code>id="mobile-menu"</code>
+        duplicates the id already used by the page's own header (a limitation of testing this component
+        a second time in isolation, not fixed here).
+      </p>
+      <div class="force-visible-mobile-menu">
+        <MobileMenu currentPath="/dev/components" />
+      </div>
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">Button.astro</h2>
+      <div class="row">
+        <Button variant="primary" href="/contact">Primary (link)</Button>
+        <Button variant="secondary" href="/contact">Secondary (link)</Button>
+        <Button variant="primary" type="button">Primary (button)</Button>
+        <Button variant="secondary" type="submit">Secondary (submit button)</Button>
+      </div>
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">Eyebrow.astro</h2>
+      <div class="stack">
+        <Eyebrow>default (div)</Eyebrow>
+        <Eyebrow as="h2">as="h2"</Eyebrow>
+        <Eyebrow as="h3">as="h3"</Eyebrow>
+      </div>
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">Divider.astro</h2>
+      <div class="stack">
+        <p class="gallery-note">horizontal (default)</p>
+        <Divider orientation="horizontal" />
+        <p class="gallery-note">vertical (in a fixed-height row)</p>
+        <div class="row" style="height: 3rem; align-items: stretch;">
+          <span>left</span>
+          <Divider orientation="vertical" />
+          <span>right</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">SocialBadge.astro</h2>
+      <div class="row">
+        <SocialBadge platform="twitter" href="https://twitter.com/leviacore" label="Tw" target="_blank" />
+        <SocialBadge platform="linkedin" href="https://www.linkedin.com/company/leviathan-core/" label="IN" target="_blank" />
+      </div>
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">SectionHeading.astro</h2>
+      <div class="stack">
+        {
+          sectionHeadingVariants.map((v) => (
+            <div>
+              <p class="gallery-note">{v.label}</p>
+              <SectionHeading as={v.as} variant={v.variant}>
+                Find your fandom
+              </SectionHeading>
+            </div>
+          ))
+        }
+        <div>
+          <p class="gallery-note">uppercase prop</p>
+          <SectionHeading as="h2" uppercase>
+            uppercase heading
+          </SectionHeading>
+        </div>
+      </div>
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">SectionShell.astro</h2>
+      <SectionShell sectionClass="gallery-demo-section" padding="large" withTopDivider={true}>
+        <p>SectionShell content slot, padding="large", withTopDivider=true.</p>
+      </SectionShell>
+      <SectionShell sectionClass="gallery-demo-section" padding="xlarge" withTopDivider={false}>
+        <p>SectionShell content slot, padding="xlarge", withTopDivider=false.</p>
+      </SectionShell>
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">ClientLogoStrip.astro</h2>
+      <ClientLogoStrip logos={clientLogos} />
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">ValuesList.astro</h2>
+      <ValuesList items={valuesItems} portraitAlt="George DePree, founder of Leviathan Core, seated portrait" />
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">ServiceDetailBlock.astro</h2>
+      <ServiceDetailBlock
+        id="consulting"
+        icon={icon01}
+        iconAlt="Consulting service icon"
+        title="Consulting"
+        tags={serviceTags}
+        ctaText="Let's talk"
+        ctaHref="/contact"
+        headline="Strategy that actually ships."
+        body="We plan campaigns around the audiences that already exist inside the games your players love, then execute with creators who know the space."
+      />
+      <ServiceDetailBlock
+        id="campaigns"
+        icon={icon02}
+        iconAlt="Campaign management service icon"
+        title="Campaign Management"
+        tags={['Sourcing', 'Contracts', 'Analytics']}
+        ctaText="See our work"
+        ctaHref="/projects"
+        headline="Every campaign, fully managed."
+        body="From creator sourcing to final reporting, we run the whole campaign lifecycle so your team doesn't have to."
+      />
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">ProjectCard.astro</h2>
+      <ProjectCard
+        title="Bungie: Destiny 2 Launch Campaign"
+        description="A coordinated influencer push across Twitch and YouTube timed to a major content drop."
+        tags={projectTags}
+        image={lcTeamPhoto}
+        imageAlt="Screenshot montage from the Destiny 2 launch campaign"
+        href="/projects/bungie-destiny-2"
+      />
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">TeamMemberCard.astro</h2>
+      <div class="row row-cards">
+        <TeamMemberCard name="George DePree" role="Founder &amp; CEO" image={georgePhoto} alt="Portrait of George DePree, Founder and CEO of Leviathan Core" />
+        <TeamMemberCard name="Alex Owen" role="Account Director" image={alexPhoto} alt="Portrait of Alex Owen, Account Director at Leviathan Core" />
+        <TeamMemberCard name="We're Hiring!" role="Open Role" image={hiringPhoto} alt="We're hiring — join the Leviathan Core team" hiring />
+      </div>
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">ContactForm.astro</h2>
+      <div class="form-demo">
+        <ContactForm />
+      </div>
+    </section>
+
+    <section class="gallery-section">
+      <h2 class="gallery-label">ContactCTA.astro</h2>
+      <ContactCTA
+        tagline="We can help. With PLANNING, NEGOTIATIONS, execution – the works."
+        socialLinks={contactSocialLinks}
+      />
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .gallery {
+    max-width: var(--container-3xl, 90rem);
+    margin-inline: auto;
+    padding: var(--space-lg) var(--page-padding, var(--space-md));
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+  }
+
+  .gallery-intro h1 {
+    font-family: var(--font-display);
+    font-size: var(--fs-h1);
+    margin: var(--space-xs) 0;
+  }
+
+  .gallery-kicker {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .gallery-intro p {
+    font-family: var(--font-body);
+    max-width: var(--width-md, 40rem);
+  }
+
+  .gallery-section {
+    border-top: var(--divider-width) solid var(--divider-color);
+    padding-top: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .gallery-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-sm);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .gallery-note {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .row-cards {
+    align-items: stretch;
+  }
+
+  .row-cards > :global(*) {
+    flex: 1 1 14rem;
+    max-width: 18rem;
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .form-demo {
+    max-width: var(--width-lg, 32rem);
+  }
+
+  /* Gallery-only override: MobileMenu hardcodes the `hidden` attribute with
+     no prop to control it. Forcing it visible here (page-scoped, not a
+     component edit) so its markup can be reviewed without JS. */
+  .force-visible-mobile-menu :global(.mobile-menu[hidden]) {
+    display: block;
+    position: static;
+    inset: auto;
+  }
+</style>

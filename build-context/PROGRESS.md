@@ -36,7 +36,7 @@ Violating these is how a session dies mid-phase.
 |---|---|---|---|
 | — | Recon: export inspected, interactions inventoried, font risk closed | Opus 5 | ✅ Complete |
 | **A** | Scaffold, token/component/interaction extraction, asset localization | Opus 5 + 3 subagents | ✅ **Complete** |
-| B | Layout shell and components | Sonnet 5 ×2 | 🔄 **In progress** |
+| B | Layout shell and components | Sonnet 5 ×3 | ✅ **Complete** |
 | C1 | Static pages — home, services, projects shell, team, contact | Sonnet 5 | ⬜ Not started |
 | C2 | Legal and utility pages — privacy, CCPA, notice-at-collection, 404, 401 | Sonnet 5 | ⬜ Not started |
 | D1 | Case study system — collection, schema, `/project/[slug]` template | Sonnet 5 | ⬜ Not started |
@@ -112,6 +112,52 @@ Expect one pre-existing bug at the 375 capture: `.navbar-dropdown { width: 390px
 | `Syne:500` is fetched on every page and never referenced | Already moot — the variable Syne file covers 400–800 in one request |
 | Zero `!important` in the site CSS (all 49 are framework) | The cascade is clean. Good news for the rebuild |
 
+---
+
+## Phase B — COMPLETE. Verification results
+
+**16 components + BaseLayout + global.css.** Gallery at `/dev/components` renders every one in isolation (`noindex`, not linked from nav).
+
+### Breakpoint verification — all five pass, zero horizontal overflow
+
+Measured in-browser against the running dev server, not eyeballed.
+
+| Width | Overflow | Offending elements | `--page-padding` | `--space-lg` | `--radius-shell` | `--fs-body` |
+|---|---|---|---|---|---|---|
+| 375 | none | 0 | 1.5rem | — | 2rem | 16px |
+| 767 | none | 0 | 2rem | 1.5rem | 3rem | 16px |
+| 768 | none | 0 | **2.5rem** | **2.5rem** | **4rem** | 16px |
+| 1280 | none | 0 | 3rem | 3rem | 0 | 18px |
+| 1920 | none | 0 | 3rem | 3rem | 0 | 18px |
+
+**767 vs 768 resolve to different token bands** — this is the empirical confirmation that the 4-breakpoint matrix in the original plan would have left the mobile-landscape block untested. At 1920, `--fs-display-3xl` correctly bumps to `10rem` (the ≥1440 tier), and `--radius-shell: 0` confirms the base-value correction.
+
+### Accessibility baseline (gallery page)
+
+| Check | Result |
+|---|---|
+| Images with missing `alt` | **0 / 17** |
+| Images with empty `alt` | **0 / 17** |
+| Links with no accessible name | **0 / 38** |
+| `<label for>` that resolves to a real input | **100%** |
+| Console errors | none |
+
+The live site has empty `alt` on every image and an unnamed footer anchor on every page. Both are gone.
+
+### Mobile menu
+Opens, `aria-expanded` toggles, Escape closes and restores focus. **Panel is 375px at a 375px viewport — the source's `.navbar-dropdown { width: 390px }` overflow bug is NOT reproduced.** Phase G will see this as a diff; it is an intentional improvement, not a regression.
+
+### Defects found and fixed during verification
+
+1. **`ContactForm` hardcoded its ids** (`contact-form`, `name`, `email`, `message`). `ContactCTA` embeds `ContactForm`, so any page rendering both emitted duplicate ids — and since `<label for>` binds by id, **the second form's labels silently pointed at the first form's inputs.** A real accessibility break, not cosmetic. Fixed with an `idPrefix` prop (default `contact`); `ContactCTA` forwards `formIdPrefix` (default `cta-contact`).
+2. **`BaseLayout` had no way to emit `<meta name="robots">`** — a page could not opt out of indexing without editing the layout. Added a `noindex` prop that emits the robots tag and suppresses the canonical link. Phase F will want this for utility routes.
+
+### Known, accepted
+- `id="mobile-menu"` appears twice **on the gallery page only**, because the gallery instantiates `MobileMenu` directly in addition to the one `SiteHeader` renders. Production renders it once. Not a component defect.
+- ⚠️ **Phase F must delete `src/pages/dev/components.astro` or confirm it is excluded from the sitemap.** It is `noindex` today, but it should not ship.
+
+---
+
 ## Phase B follow-ups (main thread — do not lose these)
 
 **1. The link reset needs a prose exception.** The export's global styles carry:
@@ -127,6 +173,12 @@ This is *correct* for nav, buttons, and footer links, which are styled by class 
 ## Handoff note
 
 *Written at each phase exit for a reader with no memory of the session.*
+
+**Phase B — COMPLETE.** 16 components, layout shell, verified at all five breakpoints with zero overflow and a clean accessibility baseline. Full results above. Two real defects were found by the gallery and fixed (`ContactForm` id collisions, `BaseLayout` noindex gap). One correction was applied to B1's output — see the reverted entry in `DECISIONS.md` about `.button-inner-text-hover`; the lesson generalizes: **Webflow interaction names do not reliably describe what they target, so check the selector list in `interactions.md`, never the title.** That will matter again in Phase E.
+
+**Starting Phase C1?** Read `tokens.md`, `components.md`, and the five static page HTMLs. Compose pages from the existing components — do not write new markup for anything the component library already covers. The gallery at `/dev/components` shows what exists.
+
+---
 
 **Phase A — COMPLETE.** All five artifacts exist and are substantial: `tokens.md`, `components.md`, `interactions.md`, `assets.md`, plus this ledger, `DECISIONS.md`, and `OPEN.md`. Scaffold builds clean (`npm run build`). Asset localization is idempotent — re-running `node scripts/localize-assets.mjs` is safe.
 

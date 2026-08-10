@@ -40,6 +40,9 @@ interface Props {
   tagline: string
   socialLinks: SocialLink[]
   withTopDivider?: boolean
+  /** Forwarded to the embedded ContactForm so its ids stay unique. Only needs
+   * overriding if a page renders this block AND a standalone ContactForm. */
+  formIdPrefix?: string
 }
 
 const {
@@ -47,6 +50,7 @@ const {
   tagline,
   socialLinks,
   withTopDivider = true,
+  formIdPrefix = 'cta-contact',
 } = Astro.props
 ---
 
@@ -66,7 +70,7 @@ const {
     </div>
     <div class="contact-hero-grid-right">
       <div class="form-shell">
-        <ContactForm />
+        <ContactForm idPrefix={formIdPrefix} />
       </div>
     </div>
   </div>

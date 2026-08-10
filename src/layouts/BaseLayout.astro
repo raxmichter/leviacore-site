@@ -21,9 +21,15 @@ export interface Props {
    * e.g. "/", "/services", "/team". No trailing slash except "/" itself,
    * matching astro.config.mjs's trailingSlash: 'never'. */
   canonicalPath: string
+  /** Emit <meta name="robots" content="noindex,nofollow"> and drop the
+   * canonical link. For pages that must never be indexed — the dev component
+   * gallery today; Phase F may also want it for utility routes. Must live in
+   * <head> to be honoured, which is why this is a prop and not something a
+   * page can inject from its own body. */
+  noindex?: boolean
 }
 
-const { title, description, ogImage, canonicalPath } = Astro.props
+const { title, description, ogImage, canonicalPath, noindex = false } = Astro.props
 
 const DEFAULT_OG_IMAGE = 'https://i.imgur.com/dYUCEcI.png'
 const resolvedOgImage = ogImage ?? DEFAULT_OG_IMAGE
@@ -36,7 +42,13 @@ const canonicalUrl = new URL(canonicalPath, Astro.site)
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalUrl} />
+    {
+      noindex ? (
+        <meta name="robots" content="noindex,nofollow" />
+      ) : (
+        <link rel="canonical" href={canonicalUrl} />
+      )
+    }
 
     <!-- Open Graph + Twitter card — shape ported verbatim from the export's
          homepage <head> (_webflow-export/index.html). -->
