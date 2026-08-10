@@ -1,0 +1,232 @@
+---
+/**
+ * SiteFooter — two-column Pages/Legal footer (components.md #3).
+ *
+ * Deliberate deviations from the export:
+ *  - Copyright year is computed at build time (new Date().getFullYear())
+ *    instead of the export's hardcoded "2025", which is already stale
+ *    (OPEN.md flags this explicitly).
+ *  - The empty `<a href="https://www.webflow.com" class="text-style-link">`
+ *    "made in Webflow" credit link is dropped entirely — no link text, an
+ *    axe failure, and pointless post-migration (OPEN.md, components.md §3).
+ */
+import { Image } from 'astro:assets'
+import logo from '../assets/images/LC-SITE-NAV.png'
+
+export interface Props {
+  currentPath: string
+}
+
+const { currentPath } = Astro.props
+
+const pageLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/services', label: 'Services' },
+  { href: '/team', label: 'Team' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/contact', label: 'Contact us' },
+]
+
+const legalLinks = [
+  { href: '/privacy-policy', label: 'Privacy Policy' },
+  { href: '/ccpa', label: 'CCPA' },
+  { href: '/notice-at-collection', label: 'California notice at collection' },
+]
+
+const isCurrent = (path: string) => currentPath === path
+const year = new Date().getFullYear()
+---
+
+<footer class="footer">
+  <div class="page-padding">
+    <div class="container-xxlarge">
+      <div class="line" aria-hidden="true"></div>
+      <div class="padding-vertical padding-xlarge">
+        <div class="footer-grid">
+          <div class="footer-grid-left">
+            <div>
+              <Image src={logo} alt="Leviathan Core" width={333} class="footer-logo-image" />
+              <p class="max-width-small footer-tagline">
+                Proudly connecting brands and audiences with influencer marketing expertise in the
+                gaming space since 2017.
+              </p>
+            </div>
+            <div class="subnav small">
+              <a
+                href="https://twitter.com/leviacore"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="badge small link"
+                aria-label="Leviathan Core on Twitter"
+              >
+                <span class="text-meta-small" aria-hidden="true">TW</span>
+              </a>
+              <a
+                href="https://www.linkedin.com/company/leviathan-core/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="badge small link"
+                aria-label="Leviathan Core on LinkedIn"
+              >
+                <span class="text-meta-small" aria-hidden="true">IN</span>
+              </a>
+            </div>
+          </div>
+          <div class="line-vertical hide-tablet" aria-hidden="true"></div>
+          <div class="line show-tablet" aria-hidden="true"></div>
+          <div class="footer-grid-right">
+            <div class="footer-column">
+              <h3 class="heading-h4">Pages</h3>
+              <nav class="footer-nav" aria-label="Footer">
+                {
+                  pageLinks.map((link) => (
+                    <a
+                      href={link.href}
+                      class="footer-nav-item-link"
+                      aria-current={isCurrent(link.href) ? 'page' : undefined}
+                    >
+                      {link.label}
+                    </a>
+                  ))
+                }
+              </nav>
+            </div>
+            <div class="footer-column">
+              <h3 class="heading-h4">Legal</h3>
+              <nav class="footer-nav" aria-label="Legal">
+                {
+                  legalLinks.map((link) => (
+                    <a href={link.href} class="footer-nav-item-link">
+                      {link.label}
+                    </a>
+                  ))
+                }
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="line" aria-hidden="true"></div>
+      <div class="footer-bottom">
+        <div class="subnav center">
+          <p class="text-meta">© Leviathan Core, LLC {year}</p>
+          <p class="text-meta">- ALL RIGHTS RESERVED</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xl);
+  }
+
+  .footer-grid-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    flex: 0.46 1 0%;
+  }
+
+  .footer-logo-image {
+    height: auto;
+    margin-bottom: var(--space-sm);
+  }
+
+  .footer-tagline {
+    max-width: var(--width-sm);
+  }
+
+  .subnav {
+    display: flex;
+    gap: var(--space-xs);
+  }
+
+  .subnav.center {
+    justify-content: center;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-circle);
+    border: 1px solid var(--color-ink);
+    inline-size: var(--space-xl);
+    block-size: var(--space-xl);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+  }
+
+  .line-vertical {
+    width: var(--divider-width);
+    align-self: stretch;
+    background: var(--divider-color);
+  }
+
+  .line-vertical.hide-tablet,
+  .line.show-tablet {
+    display: none;
+  }
+
+  @media screen and (min-width: 992px) {
+    .line-vertical.hide-tablet {
+      display: block;
+    }
+  }
+
+  @media screen and (max-width: 991px) {
+    .line.show-tablet {
+      display: block;
+    }
+  }
+
+  .footer-grid-right {
+    display: flex;
+    flex: 1 1 0%;
+    gap: var(--space-xl);
+  }
+
+  .footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    flex: 1 1 0%;
+  }
+
+  .footer-column h3 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .footer-nav-item-link[aria-current='page'] {
+    text-decoration: underline;
+  }
+
+  .line {
+    block-size: var(--divider-width);
+    background: var(--divider-color);
+  }
+
+  .footer-bottom {
+    padding-block: var(--space-md);
+  }
+
+  .footer-bottom .text-meta {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    display: inline;
+  }
+</style>

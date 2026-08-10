@@ -1,0 +1,59 @@
+---
+/**
+ * Divider — `.line` (horizontal) / `.line-vertical` (vertical) hairline rule.
+ *
+ * Source: components.md #7. Purely decorative, no content. The `responsive` modifiers
+ * reproduce the source's orientation-swap idiom (tokens.md §5f): at the tablet breakpoint
+ * (≤991) several grids swap a vertical divider for a horizontal one, e.g.
+ * `.line-vertical.hide-tablet` paired with a sibling `.line.show-tablet`. Bands per
+ * tokens.md §4b: mobile-landscape = ≤767, tablet = ≤991.
+ */
+interface Props {
+  orientation?: 'horizontal' | 'vertical'
+  responsive?: 'hide-mobile-landscape' | 'hide-tablet' | 'show-tablet' | 'show-mobile-landscape'
+  class?: string
+}
+
+const { orientation = 'horizontal', responsive, class: className } = Astro.props
+
+const classes = [
+  orientation === 'vertical' ? 'line-vertical' : 'line',
+  responsive,
+  className,
+]
+  .filter(Boolean)
+  .join(' ')
+---
+
+<div class={classes} aria-hidden="true"></div>
+
+<style>
+  .line {
+    width: 100%;
+    border-top: var(--divider-width) solid var(--divider-color);
+  }
+  .line-vertical {
+    align-self: stretch;
+    border-left: var(--divider-width) solid var(--divider-color);
+  }
+  @media screen and (max-width: 767px) {
+    .hide-mobile-landscape {
+      display: none;
+    }
+  }
+  @media screen and (max-width: 991px) {
+    .hide-tablet {
+      display: none;
+    }
+  }
+  @media screen and (min-width: 768px) {
+    .show-mobile-landscape {
+      display: none;
+    }
+  }
+  @media screen and (min-width: 992px) {
+    .show-tablet {
+      display: none;
+    }
+  }
+</style>

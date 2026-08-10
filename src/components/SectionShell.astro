@@ -1,0 +1,56 @@
+---
+/**
+ * SectionShell — the universal outer wrapper nearly every `<section>` uses.
+ *
+ * Source: components.md #6. Pattern:
+ *   section.<sectionClass> > .page-padding > .container-xxlarge > [.line] > .padding-vertical.padding-{large|xlarge}
+ *
+ * `withTopDivider` defaults true (most sections have the divider); the hero section on every
+ * page and contact.html's single section omit it — pass `withTopDivider={false}` there.
+ *
+ * `padding-vertical padding-large` / `padding-vertical padding-xlarge` is a combo class, but
+ * unlike the `margin-bottom.margin-*` trap (tokens.md BLOCKER-2) this combo is NOT restated
+ * anywhere and carries no special-case rule — it resolves to the plain nominal scale
+ * (`--space-lg` / `--space-xl`, both of which already carry their own responsive step-down).
+ */
+interface Props {
+  sectionClass: string
+  padding?: 'large' | 'xlarge'
+  withTopDivider?: boolean
+  id?: string
+}
+
+const { sectionClass, padding = 'xlarge', withTopDivider = true, id } = Astro.props
+---
+
+<section class={sectionClass} id={id}>
+  <div class="page-padding">
+    <div class="container-xxlarge">
+      {withTopDivider && <div class="line" aria-hidden="true"></div>}
+      <div class={`padding-vertical padding-${padding}`}>
+        <slot />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .page-padding {
+    padding-inline: var(--page-padding);
+  }
+  .container-xxlarge {
+    width: 100%;
+    max-width: var(--container-3xl);
+    margin-inline: auto;
+  }
+  .line {
+    border-top: var(--divider-width) solid var(--divider-color);
+    width: 100%;
+  }
+  .padding-vertical.padding-large {
+    padding-block: var(--space-lg);
+  }
+  .padding-vertical.padding-xlarge {
+    padding-block: var(--space-xl);
+  }
+</style>

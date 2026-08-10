@@ -1,0 +1,178 @@
+---
+/**
+ * ContactForm — the site's one contact form, reused on index.html, services.html (inside
+ * ContactCTA), and contact.html.
+ *
+ * Source: components.md §4. Three fixes applied relative to the source markup, per the B2
+ * brief:
+ *
+ * 1. ⚠️ NO WORKING ENDPOINT. The source form has no `action` attribute at all — Webflow's own
+ *    backend intercepted submissions via `webflow.js` (excluded from this migration), so
+ *    there is no working submit path anywhere in the exported markup. `action` below is a
+ *    clearly-marked placeholder. **This is an open item, not a decision** — tracked in
+ *    build-context/OPEN.md. Whoever closes it needs to supply a real endpoint (an Astro API
+ *    route, a form service such as Formspree/Basin, or a serverless function) and update
+ *    `action` (and possibly `method`) accordingly. `method="post"` is used here rather than
+ *    the source's `method="get"` — GET would put a visitor's message text in the URL/server
+ *    logs, which is inappropriate for a contact form; this is a corrected default, not a
+ *    preserved one.
+ *
+ * 2. FIELD NAME CASING NORMALIZED. The source is internally inconsistent: index.html and
+ *    services.html use `name`/`email`/`Message`; contact.html uses `Name`/`Email`/`Message`
+ *    (and a different `id` on top, `Message-2`). Per the B2 brief this is normalized to
+ *    lowercase everywhere — `name`, `email`, `message` — so a single endpoint sees one
+ *    consistent payload shape regardless of which page the submission came from.
+ *
+ * 3. ACCESSIBILITY: the source has no `<label>` elements on any field (placeholder text
+ *    stands in for a label on all three inputs) and no `required`/`aria-required` anywhere.
+ *    Real, visible `<label>`s are added here, all three fields are marked required (a
+ *    contact form with an empty message is not an actionable lead — a considered decision,
+ *    not a ported one, since the source enforces no validation at all), and the
+ *    success/error message blocks are wired as an `aria-live` region so assistive tech
+ *    announces the outcome. Both regions exist in the static markup already (the source
+ *    toggles their visibility via Webflow/JS); showing/hiding them on submit is an
+ *    interaction and is explicitly out of scope for this phase (Phase E), so both start
+ *    `hidden` here and are otherwise inert static markup.
+ */
+---
+
+<div class="form-wrapper">
+  <!--
+    OPEN ITEM: no submit endpoint exists in the source export (see file header, point 1).
+    Replace `action` below when a real endpoint is chosen — do not ship this placeholder.
+  -->
+  <form id="contact-form" name="contact-form" class="form" action="#contact-form-endpoint-todo" method="post">
+    <div class="form-field-wrapper">
+      <label for="name" class="form-label">Name</label>
+      <input
+        class="form-input"
+        maxlength="256"
+        name="name"
+        id="name"
+        placeholder="Your Name"
+        type="text"
+        required
+        aria-required="true"
+      />
+    </div>
+    <div class="form-field-wrapper">
+      <label for="email" class="form-label">Email</label>
+      <input
+        class="form-input"
+        maxlength="256"
+        name="email"
+        id="email"
+        placeholder="Your Email"
+        type="email"
+        required
+        aria-required="true"
+      />
+    </div>
+    <div class="form-field-wrapper">
+      <label for="message" class="form-label">Message</label>
+      <textarea
+        id="message"
+        name="message"
+        maxlength="5000"
+        placeholder="Your Message"
+        class="form-input is-text-area"
+        required
+        aria-required="true"></textarea>
+    </div>
+    <button type="submit" class="button primary submit-button">Submit</button>
+  </form>
+  <div class="form-message-success" role="status" aria-live="polite" hidden>
+    <p>Thank you! Your submission has been received!</p>
+  </div>
+  <div class="form-message-error" role="alert" aria-live="assertive" hidden>
+    <p>Oops! Something went wrong while submitting the form.</p>
+  </div>
+</div>
+
+<style>
+  .form-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .form-field-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xxs);
+  }
+  .form-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    line-height: var(--lh-looser);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .form-input {
+    width: 100%;
+    box-sizing: border-box;
+    border: var(--divider-width) solid var(--color-ink);
+    border-radius: 0;
+    background: var(--color-transparent);
+    padding: var(--space-xs) var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-lg);
+    line-height: var(--lh-loose);
+    color: var(--color-ink);
+  }
+  .form-input:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    background: var(--color-field-focus-bg);
+  }
+  .form-input.is-text-area {
+    min-height: 8rem;
+    resize: vertical;
+  }
+  .submit-button {
+    /*
+     * Source is a bare `<input type="submit">` styled `.button.primary.w-button` — NOT the
+     * link-based `Button` component's DOM shape (no `.button-inner` wrapper, no hover-swap
+     * span; see Button.astro's file header). Visual treatment duplicated here to match.
+     */
+    align-self: flex-start;
+    margin-top: var(--space-xs);
+    border: 1px solid var(--color-transparent);
+    border-radius: var(--radius-sm);
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    padding: var(--space-xs) 0.6rem; /* .6rem is off-scale in source, no token — see Button.astro */
+    cursor: pointer;
+  }
+  .submit-button:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  .form-message-success,
+  .form-message-error {
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    font-family: var(--font-body);
+  }
+  .form-message-success {
+    border: var(--divider-width) solid var(--color-ink);
+  }
+  .form-message-error {
+    border: var(--divider-width) solid var(--color-ink);
+    background: var(--wf-error-bg);
+  }
+  .form-message-success p,
+  .form-message-error p {
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,102 @@
+---
+/**
+ * ContactCTA — the "Contact" hero-style block (`section-home-contact`).
+ *
+ * Source: components.md #17. NOT the full contact.html page — this is the recurring block
+ * that appears as index.html's final section, services.html's final section, AND as
+ * contact.html's only section. Two columns: eyebrow + h1 + tagline + social row on the left,
+ * `ContactForm` on the right.
+ *
+ * components.md §7 documents real divergence across the three instances that this component
+ * must NOT silently unify:
+ *   - contact.html omits the `.line` divider the other two have before the padded content
+ *     (`withTopDivider={false}`).
+ *   - Tagline copy differs (index/contact: "We can help. With PLANNING, NEGOTIATIONS,
+ *     execution – the works." · services: "FOLLOW US on social for the latest.") — exposed as
+ *     the `tagline` prop, not hardcoded.
+ *   - Social hrefs differ per instance (index has a real Twitter link + placeholder `#`
+ *     LinkedIn; services/contact use `#` for both, even though header/footer socials on the
+ *     same pages are correctly linked) — exposed as the `socialLinks` prop so each page
+ *     supplies its own source-accurate values rather than this component inventing one.
+ *
+ * The outer wrapper's `margin-bottom.margin-xxhuge` (around the eyebrow+heading group) hits
+ * the tokens.md BLOCKER-2 trap: resolved to 1rem, frozen at every viewport, not the nominal
+ * `--space-5xl` (12rem, responsive). Ported as literal `1rem`.
+ */
+import SectionShell from './SectionShell.astro'
+import SectionHeading from './SectionHeading.astro'
+import Eyebrow from './Eyebrow.astro'
+import SocialBadge from './SocialBadge.astro'
+import ContactForm from './ContactForm.astro'
+
+interface SocialLink {
+  platform: 'twitter' | 'linkedin'
+  href: string
+  label: string
+}
+
+interface Props {
+  headingText?: string
+  tagline: string
+  socialLinks: SocialLink[]
+  withTopDivider?: boolean
+}
+
+const {
+  headingText = "It's time to find your fandom.",
+  tagline,
+  socialLinks,
+  withTopDivider = true,
+} = Astro.props
+---
+
+<SectionShell sectionClass="section-home-contact" withTopDivider={withTopDivider}>
+  <div class="contact-hero-grid">
+    <div class="contact-hero-grid-left">
+      <div class="heading-group">
+        <Eyebrow class="eyebrow-spacing">Contact</Eyebrow>
+        <SectionHeading as="h1" variant="display-xl">{headingText}</SectionHeading>
+      </div>
+      <div>
+        <Eyebrow class="tagline">{tagline}</Eyebrow>
+        <div class="social-row">
+          {socialLinks.map((social) => <SocialBadge platform={social.platform} href={social.href} label={social.label} />)}
+        </div>
+      </div>
+    </div>
+    <div class="contact-hero-grid-right">
+      <div class="form-shell">
+        <ContactForm />
+      </div>
+    </div>
+  </div>
+</SectionShell>
+
+<style>
+  .contact-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+  }
+  @media screen and (max-width: 991px) {
+    .contact-hero-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .heading-group {
+    margin-bottom: 1rem; /* frozen combo value — see file header */
+  }
+  .eyebrow-spacing {
+    margin-bottom: var(--space-sm);
+  }
+  .tagline {
+    margin-bottom: var(--space-sm);
+  }
+  .social-row {
+    display: flex;
+    gap: var(--space-xs);
+  }
+  .form-shell {
+    max-width: var(--width-lg);
+  }
+</style>

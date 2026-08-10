@@ -1,0 +1,56 @@
+---
+/**
+ * SocialBadge — small square/circular icon-badge link for Twitter/LinkedIn.
+ *
+ * Source: components.md #5. Markup: `a.badge.small.link.w-inline-block > div.text-meta-small`.
+ * Source capitalization of the label text differs by placement ("Tw"/"IN" in header and
+ * contact-hero rows, "TW"/"IN" in the footer) — cosmetic per the artifact, so it's exposed as
+ * a `label` prop rather than hardcoded, letting each call site match the source exactly.
+ *
+ * Accessible name: the visible label alone ("Tw", "IN") is not meaningful to a screen reader.
+ * `platform` drives a proper `aria-label` (e.g. "Twitter") so the link announces sensibly
+ * while the visual text-meta-small label is preserved as-is — this fixes an accessibility gap
+ * in the source rather than reproducing it (the source has no accessible name beyond the
+ * two-letter visual label).
+ */
+interface Props {
+  platform: 'twitter' | 'linkedin'
+  href: string
+  label: string
+  target?: '_blank'
+}
+
+const { platform, href, label, target } = Astro.props
+const accessibleName = platform === 'twitter' ? 'Twitter' : 'LinkedIn'
+const rel = target === '_blank' ? 'noopener noreferrer' : undefined
+---
+
+<a href={href} class="badge small link" target={target} rel={rel} aria-label={accessibleName}>
+  <span class="text-meta-small" aria-hidden="true">{label}</span>
+</a>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Fixed circular chip size — no dedicated token in tokens.md for this dimension. */
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border-radius: var(--radius-circle);
+    border: var(--divider-width) solid var(--color-ink);
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .badge:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  .text-meta-small {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    line-height: var(--lh-normal);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+  }
+</style>

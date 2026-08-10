@@ -1,0 +1,169 @@
+/* =========================================================================
+   leviacore.com — global base styles
+   Minimal reset + element defaults derived from src/styles/tokens.css.
+   Motion, hover transitions, and interaction states beyond simple static
+   affordances belong to Phase E — this file sets static appearance only.
+   ========================================================================= */
+@import './tokens.css';
+@import './fonts.css';
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  /* Verbatim from the Webflow export's <head> embed ("Please keep this css
+     code to improve the font quality"). This is what makes Satoshi's
+     browser-synthesised 300/500/600/700 faux weights render identically to
+     the live site — see build-context/tokens.md §2b. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Verbatim from the export's global-styles embed (_webflow-export/index.html). */
+a {
+  color: inherit;
+  text-decoration: inherit;
+  font-size: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* The source removes the checkbox focus ring without replacing it
+   (tokens.md §5b, LOW-5) — an axe failure we fix rather than reproduce.
+   Ink outline matches the site's only depth cue: 1px hairlines. */
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+/* ---------- Body ---------- */
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: var(--fw-regular);
+  /* Outer page frame. Source keeps the bottom edge at a constant 1rem while
+     top/left/right compress to 12px at <=479px (tokens.md §5e). --space-sm
+     is never overridden across breakpoints, so reusing it here reproduces
+     that asymmetry without a hardcoded value. */
+  padding: var(--frame-padding);
+  padding-bottom: var(--space-sm);
+}
+
+/* ---------- Headings ---------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-regular);
+  margin: 0;
+}
+
+h1 {
+  font-size: var(--fs-h1);
+  line-height: var(--lh-snug);
+}
+
+h2 {
+  font-size: var(--fs-h2);
+  line-height: var(--lh-snug);
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  line-height: var(--lh-snug);
+}
+
+h4 {
+  font-size: var(--fs-h4);
+  line-height: var(--lh-normal);
+}
+
+h5 {
+  font-size: var(--fs-h5-tag);
+  line-height: var(--lh-normal);
+}
+
+h6 {
+  font-size: var(--fs-h6);
+  line-height: var(--lh-normal);
+}
+
+/* Responsive step-downs from tokens.md §2d. Only h1–h3 have overrides at
+   these breakpoints; h4–h6 are unchanged at every width in source. */
+@media screen and (max-width: 991px) {
+  h1 {
+    font-size: 3.5rem; /* no --fs- token for this step; see build summary */
+  }
+}
+
+@media screen and (max-width: 767px) {
+  h1 {
+    font-size: 3rem; /* no --fs- token for this step; see build summary */
+  }
+  h2 {
+    font-size: 2.5rem; /* no --fs- token for this step; see build summary */
+  }
+  h3 {
+    font-size: 1.75rem; /* no --fs- token for this step; see build summary */
+  }
+}
+
+/* ---------- Paragraphs & inline text ---------- */
+p {
+  margin: 0;
+}
+
+strong {
+  /* Inherits Satoshi from body and asks for 700, which the export does not
+     ship — browser-synthesised faux bold, same as the live site (§2b). */
+  font-weight: var(--fw-bold);
+}
+
+/* The link reset above (color/text-decoration: inherit) is correct for nav,
+   button, and footer links, which are styled per-class. But the export has
+   no ".text-rich-text a" rule either, so every in-body prose link — legal
+   page cross-references, mailto: links — renders with zero affordance,
+   indistinguishable from surrounding text (OPEN.md, "every in-body link in
+   the legal pages is invisible"; flagged for global.css in PROGRESS.md's
+   Phase B follow-ups). Restore visible styling inside rich-text content
+   only. This is a deliberate visual change from the live site — flag it in
+   fidelity.md during Phase G so it doesn't read as a regression. */
+.text-rich-text a {
+  color: var(--color-ink);
+  text-decoration: underline;
+}

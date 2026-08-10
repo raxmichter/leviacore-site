@@ -1,0 +1,299 @@
+---
+/**
+ * SiteHeader — sticky-free top navbar: logo, primary nav, CTA, socials, and
+ * the mobile-menu hamburger trigger. Renders MobileMenu as a sibling inside
+ * the same <header>, matching the export's structure (components.md #1/#2).
+ *
+ * The nested <header class="navbar-inner"> inside <header class="header">
+ * from the source markup is invalid HTML (a header must not be a descendant
+ * of a header) and an axe landmark failure — rebuilt as a <div> here.
+ *
+ * CTA uses the shared Button component so the hover text-swap structure stays
+ * consistent sitewide. NOTE: an earlier revision of this file stripped the
+ * .button-inner-text / .button-inner-text-hover span pair, reasoning that
+ * "Button Text Hover" was dead. That conflated two different interactions:
+ *   - a-34/a-169 "Button Text Hover" IS dead — it nudges .arrow-right /
+ *     .button-text, classes that exist nowhere in the export.
+ *   - a-74/a-75 "Button Hover [In]/[Out]" IS LIVE on .button across 19 pages
+ *     and translateYs BOTH inner-text spans 0% -> -100% (500ms, outQuint).
+ * Dropping the spans would have left the header/footer CTAs with no hover
+ * swap while every other button had one. See interactions.md §1.4.
+ */
+import { Image } from 'astro:assets'
+import logo from '../assets/images/LC-SITE-NAV.png'
+import MobileMenu from './MobileMenu.astro'
+import Button from './Button.astro'
+
+export interface Props {
+  currentPath: string
+}
+
+const { currentPath } = Astro.props
+
+const navLinks = [
+  { href: '/services', label: 'Services' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/team', label: 'Team' },
+]
+
+const isCurrent = (path: string) => currentPath === path
+---
+
+<header class="header">
+  <div class="navbar-wrapper">
+    <div class="navbar">
+      <div class="page-padding">
+        <div class="container-xxlarge">
+          <div class="navbar-inner">
+            <div class="navbar-left">
+              <a
+                href="/"
+                class="navbar-logo"
+                aria-current={isCurrent('/') ? 'page' : undefined}
+              >
+                <Image src={logo} alt="Leviathan Core" width={250} class="navbar-logo-image" />
+              </a>
+            </div>
+            <div class="navbar-right">
+              <nav class="navbar-menu" aria-label="Primary">
+                {
+                  navLinks.map((link) => (
+                    <a
+                      href={link.href}
+                      class="navbar-menu-item-link"
+                      aria-current={isCurrent(link.href) ? 'page' : undefined}
+                    >
+                      {link.label}
+                    </a>
+                  ))
+                }
+              </nav>
+              <div class="navbar-right-inner">
+                <div class="navbar-right-button">
+                  <Button href="/contact" ariaCurrent={isCurrent('/contact')}>
+                    Let's make it happen
+                  </Button>
+                </div>
+                <div class="line-vertical hide-mobile-landscape" aria-hidden="true"></div>
+                <div class="navbar-right-social">
+                  <a
+                    href="https://twitter.com/leviacore"
+                    class="badge small link"
+                    aria-label="Leviathan Core on Twitter"
+                  >
+                    <span class="text-meta-small" aria-hidden="true">Tw</span>
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/company/leviathan-core/"
+                    class="badge small link"
+                    aria-label="Leviathan Core on LinkedIn"
+                  >
+                    <span class="text-meta-small" aria-hidden="true">IN</span>
+                  </a>
+                </div>
+                <button
+                  type="button"
+                  id="mobile-menu-toggle"
+                  class="mobile-menu-toggle"
+                  aria-expanded="false"
+                  aria-controls="mobile-menu"
+                  aria-label="Open menu"
+                >
+                  <span class="mobile-menu-toggle-line"></span>
+                  <span class="mobile-menu-toggle-line"></span>
+                  <span class="mobile-menu-toggle-line"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="line" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <MobileMenu currentPath={currentPath} />
+</header>
+
+<script>
+  // Structural open/close only — no animated transition (Phase E owns motion,
+  // including the documented 20px-scroll auto-close, tokens.md/interactions.md).
+  const toggle = document.getElementById('mobile-menu-toggle')
+  const menu = document.getElementById('mobile-menu')
+
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open))
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu')
+      toggle.classList.toggle('is-active', open)
+      if (open) {
+        menu.removeAttribute('hidden')
+      } else {
+        menu.setAttribute('hidden', '')
+      }
+    }
+
+    toggle.addEventListener('click', () => {
+      setOpen(menu.hasAttribute('hidden'))
+    })
+
+    menu.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false)
+        toggle.focus()
+      }
+    })
+  }
+</script>
+
+<style>
+  .header {
+    position: relative;
+    z-index: var(--z-header);
+  }
+
+  .navbar {
+    position: relative;
+    z-index: var(--z-navbar);
+  }
+
+  @media screen and (max-width: 767px) {
+    .navbar {
+      z-index: 10; /* tokens.md §5d: navbar drops below the open mobile menu here */
+    }
+  }
+
+  .navbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-block: var(--space-sm);
+  }
+
+  .navbar-logo-image {
+    display: block;
+    height: auto;
+  }
+
+  .navbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  .navbar-menu {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .navbar-menu-item-link {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+  }
+
+  .navbar-menu-item-link:hover,
+  .navbar-menu-item-link[aria-current='page'] {
+    background-color: var(--color-overlay-hover);
+  }
+
+  @media screen and (max-width: 991px) {
+    .navbar-menu {
+      display: none;
+    }
+  }
+
+  .navbar-right-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-ink);
+    background: transparent;
+    color: var(--color-ink-button);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+  }
+
+  .button.primary {
+    background: var(--color-ink);
+    border-color: var(--color-transparent);
+    color: var(--color-on-ink);
+  }
+
+  .line-vertical {
+    width: var(--divider-width);
+    align-self: stretch;
+    background: var(--divider-color);
+  }
+
+  @media screen and (max-width: 767px) {
+    .hide-mobile-landscape {
+      display: none;
+    }
+  }
+
+  .navbar-right-social {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-circle);
+    border: 1px solid var(--color-ink);
+    inline-size: var(--space-xl);
+    block-size: var(--space-xl);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    inline-size: var(--space-xl);
+    block-size: var(--space-xl);
+  }
+
+  .mobile-menu-toggle-line {
+    display: block;
+    inline-size: var(--space-md);
+    block-size: 1px;
+    background: var(--color-ink);
+  }
+
+  @media screen and (max-width: 991px) {
+    .mobile-menu-toggle {
+      display: flex;
+    }
+  }
+
+  .line {
+    block-size: var(--divider-width);
+    background: var(--divider-color);
+  }
+</style>

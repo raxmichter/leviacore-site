@@ -124,7 +124,11 @@
   --radius-sm:      6px;     /* .label, .button */
   --radius-md:      8px;     /* .cursor */
   --radius-card:    1rem;    /* every image/media wrapper — 11 uses */
-  --radius-shell:   4rem;    /* .main-wrapper @<=991 (none at base) */
+  /* .main-wrapper has NO radius above 991px; the rounding is a tablet/mobile
+     treatment only. Extraction emitted 4rem here while its own comment said
+     "none at base" — corrected to 0 so the base value is honest and the
+     max-width overrides below supply the real values. */
+  --radius-shell:   0;
   --radius-gallery: 6rem;    /* .about-gallery */
   --radius-pill:    500px;
   --radius-circle:  50%;

@@ -1,0 +1,164 @@
+---
+/**
+ * ValuesList — "the values at our core." section (`section-home-values`).
+ *
+ * Source: components.md #16. Byte-identical between index.html and team.html (only the
+ * Webflow auto-generated `w-node-*` ids differ, which carry no meaning) — one shared
+ * component per components.md's explicit instruction, fed by the `items` prop so callers on
+ * both pages pass the same 4-item array from one content source rather than duplicating it.
+ *
+ * IMPORTANT — this is NOT an accordion. tokens.md/components.md both independently verified
+ * zero expand/collapse markup anywhere in the export (no `<details>`, no toggle class, no JS
+ * hook). It is a plain static numbered list. Built static, per the build brief.
+ *
+ * Structural note: the source section contains TWO stacked `.padding-vertical` blocks (the
+ * centered heading, then the grid), each preceded by its own `.line` — not the single-block
+ * shape `SectionShell` assumes, so this component owns its own full `page-padding >
+ * container-xxlarge` wrapper rather than composing `SectionShell`.
+ *
+ * `.home-values-grid { grid-template-columns: 1fr 1px 2fr }` is one of the site's documented
+ * 1px-divider grids (tokens.md §5f) — same vertical/horizontal swap pattern as ClientLogoStrip
+ * and ServiceDetailBlock.
+ *
+ * The portrait (`LC-Head.png`) is identical content on every known usage, so it is owned and
+ * imported directly by this component per the image-ownership rule, rather than threaded
+ * through as a prop. `portraitAlt` is still a required prop — the source ships `alt=""` on
+ * this image, and supplying real alt text is part of this migration's accessibility goal.
+ */
+import { Image } from 'astro:assets'
+import portrait from '../assets/images/LC-Head.png'
+import SectionHeading from './SectionHeading.astro'
+import Divider from './Divider.astro'
+
+interface ValueItem {
+  number: string
+  title: string
+  description: string
+}
+
+interface Props {
+  headingText?: string
+  items: ValueItem[]
+  portraitAlt: string
+}
+
+const { headingText = 'the values at our core.', items, portraitAlt } = Astro.props
+---
+
+<section class="section-home-values">
+  <div class="page-padding">
+    <div class="container-xxlarge">
+      <Divider />
+      <div class="padding-vertical padding-large">
+        <div class="heading-row">
+          <SectionHeading as="h2" variant="display-lg" uppercase>{headingText}</SectionHeading>
+        </div>
+      </div>
+      <Divider />
+      <div class="padding-vertical padding-xlarge">
+        <div class="home-values-grid">
+          <div class="portrait-wrapper">
+            <Image src={portrait} alt={portraitAlt} class="image-cover" />
+          </div>
+          <Divider orientation="vertical" responsive="hide-tablet" />
+          <Divider orientation="horizontal" responsive="show-tablet" />
+          <div class="home-values-grid-right">
+            {
+              items.map((item, index) => (
+                <>
+                  <div class="home-values-item">
+                    <div class="badge" aria-hidden="true">
+                      <span class="text-meta">{item.number}</span>
+                    </div>
+                    <div>
+                      <SectionHeading as="h3" uppercase class="item-title">{item.title}</SectionHeading>
+                      <p class="item-description">{item.description}</p>
+                    </div>
+                  </div>
+                  {index < items.length - 1 && <Divider />}
+                </>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .page-padding {
+    padding-inline: var(--page-padding);
+  }
+  .container-xxlarge {
+    width: 100%;
+    max-width: var(--container-3xl);
+    margin-inline: auto;
+  }
+  .padding-vertical.padding-large {
+    padding-block: var(--space-lg);
+  }
+  .padding-vertical.padding-xlarge {
+    padding-block: var(--space-xl);
+  }
+  .heading-row {
+    text-align: center;
+  }
+  .home-values-grid {
+    display: grid;
+    grid-template-columns: 1fr var(--divider-width) 2fr;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+  @media screen and (max-width: 991px) {
+    .home-values-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto var(--divider-width) auto;
+    }
+  }
+  .portrait-wrapper {
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .portrait-wrapper :global(img) {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  .home-values-grid-right {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .home-values-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-md);
+    align-items: start;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 2.75rem; /* matches SocialBadge — no dedicated token in tokens.md */
+    block-size: 2.75rem;
+    border-radius: var(--radius-circle);
+    border: var(--divider-width) solid var(--color-ink);
+  }
+  .text-meta {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+  }
+  .item-title {
+    margin-bottom: var(--space-xs);
+  }
+  .item-description {
+    margin: 0;
+    font-family: var(--font-body);
+  }
+</style>

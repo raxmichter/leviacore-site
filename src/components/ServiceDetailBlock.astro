@@ -1,0 +1,126 @@
+---
+/**
+ * ServiceDetailBlock — the repeating unit that makes up 80% of services.html, used 4x.
+ *
+ * Source: components.md #18. Two columns divided by the site's standard hairline (vertical
+ * on desktop, horizontal at mobile-landscape — same swap idiom as ClientLogoStrip). Left:
+ * icon, title, tag chips, CTA button. Right: headline + body copy.
+ *
+ * The source anchor ids (`branding`, `design`, `video`, `content`) and section classes
+ * (`section-services-branding` etc.) are legacy leftovers that no longer describe their
+ * content — components.md #18 flags `id="video"` as holding the Legal block and `id="content"`
+ * holding Finance, and explicitly recommends renaming rather than preserving the confusion.
+ * This component takes `id` as a plain prop (the caller supplies a sensible value, e.g.
+ * "consulting"/"campaigns"/"legal"/"finance") and generates its own consistent section class
+ * from it, rather than accepting/reproducing the old names.
+ *
+ * `.services-branding-text` carries a documented 2-column text flow at wide viewports
+ * (tokens.md §5e: `column-gap: 3rem` is otherwise unused anywhere else in the file). No
+ * breakpoint for collapsing back to 1 column is documented, so it collapses at the same ≤991
+ * band every other multi-column layout in the site uses — flagged as an assumption.
+ *
+ * Two `margin-bottom.margin-large` combos here (services.html: the tag-chip wrapper and the
+ * body-copy wrapper) fall into the tokens.md BLOCKER-2 trap: resolved to a literal 2rem,
+ * frozen at every viewport, NOT the nominal `--space-lg` (3rem, responsive). Ported as literal
+ * `2rem`, not `var(--space-lg)` — using the token would both use the wrong value and make it
+ * wrongly responsive.
+ */
+import SectionShell from './SectionShell.astro'
+import SectionHeading from './SectionHeading.astro'
+import Divider from './Divider.astro'
+import Button from './Button.astro'
+import { Image } from 'astro:assets'
+import type { ImageMetadata } from 'astro'
+
+interface Props {
+  id: string
+  icon: ImageMetadata
+  iconAlt: string
+  title: string
+  tags: string[]
+  ctaText: string
+  ctaHref: string
+  headline: string
+  body: string
+}
+
+const { id, icon, iconAlt, title, tags, ctaText, ctaHref, headline, body } = Astro.props
+---
+
+<SectionShell sectionClass={`section-service-detail section-service-detail--${id}`} id={id}>
+  <div class="services-grid">
+    <div class="services-grid-left">
+      <div class="services-grid-left-inner">
+        <div class="icon-wrap">
+          <Image src={icon} alt={iconAlt} width={100} />
+        </div>
+        <SectionHeading as="h2" uppercase class="title">{title}</SectionHeading>
+        {
+          tags.length > 0 && (
+            <ul class="service-list">
+              {tags.map((tag) => (
+                <li class="text-meta">{tag}</li>
+              ))}
+            </ul>
+          )
+        }
+        <Button href={ctaHref} variant="primary">{ctaText}</Button>
+      </div>
+    </div>
+    <Divider orientation="vertical" responsive="hide-mobile-landscape" />
+    <Divider orientation="horizontal" responsive="show-mobile-landscape" />
+    <div class="services-grid-right">
+      <SectionHeading as="h3" variant="h1" class="headline">{headline}</SectionHeading>
+      <p class="services-branding-text">{body}</p>
+    </div>
+  </div>
+</SectionShell>
+
+<style>
+  .services-grid {
+    display: grid;
+    grid-template-columns: 0.45fr var(--divider-width) 1fr;
+    gap: var(--space-lg);
+  }
+  @media screen and (max-width: 767px) {
+    .services-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto var(--divider-width) auto;
+    }
+  }
+  .icon-wrap {
+    margin-bottom: var(--space-sm);
+  }
+  .title {
+    margin-bottom: var(--space-md);
+  }
+  .service-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin: 0 0 2rem; /* frozen combo value — see file header */
+    padding: 0;
+    list-style: none;
+  }
+  .text-meta {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    line-height: var(--lh-relaxed);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .headline {
+    margin-bottom: var(--space-md);
+  }
+  .services-branding-text {
+    margin: 0 0 2rem; /* frozen combo value — see file header */
+    font-family: var(--font-body);
+    column-gap: var(--space-lg);
+  }
+  @media screen and (min-width: 992px) {
+    .services-branding-text {
+      column-count: 2;
+    }
+  }
+</style>

@@ -1,0 +1,105 @@
+---
+/**
+ * Button — the site's only button style, used for every CTA.
+ *
+ * Source: components.md #4. Markup is `a.button.primary.w-inline-block > .button-inner >
+ * (.button-inner-text, .button-inner-text-hover)`. The duplicated text span is a Webflow
+ * hover-swap animation pattern (text slides/crossfades on hover). Phase B builds the static
+ * structure only — Phase E owns the hover transition/animation that will act on
+ * `.button-inner-text-hover` (rule: no motion in this phase). Both spans render identical
+ * slotted content so the structure is ready without any interaction wired up.
+ *
+ * `variant="primary"` = filled ink background (source: `.button.primary`, used for nearly
+ * every CTA). `variant="secondary"` = outline/ink-on-transparent (source: bare `.button`,
+ * used once — the projects.html "View Project" card CTA).
+ *
+ * Renders an `<a>` when `href` is supplied, otherwise a `<button>` (for the contact form's
+ * submit control, which the source implements as a bare `<input type="submit">` with no
+ * `button-inner`/hover-swap wrapper — ContactForm.astro builds that separately rather than
+ * reusing this component, since the DOM shape genuinely differs per components.md #4).
+ */
+interface Props {
+  href?: string
+  variant?: 'primary' | 'secondary'
+  type?: 'button' | 'submit'
+  ariaCurrent?: boolean
+  class?: string
+}
+
+const { href, variant = 'primary', type = 'button', ariaCurrent = false, class: className } = Astro.props
+
+const classes = ['button', variant === 'primary' ? 'primary' : '', className].filter(Boolean).join(' ')
+---
+
+{
+  href ? (
+    <a href={href} class={classes} aria-current={ariaCurrent ? 'page' : undefined}>
+      <span class="button-inner">
+        <span class="button-inner-text">
+          <slot />
+        </span>
+        <span class="button-inner-text-hover" aria-hidden="true">
+          <slot />
+        </span>
+      </span>
+    </a>
+  ) : (
+    <button type={type} class={classes}>
+      <span class="button-inner">
+        <span class="button-inner-text">
+          <slot />
+        </span>
+        <span class="button-inner-text-hover" aria-hidden="true">
+          <slot />
+        </span>
+      </span>
+    </button>
+  )
+}
+
+<style>
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-ink);
+    border-radius: var(--radius-sm);
+    background: var(--color-transparent);
+    color: var(--color-ink-button);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    /* .6rem horizontal padding is off-scale in source (tokens.md §3c) — no token exists. */
+    padding: var(--space-xs) 0.6rem;
+    /* source: `.button { margin: 5px 0 0 }` — literal, no token. */
+    margin: 5px 0 0;
+  }
+
+  .button.primary {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+    border-color: var(--color-transparent);
+  }
+
+  .button:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  .button-inner {
+    position: relative;
+    display: inline-flex;
+    overflow: hidden;
+  }
+
+  .button-inner-text-hover {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>

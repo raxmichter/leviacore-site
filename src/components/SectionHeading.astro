@@ -1,0 +1,222 @@
+---
+/**
+ * SectionHeading — the Syne display/heading type scale as a shared component.
+ *
+ * Source: components.md #10 ("Treat as a typographic scale, not a component with logic").
+ * Values ported verbatim from tokens.md §2c/§2d — resolved values, not the nominal table.
+ *
+ * `as` sets the rendered tag (h1–h6) for correct document outline / a11y — always pass the
+ * heading level that is semantically correct for the page, independent of visual size.
+ * `variant` sets the visual style and defaults to match `as`. This decouples semantics from
+ * appearance, which is required because the source itself disagrees with itself:
+ * tokens.md MEDIUM-3 documents that the bare `<h2>` tag (120% line-height) and the
+ * `.heading-h2` class (110% line-height, and a different ≤479 value: 2.25rem vs none) are
+ * NOT the same style, and likewise `<h5>` (1.375rem) vs `.heading-h5` (1.25rem). Both are
+ * kept here as distinct variants (`h2` vs `heading-h2`, `h5` vs `heading-h5`) rather than
+ * silently picking one, per tokens.md's recommendation not to reconcile them without a
+ * design decision.
+ *
+ * `display-lg` (.heading-small) deliberately reproduces the type-scale inversion documented
+ * in tokens.md HIGH-1: it gets LARGER at ≤479 (3.25rem) than at ≤767 (3.125rem), which also
+ * makes it exceed `display-xl` (.heading-medium) at both those breakpoints. This is a known
+ * anomaly in the live site, preserved per migration rules (reproduce, don't fix).
+ *
+ * `.heading-xlarge` (display-3xl) is omitted: confirmed dead in tokens.md LOW-1 (0 HTML uses
+ * across the entire export) and not needed by any component in this phase's scope.
+ *
+ * Responsive step-down values below have no dedicated custom property in tokens.css (only
+ * the ≥1440 upscale is tokenized there) — they are literal rem values sourced directly from
+ * tokens.md §2d, called out per-rule below.
+ */
+type Variant =
+  | 'display-2xl' // .heading-large
+  | 'display-xl' // .heading-medium
+  | 'display-lg' // .heading-small
+  | 'h1' // <h1> / .heading-h1 (identical)
+  | 'h2' // bare <h2> tag — 120% line-height
+  | 'heading-h2' // .heading-h2 class — 110% line-height, distinct ≤479 value
+  | 'h3' // <h3> / .heading-h3 (identical)
+  | 'h4' // <h4> / .heading-h4 (identical)
+  | 'h5' // bare <h5> tag — 1.375rem
+  | 'heading-h5' // .heading-h5 class — 1.25rem
+  | 'h6' // <h6> / .heading-h6 (identical)
+
+interface Props {
+  as: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+  variant?: Variant
+  uppercase?: boolean
+  class?: string
+}
+
+const { as: Tag, variant, uppercase = false, class: className } = Astro.props
+const resolvedVariant = variant ?? Tag
+const classes = ['heading', `heading--${resolvedVariant}`, uppercase ? 'text-uppercase' : '', className]
+  .filter(Boolean)
+  .join(' ')
+---
+
+<Tag class={classes}>
+  <slot />
+</Tag>
+
+<style>
+  .heading {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--fw-regular);
+  }
+  .text-uppercase {
+    text-transform: uppercase;
+  }
+
+  /* ---------- display-2xl (.heading-large) ---------- */
+  .heading--display-2xl {
+    font-size: var(--fs-display-2xl); /* 6rem base, 8rem @>=1440 via tokens.css */
+    line-height: var(--lh-tighter);
+  }
+  @media screen and (max-width: 991px) {
+    .heading--display-2xl {
+      font-size: 5rem;
+    } /* tokens.md §2d — no token */
+  }
+  @media screen and (max-width: 767px) {
+    .heading--display-2xl {
+      font-size: 4rem;
+    }
+  }
+  @media screen and (max-width: 479px) {
+    .heading--display-2xl {
+      font-size: 3.5rem;
+    }
+  }
+
+  /* ---------- display-xl (.heading-medium) ---------- */
+  .heading--display-xl {
+    font-size: var(--fs-display-xl); /* 5rem base, 6rem @>=1440 via tokens.css */
+    line-height: var(--lh-tighter);
+  }
+  @media screen and (max-width: 991px) {
+    .heading--display-xl {
+      font-size: 4rem;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .heading--display-xl {
+      font-size: 3rem;
+    }
+  }
+  @media screen and (max-width: 479px) {
+    .heading--display-xl {
+      font-size: 3rem;
+    }
+  }
+
+  /* ---------- display-lg (.heading-small) — reproduces the HIGH-1 inversion ---------- */
+  .heading--display-lg {
+    font-size: var(--fs-display-lg); /* 4.5rem base, 5rem @>=1440 via tokens.css */
+    line-height: var(--lh-tight);
+  }
+  @media screen and (max-width: 991px) {
+    .heading--display-lg {
+      font-size: 4rem;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .heading--display-lg {
+      font-size: 3.125rem;
+    }
+  }
+  @media screen and (max-width: 479px) {
+    .heading--display-lg {
+      font-size: 3.25rem; /* ⚠ larger than the ≤767 value — deliberate reproduction, see tokens.md HIGH-1 */
+    }
+  }
+
+  /* ---------- h1 / .heading-h1 ---------- */
+  .heading--h1 {
+    font-size: var(--fs-h1);
+    line-height: var(--lh-snug);
+  }
+  @media screen and (max-width: 991px) {
+    .heading--h1 {
+      font-size: 3rem;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .heading--h1 {
+      font-size: 3rem;
+    }
+  }
+
+  /* ---------- h2 (bare tag) ---------- */
+  .heading--h2 {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-snug);
+  }
+  @media screen and (max-width: 991px) {
+    .heading--h2 {
+      font-size: 3rem;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .heading--h2 {
+      font-size: 2.5rem;
+    }
+  }
+
+  /* ---------- .heading-h2 (class variant) ---------- */
+  .heading--heading-h2 {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-tight);
+  }
+  @media screen and (max-width: 991px) {
+    .heading--heading-h2 {
+      font-size: 3rem;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .heading--heading-h2 {
+      font-size: 2.5rem;
+    }
+  }
+  @media screen and (max-width: 479px) {
+    .heading--heading-h2 {
+      font-size: 2.25rem;
+    }
+  }
+
+  /* ---------- h3 / .heading-h3 ---------- */
+  .heading--h3 {
+    font-size: var(--fs-h3);
+    line-height: var(--lh-snug);
+  }
+  @media screen and (max-width: 767px) {
+    .heading--h3 {
+      font-size: 1.75rem;
+    }
+  }
+
+  /* ---------- h4 / .heading-h4 ---------- */
+  .heading--h4 {
+    font-size: var(--fs-h4);
+    line-height: var(--lh-normal);
+  }
+
+  /* ---------- h5 (bare tag) ---------- */
+  .heading--h5 {
+    font-size: var(--fs-h5-tag);
+    line-height: var(--lh-normal);
+  }
+
+  /* ---------- .heading-h5 (class variant) ---------- */
+  .heading--heading-h5 {
+    font-size: var(--fs-h5-class);
+    line-height: var(--lh-normal);
+  }
+
+  /* ---------- h6 / .heading-h6 ---------- */
+  .heading--h6 {
+    font-size: var(--fs-h6);
+    line-height: var(--lh-normal);
+  }
+</style>

@@ -1,0 +1,85 @@
+---
+/**
+ * ClientLogoStrip — homepage "brands we've helped" section (`section-home-clients`).
+ *
+ * Source: components.md #12. Eyebrow label + `.home-clients-logos`, a flex row of 8 client
+ * logo `<img>`s — no links, no captions. Used once, on index.html only.
+ *
+ * The eyebrow/logos pair sits inside `.home-clients-grid`, which tokens.md §5f names as one
+ * of the site's ~25 "1px divider track" grids (`grid-template-columns: auto 1px 1fr`) — the
+ * dominant structural idiom of the whole site (a hairline divider between an eyebrow column
+ * and content). That divider flips from a vertical column rule to a horizontal row rule at
+ * ≤991, per the same section. Reproduced here with two `Divider`s, each visible on only one
+ * side of that breakpoint (the same pattern used by every other divided grid in this library).
+ *
+ * Logo count/order (8, per §1 item 12): amazon_games, bungie, thunder_lotus, digital_extremes,
+ * grinding_gear, north_beach, 2K_2021_Logo, private_division — that ordering is page content
+ * owned by whichever page assembles this component, not hardcoded here.
+ */
+import { Image } from 'astro:assets'
+import type { ImageMetadata } from 'astro'
+import Eyebrow from './Eyebrow.astro'
+import Divider from './Divider.astro'
+
+interface Logo {
+  src: ImageMetadata
+  alt: string
+}
+
+interface Props {
+  logos: Logo[]
+}
+
+const { logos } = Astro.props
+---
+
+<div class="home-clients-grid">
+  <Eyebrow>brands we&#x27;ve helped</Eyebrow>
+  <Divider orientation="vertical" responsive="hide-tablet" />
+  <Divider orientation="horizontal" responsive="show-tablet" />
+  <ul class="home-clients-logos">
+    {
+      logos.map((logo) => (
+        <li>
+          <Image src={logo.src} alt={logo.alt} class="client-logo" />
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .home-clients-grid {
+    display: grid;
+    grid-template-columns: auto var(--divider-width) 1fr;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+  @media screen and (max-width: 991px) {
+    .home-clients-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto var(--divider-width) auto;
+    }
+  }
+  .home-clients-logos {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    align-items: center;
+    gap: var(--space-md);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media screen and (max-width: 991px) {
+    .home-clients-logos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .home-clients-logos :global(.client-logo) {
+    width: 100%;
+    height: auto;
+    /* No token for logo max-height in tokens.md — chosen to keep the row visually even. */
+    max-height: 2.5rem;
+    object-fit: contain;
+  }
+</style>

@@ -36,7 +36,7 @@ Violating these is how a session dies mid-phase.
 |---|---|---|---|
 | — | Recon: export inspected, interactions inventoried, font risk closed | Opus 5 | ✅ Complete |
 | **A** | Scaffold, token/component/interaction extraction, asset localization | Opus 5 + 3 subagents | ✅ **Complete** |
-| B | Layout shell and components | Sonnet 5 | ⬜ Not started |
+| B | Layout shell and components | Sonnet 5 ×2 | 🔄 **In progress** |
 | C1 | Static pages — home, services, projects shell, team, contact | Sonnet 5 | ⬜ Not started |
 | C2 | Legal and utility pages — privacy, CCPA, notice-at-collection, 404, 401 | Sonnet 5 | ⬜ Not started |
 | D1 | Case study system — collection, schema, `/project/[slug]` template | Sonnet 5 | ⬜ Not started |
@@ -111,6 +111,18 @@ Expect one pre-existing bug at the 375 capture: `.navbar-dropdown { width: 390px
 | 5-value near-duplicate dark-ink cluster; 28 colors total (18 site-layer, 10 commerce residue) | Listed, **not** collapsed. Collapsing is a design decision, deferred |
 | `Syne:500` is fetched on every page and never referenced | Already moot — the variable Syne file covers 400–800 in one request |
 | Zero `!important` in the site CSS (all 49 are framework) | The cascade is clean. Good news for the rebuild |
+
+## Phase B follow-ups (main thread — do not lose these)
+
+**1. The link reset needs a prose exception.** The export's global styles carry:
+
+```css
+a { color: inherit; text-decoration: inherit; font-size: inherit; }
+```
+
+This is *correct* for nav, buttons, and footer links, which are styled by class — keep it. But it is why **every in-body link in the legal pages is invisible** (`OPEN.md` item 5). `global.css` must add a rule restoring link affordance (color + underline) inside rich-text / prose contexts only. Neither B1 nor B2 was briefed on this; apply it after B1 lands. Registers as an intentional diff in Phase G.
+
+**2. Verify the two agents' output doesn't overlap.** B1 owns `BaseLayout`, `SiteHeader`, `MobileMenu`, `SiteFooter`, `global.css`. B2 owns the 13 content components. File ownership was disjoint by brief, but confirm before committing.
 
 ## Handoff note
 

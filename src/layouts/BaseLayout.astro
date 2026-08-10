@@ -1,0 +1,107 @@
+---
+/**
+ * BaseLayout — the one shell every page renders through.
+ *
+ * Emits <head> metadata (title, description, OG/Twitter, canonical, icons,
+ * font preloads, GA4) and wraps page content with SiteHeader above and
+ * SiteFooter below. Pages own everything inside <slot />.
+ */
+import '../styles/global.css'
+import SiteHeader from '../components/SiteHeader.astro'
+import SiteFooter from '../components/SiteFooter.astro'
+
+export interface Props {
+  title: string
+  description: string
+  /** Absolute URL to a social-preview image. Falls back to the export's
+   * original OG image (still hosted on i.imgur.com — flagged in
+   * build-context/OPEN.md for localization; not fixed here). */
+  ogImage?: string
+  /** Path used for both the canonical <link> and nav "current page" state,
+   * e.g. "/", "/services", "/team". No trailing slash except "/" itself,
+   * matching astro.config.mjs's trailingSlash: 'never'. */
+  canonicalPath: string
+}
+
+const { title, description, ogImage, canonicalPath } = Astro.props
+
+const DEFAULT_OG_IMAGE = 'https://i.imgur.com/dYUCEcI.png'
+const resolvedOgImage = ogImage ?? DEFAULT_OG_IMAGE
+const canonicalUrl = new URL(canonicalPath, Astro.site)
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph + Twitter card — shape ported verbatim from the export's
+         homepage <head> (_webflow-export/index.html). -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/webclip.png" />
+
+    <link
+      rel="preload"
+      href="/fonts/syne-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/Satoshi-Regular.woff"
+      as="font"
+      type="font/woff"
+      crossorigin
+    />
+
+    <!-- GA4 — verbatim from every page of the live export. Must survive migration. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EG4F7ZLTZQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        window.dataLayer.push(arguments)
+      }
+      gtag('set', 'developer_id.dZGVlNj', true)
+      gtag('js', new Date())
+      gtag('config', 'G-EG4F7ZLTZQ')
+    </script>
+  </head>
+  <body>
+    <SiteHeader currentPath={canonicalPath} />
+    <main class="main-wrapper">
+      <slot />
+    </main>
+    <SiteFooter currentPath={canonicalPath} />
+  </body>
+</html>
+
+<style>
+  /* .main-wrapper radius (tokens.md §5a): no radius at base, stepping in at
+     <=991px via --radius-shell. tokens.css declares --radius-shell: 4rem
+     unconditionally at :root (its own comment says "none at base" but the
+     value isn't actually gated) — since tokens.css is off-limits to edit
+     here, the base case is zeroed explicitly and the token is only applied
+     inside the media query where tokens.css legitimately overrides it. */
+  .main-wrapper {
+    border-radius: 0;
+  }
+
+  @media screen and (max-width: 991px) {
+    .main-wrapper {
+      border-radius: var(--radius-shell);
+    }
+  }
+</style>

@@ -1,0 +1,125 @@
+---
+/**
+ * MobileMenu — the full nav panel shown at <=991px, toggled by
+ * SiteHeader's hamburger button (#mobile-menu-toggle / #mobile-menu.astro
+ * wires the open/close script — this component only renders markup).
+ *
+ * Per components.md #2: the export's Blog and Shop links are dropped
+ * entirely (both point at template-info/* pages excluded from this
+ * migration; Blog's link is authored `hide` and Shop's label span is
+ * authored `hide`, leaving a visible-but-empty link — a Webflow authoring
+ * artifact, not intentional content).
+ *
+ * ⚠️ Phase D3: the Blog link must be re-added here CONDITIONALLY, behind the
+ * `features.blog` flag — that is gate 1 of the six-gate enablement checklist
+ * in docs/enable-blog.md. Never add an unconditional Blog link.
+ */
+import Button from './Button.astro'
+
+export interface Props {
+  currentPath: string
+}
+
+const { currentPath } = Astro.props
+
+const navLinks = [
+  { href: '/services', label: 'Services' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/team', label: 'Team' },
+  { href: '/contact', label: 'Contact' },
+]
+
+const isCurrent = (path: string) => currentPath === path
+---
+
+<div class="mobile-menu" id="mobile-menu" hidden>
+  <div class="page-padding">
+    <div class="container-xxlarge">
+      <div class="mobile-menu-wrapper">
+        <nav class="mobile-menu-nav" aria-label="Mobile">
+          {
+            navLinks.map((link, index) => (
+              <>
+                <a
+                  href={link.href}
+                  class="mobile-menu-nav-link"
+                  aria-current={isCurrent(link.href) ? 'page' : undefined}
+                >
+                  <span class="mobile-menu-nav-text">{link.label}</span>
+                </a>
+                {index < navLinks.length - 1 && <div class="line" aria-hidden="true" />}
+              </>
+            ))
+          }
+          <Button href="/contact" class="mobile-menu-cta" ariaCurrent={isCurrent('/contact')}>
+            Let's talk
+          </Button>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    /* Above every other layer (navbar included) once open — see the header's
+       z-index writeup for why the source's own z-index recipe (100) isn't
+       reliable here across breakpoints. */
+    z-index: var(--z-overlay);
+    background: var(--color-bg);
+    overflow-y: auto;
+  }
+
+  .mobile-menu:not([hidden]) {
+    display: block;
+  }
+
+  .mobile-menu-wrapper {
+    padding-block: var(--space-lg);
+  }
+
+  .mobile-menu-nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-menu-nav-link {
+    display: block;
+    padding-block: var(--space-md);
+  }
+
+  .mobile-menu-nav-text {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+  }
+
+  .mobile-menu-nav-link[aria-current='page'] .mobile-menu-nav-text {
+    text-decoration: underline;
+  }
+
+  .line {
+    block-size: var(--divider-width);
+    background: var(--divider-color);
+  }
+
+  .button.primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--space-lg);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-transparent);
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+  }
+</style>
