@@ -1,0 +1,318 @@
+---
+/**
+ * Blog article (`/blog/<slug>`) — Phase D3. Built and SHIPPED DISABLED.
+ *
+ * See build-context/DECISIONS.md ("Blog is built and DELIBERATELY DISABLED") and
+ * docs/enable-blog.md before touching anything in this file's behaviour.
+ *
+ * GATE 4 of 6 (docs/enable-blog.md's six-gate checklist): route suppression.
+ * `getStaticPaths()` returns `[]` whenever `features.blog` is false — the committed
+ * value in src/config.ts — so zero `/blog/*` article routes are generated. No file
+ * exists to redirect or noindex; the routes are simply never created.
+ *
+ * Layout derived once from _webflow-export/detail_post.html (the single authorized
+ * exception to the never-read detail_*.html rule — build-context/PROGRESS.md), per
+ * the build brief: the same hero-grid / content-grid shape the case study system
+ * uses, minus the case-study-specific metadata block (client/year/timeline/
+ * services/website — none of that applies to a blog post), plus publish date and
+ * reading time, which the source's own post-hero-grid meta column already carries
+ * (it also carries "Category", replaced here with the schema's `tags`).
+ *
+ * Grid ratio `.33fr 1fr 1px .33fr` and the vertical-divider-becomes-horizontal-line
+ * idiom at <=991px are ported verbatim from tokens.md's documented `.post-hero-grid`
+ * / `.post-content-grid` structure (the "dominant structural pattern" — see tokens.md
+ * around its grid-template-columns catalogue) using the existing Divider component's
+ * `hide-mobile-landscape` / `show-mobile-landscape` responsive pair, exactly as
+ * detail_post.html itself pairs `.line-vertical.hide-mobile-landscape` with a sibling
+ * `.line.show-mobile-landscape`.
+ *
+ * Dropped from the source layout: the "Share" social-badge row and the "Related
+ * News" / newsletter sections below the article. All three bind to `href="#"` or an
+ * empty CMS list in the source — non-functional placeholder markup, not live
+ * functionality (the same reasoning SiteFooter already applies to the empty
+ * webflow.com credit link). Not in this phase's scope to invent real destinations
+ * for them.
+ *
+ * No hero-image motion: interactions.md lists "Blog Post Image Parallax" as dormant
+ * and belonging to this template, but Phase E owns all motion. The image below
+ * renders as a static `<Image>` — Phase E attaches the parallax later if it turns
+ * out to share the sitewide Image Parallax primitive.
+ */
+import type { ImageMetadata } from 'astro'
+import { getCollection, render, type CollectionEntry } from 'astro:content'
+import { Image } from 'astro:assets'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import SectionHeading from '../../components/SectionHeading.astro'
+import Button from '../../components/Button.astro'
+import Divider from '../../components/Divider.astro'
+import { features } from '../../config'
+
+export async function getStaticPaths() {
+  if (!features.blog) return []
+
+  const posts = await getCollection('blog', ({ data }) => !data.draft)
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }))
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>
+}
+
+const { post } = Astro.props
+const { Content } = await render(post)
+
+const publishDateDisplay = post.data.publishDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+})
+
+// Reading time: no dedicated field in the schema (per the brief, this is one of the
+// two additions that replace the case-study metadata block). Computed from the raw
+// markdown body at ~200 words/minute, floored at 1 minute so a very short post never
+// reads "0 min read".
+const wordCount = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length
+const readingMinutes = Math.max(1, Math.round(wordCount / 200))
+
+const heroImage: ImageMetadata | undefined = post.data.heroImage
+---
+
+<BaseLayout
+  title={`${post.data.title} | Leviathan Core`}
+  description={post.data.description}
+  canonicalPath={`/blog/${post.id}`}
+>
+  <section class="section-post">
+    <div class="page-padding">
+      <div class="container-xxlarge">
+        <div class="padding-vertical padding-xlarge">
+          <div class="post-hero-grid">
+            <div class="post-hero-back">
+              <Button href="/blog" variant="secondary">Go Back</Button>
+            </div>
+            <div class="post-hero-heading-col">
+              <SectionHeading as="h1" variant="display-xl" class="post-title">
+                {post.data.title}
+              </SectionHeading>
+              <p class="post-lead">{post.data.description}</p>
+            </div>
+            <Divider orientation="vertical" responsive="hide-mobile-landscape" class="post-hero-divider" />
+            <Divider responsive="show-mobile-landscape" class="post-hero-divider-mobile" />
+            <div class="post-hero-meta">
+              <div class="post-meta-block">
+                <p class="post-meta-label">Date</p>
+                <p class="post-meta-value">{publishDateDisplay}</p>
+              </div>
+              {
+                post.data.tags.length > 0 && (
+                  <div class="post-meta-block">
+                    <p class="post-meta-label">Tags</p>
+                    <p class="post-meta-value">{post.data.tags.join(', ')}</p>
+                  </div>
+                )
+              }
+              <div class="post-meta-block">
+                <p class="post-meta-label">Reading Time</p>
+                <p class="post-meta-value">{readingMinutes} min read</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {
+          heroImage && (
+            <div class="post-image-wrapper">
+              <Image src={heroImage} alt={post.data.heroImageAlt ?? post.data.title} class="image-cover" />
+            </div>
+          )
+        }
+
+        <div class="padding-vertical padding-xlarge">
+          <div class="post-content-grid">
+            <div class="post-content-spacer" aria-hidden="true"></div>
+            <div class="text-rich-text">
+              <Content />
+            </div>
+            <Divider orientation="vertical" responsive="hide-mobile-landscape" class="post-content-divider" />
+            <Divider responsive="show-mobile-landscape" class="post-content-divider-mobile" />
+            <div class="post-content-sidebar">
+              <p class="post-meta-label">Author</p>
+              <SectionHeading as="h3" variant="h4">{post.data.author}</SectionHeading>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-padding {
+    padding-inline: var(--page-padding);
+  }
+  .container-xxlarge {
+    width: 100%;
+    max-width: var(--container-3xl);
+    margin-inline: auto;
+  }
+  .padding-vertical.padding-xlarge {
+    padding-block: var(--space-xl);
+  }
+
+  /* ---------- Hero + content grids ----------
+     Source ratio verbatim from tokens.md: `.33fr 1fr 1px .33fr`. At <=991px the site-wide
+     idiom flips the 1px divider from a grid column to its own full-width row — here that's
+     handled by swapping which Divider instance is visible (see the two <Divider> pairs
+     above), so the grid itself only needs to collapse to a single column. */
+  .post-hero-grid,
+  .post-content-grid {
+    display: grid;
+    grid-template-columns: 0.33fr 1fr 1px 0.33fr;
+    align-items: start;
+    gap: var(--space-md);
+  }
+  @media screen and (max-width: 991px) {
+    .post-hero-grid,
+    .post-content-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+    }
+  }
+
+  .post-hero-heading-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  .post-title {
+    margin-bottom: 0;
+  }
+  .post-lead {
+    margin: 0;
+    max-width: var(--width-lg);
+    font-family: var(--font-body);
+    font-size: var(--fs-xl);
+    line-height: var(--lh-loose);
+  }
+
+  .post-hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .post-meta-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xxs);
+  }
+  .post-meta-label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .post-meta-value {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  /* ---------- Hero image ----------
+     tokens.md §5c confirms `.post-image-wrapper` shares the sitewide 1rem card radius
+     (--radius-card), but its height/aspect ratio isn't among the documented viewport-
+     relative primitives — no source value to port. This mirrors the closest documented
+     sibling (`.work-projects-item-image-wrapper`: viewport-relative height with a px cap)
+     rather than inventing an unrelated fixed aspect ratio. Flagged as an assumption, not a
+     ported value — same disclosure pattern ProjectCard.astro uses for its own grid ratio. */
+  .post-image-wrapper {
+    margin-top: var(--space-lg);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    height: 36vw;
+    max-height: 600px;
+  }
+  @media screen and (max-width: 767px) {
+    .post-image-wrapper {
+      height: 55vw;
+    }
+  }
+  .post-image-wrapper :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .post-content-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  /* ---------- Rich-text prose ----------
+     Same prose ruleset privacy-policy.astro established for its Markdown body, plus a
+     blockquote rule (not needed there, but documented for `.text-rich-text` generally in
+     tokens.md §2c/§4c) since article bodies are freer-form than legal text. Link color/
+     underline inside `.text-rich-text` already comes from global.css — not repeated here. */
+  .text-rich-text :global(p) {
+    margin-top: var(--space-sm);
+  }
+  .text-rich-text :global(> :first-child) {
+    margin-top: 0;
+  }
+  .text-rich-text :global(h2),
+  .text-rich-text :global(h3),
+  .text-rich-text :global(h4) {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+  }
+  .text-rich-text :global(ul),
+  .text-rich-text :global(ol) {
+    margin-top: var(--space-sm);
+    padding-left: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+  .text-rich-text :global(ul) {
+    list-style: disc;
+  }
+  .text-rich-text :global(ol) {
+    list-style: decimal;
+  }
+  .text-rich-text :global(li) {
+    display: list-item;
+  }
+  .text-rich-text :global(blockquote) {
+    margin: var(--space-md) 0;
+    padding-left: var(--space-md);
+    border-left: var(--divider-width) solid var(--color-ink-pure);
+    font-family: var(--font-body);
+    font-weight: var(--fw-medium);
+    font-size: 2rem; /* tokens.md §2c — .text-rich-text blockquote base size, no dedicated token */
+    line-height: var(--lh-relaxed);
+  }
+  @media screen and (max-width: 767px) {
+    .text-rich-text :global(blockquote) {
+      font-size: 1.5rem;
+    }
+  }
+  @media screen and (max-width: 479px) {
+    .text-rich-text :global(blockquote) {
+      font-size: 1.75rem; /* larger than the <=767 step — same inversion tokens.md HIGH-1
+        documents for .heading-small, reproduced here per tokens.md §4c's note that the
+        blockquote follows the identical pattern. */
+    }
+  }
+  .text-rich-text :global(figcaption) {
+    margin-top: var(--space-xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    color: var(--color-text-muted);
+  }
+</style>

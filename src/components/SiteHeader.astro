@@ -23,6 +23,7 @@ import { Image } from 'astro:assets'
 import logo from '../assets/images/LC-SITE-NAV.png'
 import MobileMenu from './MobileMenu.astro'
 import Button from './Button.astro'
+import { features } from '../config'
 
 export interface Props {
   currentPath: string
@@ -34,6 +35,10 @@ const navLinks = [
   { href: '/services', label: 'Services' },
   { href: '/projects', label: 'Projects' },
   { href: '/team', label: 'Team' },
+  // Gate 1 of 6 in docs/enable-blog.md's checklist. Purely additive/conditional —
+  // when features.blog is false (committed default) this spread is a no-op and the
+  // rendered nav is byte-identical to before this line existed.
+  ...(features.blog ? [{ href: '/blog', label: 'Blog' }] : []),
 ]
 
 const isCurrent = (path: string) => currentPath === path

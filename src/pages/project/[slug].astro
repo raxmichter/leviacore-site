@@ -1,0 +1,416 @@
+---
+/**
+ * `/project/[slug]` — the case study detail template. Phase D1.
+ *
+ * ⚠️ Note the singular `project` path segment — the plural `/projects` is the index page.
+ * URL parity is the one non-negotiable rule of this migration: the slug IS the live URL
+ * (e.g. `/project/warframe`). Slugs come from the file names D2 adds under
+ * `src/content/projects/*.md` (the content layer's default id generator — see
+ * `content.config.ts`); nothing here normalizes, prefixes, or prettifies them.
+ *
+ * Source: `_webflow-export/detail_project.html`, read once. The export's CMS fields are all
+ * empty (Webflow strips Collection content from static exports), but the layout structure is
+ * intact and is what's rebuilt here:
+ *   1. Hero — title + subtitle on the left, a vertical divider, then a metadata list
+ *      (Client / Year / Timeline / Services / Website) on the right.
+ *   2. Content — Challenge/Solution copy on the left, a vertical divider, [gallery] on the
+ *      right.
+ *   3. Closing CTA — heading + icon on the left, tagline + button on the right.
+ *
+ * Two deliberate departures from the literal source markup, both because the schema (fixed,
+ * not redefined here per the brief) shapes the content differently than the empty export
+ * could show:
+ *
+ * - **Hero image.** The source's `section-project-hero` grid contains no `<img>` at all in the
+ *   export — a Webflow CMS "image" field bound as a `background-image` inline style vanishes
+ *   entirely (not just empty-`src`) when the export has no bound value, unlike the `w-dyn-bind-
+ *   empty` markers left behind elsewhere. The schema (and the migration plan's own case-study
+ *   shape: "...Metrics, hero image, CTA") requires `heroImage`/`heroImageAlt`, so it renders as
+ *   a full-width banner directly below the hero grid — the standard place for it in this exact
+ *   card pattern (compare `ProjectCard`'s cover image). Flagged here as a page-local addition,
+ *   not a literal port.
+ * - **Challenge/Solution icons dropped, gallery column repurposed as the metrics block.** The
+ *   source binds Challenge and Solution as two *separate* rich-text fields, each with its own
+ *   icon (icon-05/icon-06). The schema and the governing migration plan instead give one
+ *   Markdown body per case study ("Body holds Challenge and Solution copy"), rendered as a
+ *   single `.text-rich-text` flow — so there's no per-field seam left to hang a per-heading
+ *   icon on without parsing the rendered output. The icons are decorative only (no information
+ *   loss), so they're omitted rather than faked. The source's right-hand column in this section
+ *   is an empty CMS image gallery with no corresponding schema field (`heroImage` is the only
+ *   image field) — rather than render nothing or fake gallery items, that column is repurposed
+ *   for the structured `metrics` field (three stat/label pairs), which is real schema data and
+ *   satisfies the same "Metrics that Matter" content the source names in that section.
+ *
+ * The closing CTA is built page-local rather than via `ContactCTA` — that component's shape
+ * (eyebrow + heading + tagline + social row + embedded `ContactForm`) doesn't match this
+ * section's actual markup (heading + decorative icon on the left; a one-line tagline + single
+ * button on the right, no form, no social row). Forcing it through `ContactCTA`'s prop surface
+ * would mean inventing a form/social presence the source page doesn't have here. `ContactCTA`
+ * is off-limits to edit this phase anyway (blog agent owns nav/shared-component concerns
+ * concurrently) — this mirrors how `privacy-policy.astro` built its own local section instead
+ * of stretching `SectionShell`'s siblings.
+ */
+import { getCollection, render } from 'astro:content'
+import { Image } from 'astro:assets'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import SectionShell from '../../components/SectionShell.astro'
+import SectionHeading from '../../components/SectionHeading.astro'
+import Eyebrow from '../../components/Eyebrow.astro'
+import Divider from '../../components/Divider.astro'
+import Button from '../../components/Button.astro'
+import icon02 from '../../assets/images/icon-02.svg'
+
+export async function getStaticPaths() {
+  const isProd = import.meta.env.PROD
+  const entries = await getCollection('projects', (entry) => !isProd || !entry.data.draft)
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const { Content } = await render(entry)
+const { title, client, year, timeline, services, website, heroImage, heroImageAlt, metrics, description } =
+  entry.data
+---
+
+<BaseLayout title={`${title} | Leviathan Core`} description={description} canonicalPath={`/project/${entry.id}`}>
+  <SectionShell sectionClass="section-project-hero" withTopDivider={false}>
+    <div class="project-hero-grid">
+      <div class="project-hero-intro">
+        <SectionHeading as="h1" variant="h1" uppercase class="project-title">{title}</SectionHeading>
+        <p class="project-subtitle">{description}</p>
+      </div>
+      <Divider orientation="vertical" responsive="hide-mobile-landscape" />
+      <Divider orientation="horizontal" responsive="show-mobile-landscape" class="hero-divider-horizontal" />
+      <dl class="project-meta">
+        <div class="project-meta-item">
+          <dt class="project-meta-label">Client</dt>
+          <dd class="project-meta-value">{client}</dd>
+        </div>
+        <div class="project-meta-item">
+          <dt class="project-meta-label">Year</dt>
+          <dd class="project-meta-value">{year}</dd>
+        </div>
+        <div class="project-meta-item">
+          <dt class="project-meta-label">Timeline</dt>
+          <dd class="project-meta-value">{timeline}</dd>
+        </div>
+        <div class="project-meta-item">
+          <dt class="project-meta-label">Services</dt>
+          <dd class="project-meta-value">
+            <ul class="project-services-list">
+              {services.map((service) => <li class="text-meta-link">{service}</li>)}
+            </ul>
+          </dd>
+        </div>
+        {
+          website && (
+            <div class="project-meta-item">
+              <dt class="project-meta-label">Website</dt>
+              <dd class="project-meta-value">
+                <a href={website} class="text-meta-link" target="_blank" rel="noopener">
+                  {website.replace(/^https?:\/\//, '')}
+                </a>
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+    </div>
+    <div class="project-hero-image-wrapper">
+      <Image src={heroImage} alt={heroImageAlt} class="image-cover" />
+    </div>
+  </SectionShell>
+
+  <SectionShell sectionClass="section-project-content">
+    <div class:list={['project-content-grid', { 'project-content-grid--solo': !metrics || metrics.length === 0 }]}>
+      <div class="text-rich-text">
+        <Content />
+      </div>
+      {
+        metrics && metrics.length > 0 && (
+          <>
+            <Divider orientation="vertical" responsive="hide-mobile-landscape" />
+            <div class="project-metrics">
+              <SectionHeading as="h2" variant="h4" uppercase class="metrics-heading">
+                Metrics that Matter
+              </SectionHeading>
+              <ul class="project-metrics-list">
+                {metrics.map((metric) => (
+                  <li class="project-metric">
+                    <span class="project-metric-value">{metric.value}</span>
+                    <span class="project-metric-label">{metric.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )
+      }
+    </div>
+  </SectionShell>
+
+  <SectionShell sectionClass="section-cta-contact">
+    <div class="cta-contact-grid">
+      <div class="cta-contact-grid-left">
+        <div class="cta-heading-group">
+          <Eyebrow class="cta-eyebrow">Contact</Eyebrow>
+          <SectionHeading as="h2" variant="display-xl" uppercase class="cta-heading">
+            It's time to find your fandom
+          </SectionHeading>
+        </div>
+        <Image src={icon02} alt="" class="cta-icon" aria-hidden="true" />
+      </div>
+      <Divider orientation="vertical" responsive="hide-tablet" />
+      <Divider orientation="horizontal" responsive="show-tablet" />
+      <div class="cta-contact-grid-right">
+        <p class="cta-tagline">
+          The gaming industry has never been deeper or more complex. We can help. With negotiations, planning,
+          execution – the works.
+        </p>
+        <Button href="/contact" variant="primary">Let's make it happen</Button>
+      </div>
+    </div>
+  </SectionShell>
+</BaseLayout>
+
+<style>
+  /* ---------- Hero ---------- */
+  .project-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr var(--divider-width) auto;
+    gap: var(--space-lg);
+    align-items: start;
+  }
+  @media screen and (max-width: 767px) {
+    .project-hero-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto var(--divider-width) auto;
+    }
+  }
+  .hero-divider-horizontal {
+    display: none;
+  }
+  @media screen and (max-width: 767px) {
+    .hero-divider-horizontal {
+      display: block;
+    }
+  }
+
+  .project-hero-intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .project-title {
+    /* Source: `margin-bottom margin-small` — tokens.md BLOCKER-2 resolves this combo to a
+       frozen 1rem, which happens to equal --space-sm's own non-responsive base value, so the
+       intro's flex `gap` above reproduces it exactly without a literal override. */
+  }
+  .project-subtitle {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-xl);
+    line-height: var(--lh-loose);
+    max-width: var(--width-lg);
+  }
+
+  .project-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin: 0;
+    min-width: 16rem;
+  }
+  .project-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-tiny);
+  }
+  .project-meta-label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .project-meta-value {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .project-services-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-tiny);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .text-meta-link {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  a.text-meta-link {
+    text-decoration: underline;
+  }
+
+  .project-hero-image-wrapper {
+    margin-top: var(--space-xl);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .project-hero-image-wrapper :global(img) {
+    width: 100%;
+    height: auto;
+    max-height: 40rem;
+    object-fit: cover;
+  }
+
+  /* ---------- Content ---------- */
+  .project-content-grid {
+    display: grid;
+    grid-template-columns: 1fr var(--divider-width) 22rem;
+    gap: var(--space-lg);
+    align-items: start;
+  }
+  .project-content-grid--solo {
+    grid-template-columns: 1fr;
+  }
+  @media screen and (max-width: 991px) {
+    .project-content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .text-rich-text {
+    max-width: var(--width-2xl);
+  }
+  .text-rich-text :global(h2) {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    line-height: var(--lh-normal);
+    text-transform: uppercase;
+  }
+  .text-rich-text :global(> :first-child) {
+    margin-top: 0;
+  }
+  .text-rich-text :global(p) {
+    margin-top: var(--space-sm);
+    font-family: var(--font-body);
+  }
+  .text-rich-text :global(> p:first-child) {
+    margin-top: 0;
+  }
+  .text-rich-text :global(ul),
+  .text-rich-text :global(ol) {
+    margin-top: var(--space-sm);
+    padding-left: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+  .text-rich-text :global(ul) {
+    list-style: disc;
+  }
+  .text-rich-text :global(ol) {
+    list-style: decimal;
+  }
+  .text-rich-text :global(li) {
+    display: list-item;
+  }
+
+  .project-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .metrics-heading {
+    margin: 0;
+  }
+  .project-metrics-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .project-metric {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xxs);
+  }
+  .project-metric-value {
+    font-family: var(--font-display);
+    font-size: var(--fs-h2);
+    line-height: var(--lh-tight);
+  }
+  .project-metric-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  /* ---------- Closing CTA ---------- */
+  .cta-contact-grid {
+    display: grid;
+    grid-template-columns: 1fr var(--divider-width) 1fr;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+  @media screen and (max-width: 991px) {
+    .cta-contact-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto var(--divider-width) auto;
+    }
+  }
+  .cta-contact-grid-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  .cta-heading-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  .cta-eyebrow {
+    margin: 0;
+  }
+  .cta-heading {
+    margin: 0;
+    max-width: var(--width-2xl);
+  }
+  .cta-contact-grid-left :global(.cta-icon) {
+    width: 6.25rem;
+    height: auto;
+  }
+  .cta-contact-grid-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-lg);
+  }
+  .cta-tagline {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-xl);
+    line-height: var(--lh-loose);
+    max-width: var(--width-lg);
+  }
+</style>

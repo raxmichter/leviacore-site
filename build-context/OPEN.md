@@ -8,8 +8,33 @@ Last reviewed: 2026-08-10
 
 ## Blocking — CTO
 
-### 1. Projects Collection CSV + 5 case study hero images ⛔ THE ONE HARD BLOCKER
-**Gates:** Phase D2 content (five Markdown files) — **and, discovered in C1, part of Phase G.** Does **not** block D1 (schema + template) or any build phase.
+### 1. ~~Projects Collection CSV + 5 case study hero images~~ ✅ **UNBLOCKED 2026-08-10 — no CSV required**
+
+**George supplied the five live URLs. The content was captured directly from the published site, which makes the CSV a nice-to-have cross-check rather than a dependency.**
+
+Confirmed slugs — **these are the live URLs and must be preserved exactly** (note the singular `/project/`):
+
+| Slug | Title | Client | Year | Timeline |
+|---|---|---|---|---|
+| `return-to-aeternum` | Return to Aeternum | Amazon Games | 2022 | 16 Weeks |
+| `warframe` | Warframe | Digital Extremes | 2017 | 2 Months |
+| `legends-of-lost-ark` | Legends of Lost Ark | Amazon Games | 2022 | 12 Weeks |
+| `spiritfarer` | Spiritfarer | Thunder Lotus | 2020 | 8 Weeks |
+| `borderlands3` | Borderlands 3 | 2K Games | 2019 | 3 Weeks |
+
+Services, website link, Challenge/Solution body copy, and the three "Metrics that Matter" stats are all present per project in the captured HTML.
+
+> Cross-check: the migration plan's illustrative schema example (Warframe / Digital Extremes / 2017 / 2 Months) matches the live data exactly — the schema in `content.config.ts` was built against the right shape.
+
+**Captured to `_case-study-source/`** (sibling of `_webflow-export/`, outside the site repo):
+- `pages/*.html` — all five live pages. Every field the schema needs is present: client, year, timeline, services, website link, Challenge and Solution body copy, and the three "Metrics that Matter" stats.
+- `images/` — 9 CMS images. Each project has a wide hero (`*remini-enhanced*`, 1000–2500px) and a 1403×1080 card, **except Warframe, which has only the wide image** — check what `/projects` uses for its card before assuming one is missing.
+
+> ⚠️ **This does NOT change the "do not delete the Webflow site" rule.** These assets came off Webflow's CDN and the live site is still the Phase G visual-regression reference. Sequence is unchanged: verify → cut over → *then* wind down.
+
+**Still worth requesting from the CTO, downgraded to nice-to-have:** the Collection CSV, purely as a cross-check that nothing rendered-but-truncated was missed, and to confirm field values (e.g. whether `year` is a Webflow date field).
+
+**Gates now:** nothing. Phase D2 can complete, and Phase G visual regression on `/projects` and the homepage teaser is unblocked.
 
 > **🆕 Phase G implication (found 2026-08-10 during C1a).** `/projects` and the homepage's featured-projects teaser both render from an empty array until the CSV lands. The live site shows five case study cards in those slots. **Visual regression on those two pages cannot pass until the content exists** — the diff would be reporting missing content, not a layout defect. Every other page is fully diffable now. Plan Phase G accordingly: run the other pages to threshold first, and treat these two as a second pass after content migration.
 
