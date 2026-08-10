@@ -107,10 +107,15 @@ The target sections **exist**; they are pseudo-headings, not real headings:
 ### Tier 2 → confirmed **body text**, not footer. Mechanical, fix in C2.
 Footer legal links are separate relative links and are correct.
 
-### Tier 3 → **remove. George: "we don't need them."**
+> **⚠️ Corrected count: there are FIVE, not four.** `https://leviacore.com/` in `ccpa.html` was missed on the first pass. All five — with visible text, current href, correct value, and document location — are documented in **`../../legal-page-url-reference.md`**, a standing reference for future policy edits. Work from that file, not from the Tier 2 table above.
 
-- **NAI opt-out** — service still exists at a new URL. Repoint rather than delete, unless told otherwise.
-- **Macromedia / Flash Player settings** — ⚠️ deleting the link leaves dangling prose: *"…see this website"* pointing nowhere. **Recommendation: remove the entire Flash cookies bullet**, since Flash has been EOL since December 2020. That deletes a paragraph from a privacy policy, so **confirm with George before doing it.** Removing only the link is the fallback.
+### Tier 3 → **remove the links, leave the prose. CLOSED.**
+
+**George, 2026-08-10:** *"The text will be updated when we next update the policy (RE: Flash), disregard and proceed."*
+
+- **Remove both links** — Macromedia/Flash Player settings, and the NAI opt-out.
+- **Do not touch the surrounding prose.** Accepted consequence: the Flash sentence temporarily reads *"…see this website"* with no link. This is a known, deliberate state, to be resolved at the next policy revision. **Do not "fix" it by rewording — that is a content change to a compliance document and it is not ours to make.**
+- Do not repoint the NAI link to its new URL either; the direction was to remove, and the same policy revision covers it.
 
 ### Tier 4 → **clean up. George: "we're moving off Webflow."**
 Remove the empty `<a href="https://www.webflow.com">` from all three footers. Add `rel="noopener"` where `target="_blank"` remains.
