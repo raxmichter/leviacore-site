@@ -78,6 +78,21 @@ Violating these is how a session dies mid-phase.
 - `component-mapper` (Sonnet 5) → `components.md`
 - `ix-decoder` (Opus 5) → `interactions.md`
 
+**Cross-checks run in the main thread (findings that no single subagent could see):**
+
+- **`Accordion [Open]` and `Accordion [Close]` are DEAD.** The IX2 data defines both, but `grep -i accordion` returns **zero matches** across `index`, `services`, `team`, `projects`, `contact`, and `detail_project`. They are residue from the purchased template, bound to pages we are not migrating. **Phase E scope drops from 19 action lists to 17.** The block `component-mapper` initially read as an accordion (site values) is a static list with no expand/collapse markup — confirmed independently from both sides.
+- **`Blog Post Image Parallax` is dormant, not dead** — it belongs to the article template built in D3 and shipped disabled. Reimplement it in E only if it shares the `Image Parallax` primitive (it should); do not build it standalone.
+
+**Component-mapper gotchas to carry into later phases:**
+
+| Finding | Bites in |
+|---|---|
+| Contact form field `name` casing diverges: `Name`/`Email` in `contact.html` vs `name`/`email` on other pages | C1 — normalize to one casing before wiring the endpoint, or submissions split into two shapes |
+| `services.html` section IDs don't match their content — Legal sits under `id="video"`, Finance under `id="content"` | C1 — any anchor link or nav jump inherits the mismatch. Fix the IDs, but check for inbound deep links first |
+| Team image `JordiChapdelanie-FINAL.jpg` misspells "Chapdelaine" | D2 — the *filename* stays as-is (renaming breaks nothing but gains nothing); the *displayed name* must be spelled correctly |
+| Homepage has two divergent CMS placeholder lists (likely featured + grid), both empty | D1 — the split can't be confirmed until the CSV arrives |
+| "We're Hiring" card is structurally identical to a real team card | D2 — a boolean toggle on the same component, not a separate one |
+
 **Remaining in Phase A:**
 - Confirm Satoshi weight coverage (answered by `token-extractor`); self-host Syne + Roboto Mono, subset, preload, drop the render-blocking WebFont.js
 - Astro config: static output, site URL, image service

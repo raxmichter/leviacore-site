@@ -1,0 +1,69 @@
+/*
+ * Self-hosted fonts.
+ *
+ * The Webflow site loaded Syne and Roboto Mono through Google's WebFont.js — a
+ * render-blocking third-party script plus two cross-origin round trips before
+ * any text could paint. Both families are now served from our own origin.
+ *
+ * Files are copied into public/fonts/ by hand (from the @fontsource packages in
+ * node_modules) rather than imported through Vite, so the URLs stay stable and
+ * unhashed. That is what makes <link rel="preload"> in BaseLayout possible.
+ * If you bump a font package, re-copy the file.
+ *
+ * font-display: swap on all three — text paints immediately in the fallback and
+ * reflows once. For a brochure site that is the right trade against invisible text.
+ */
+
+/* Syne — variable weight axis, 400–800 in a single file.
+   The site uses 400 and 500; the variable file covers both at no extra request. */
+@font-face {
+  font-family: 'Syne';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/syne-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Syne';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/syne-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Roboto Mono — 400 only. Used for meta/label text. */
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/roboto-mono-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/*
+ * Satoshi — carried over from the Webflow export, which shipped ONLY the
+ * Regular (400) weight as .woff. It is licensed to Leviathan Core and is not
+ * available from a package registry, so this file is the source of truth.
+ *
+ * Two known follow-ups, both tracked in build-context/OPEN.md:
+ *   1. If tokens.md reports any Satoshi weight other than 400 in use, the source
+ *      file for that weight has to be found — it is not in the export.
+ *   2. .woff is ~30% larger than .woff2. Converting is a Phase F optimization.
+ */
+@font-face {
+  font-family: 'Satoshi';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Satoshi-Regular.woff') format('woff');
+}

@@ -22,6 +22,35 @@ Confirmed by inspection: the form has **no `action` attribute** — it was handl
 ### 3. DNS cutover window
 **Gates:** post-Phase-H.
 
+---
+
+## Needs a decision — George (and possibly counsel)
+
+### 5. 🆕 Four broken cross-reference links inside the legal pages
+**Gates:** Phase C2. Found during Phase A, not previously known.
+
+`privacy-policy.html` and `ccpa.html` contain four links that are **broken in two ways at once**:
+
+| Link | Page |
+|---|---|
+| `https://about:blank/#SD_ChangesPrivacyPolicy` → "Changes to Our Privacy Policy" | privacy-policy |
+| `https://about:blank/#SD_ChoicesAboutUse` → "Choices About How We Use and Disclose Your Information" | privacy-policy |
+| `https://about:blank/#a585939` ×2 | privacy-policy, ccpa |
+
+1. The `href` is `https://about:blank/#…`, which is not a valid destination — these were meant to be same-page fragment links and go nowhere. They also carry `target="_blank"`, which is wrong for a same-page anchor.
+2. **The anchor targets do not exist.** `SD_ChangesPrivacyPolicy`, `SD_ChoicesAboutUse`, and `a585939` appear as no `id` or `name` on either page. So even with the href repaired there is nothing to land on.
+
+This is boilerplate legal text carried in from a template whose internal cross-references were never wired up.
+
+**Why this is not being fixed silently:** the mechanical repair is to add `id`s to the sections these phrases name and point the links at them. But this is a **compliance document**, and the sections referenced may not exist under those names — or at all. Rewriting or deleting links inside a privacy policy is not a developer's call.
+
+**Options for George:**
+- **(a)** Point each link at the matching existing section, adding `id`s — a real fix if the sections exist under different wording. Recommended if they do.
+- **(b)** Strip the link, keep the text as a plain cross-reference in prose. Safe, minimal, defensible.
+- **(c)** Leave as-is. Not recommended — the link checker CI gate (Phase F) will fail on these, which is exactly what that gate is for.
+
+> Related context: the migration was prompted in part by the privacy policy being out of date because updating it was too cumbersome. This is the same problem showing up a second way. Whichever option is chosen, it is worth asking counsel whether the policy needs a content review at the same time — the cost of editing it after this migration is a text file edit.
+
 ### 4. Google Search Console baseline ⏰ TIME-SENSITIVE
 **Gates:** meaningful post-cutover verification.
 Roughly ten minutes of work, and it **must happen before cutover**. Without a pre-migration snapshot of rankings and coverage there is no way to distinguish a migration-caused change from normal fluctuation. This is the difference between diagnosing a problem and arguing about one. It becomes unrecoverable the moment DNS flips.
