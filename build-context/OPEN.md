@@ -26,28 +26,59 @@ Confirmed by inspection: the form has **no `action` attribute** — it was handl
 
 ## Needs a decision — George (and possibly counsel)
 
-### 5. 🆕 Four broken cross-reference links inside the legal pages
-**Gates:** Phase C2. Found during Phase A, not previously known.
+### 5. 🆕 Broken and wrong links throughout the legal pages — full audit
+**Gates:** Phase C2 (Tiers 1 & 3 need a decision; Tiers 2 & 4 are mechanical). Found during Phase A.
 
-`privacy-policy.html` and `ccpa.html` contain four links that are **broken in two ways at once**:
+Full link audit of `privacy-policy.html`, `ccpa.html`, `notice-at-collection.html`.
 
-| Link | Page |
-|---|---|
-| `https://about:blank/#SD_ChangesPrivacyPolicy` → "Changes to Our Privacy Policy" | privacy-policy |
-| `https://about:blank/#SD_ChoicesAboutUse` → "Choices About How We Use and Disclose Your Information" | privacy-policy |
-| `https://about:blank/#a585939` ×2 | privacy-policy, ccpa |
+#### Tier 1 — genuinely broken (4 links) ⚠️ NEEDS A DECISION
 
-1. The `href` is `https://about:blank/#…`, which is not a valid destination — these were meant to be same-page fragment links and go nowhere. They also carry `target="_blank"`, which is wrong for a same-page anchor.
-2. **The anchor targets do not exist.** `SD_ChangesPrivacyPolicy`, `SD_ChoicesAboutUse`, and `a585939` appear as no `id` or `name` on either page. So even with the href repaired there is nothing to land on.
+Invalid `href` **and** a non-existent anchor target. Broken twice over.
 
-This is boilerplate legal text carried in from a template whose internal cross-references were never wired up.
+| Page | Link text | href |
+|---|---|---|
+| privacy-policy | "Changes to Our Privacy Policy" | `https://about:blank/#SD_ChangesPrivacyPolicy` |
+| privacy-policy | "Choices About How We Use and Disclose Your Information" | `https://about:blank/#SD_ChoicesAboutUse` |
+| ccpa | "Exercising Your Rights to Know or Delete" | `https://about:blank/#a585939` |
+| ccpa | "Exercising Your Rights to Know or Delete" (2nd instance) | `https://about:blank/#a585939` |
 
-**Why this is not being fixed silently:** the mechanical repair is to add `id`s to the sections these phrases name and point the links at them. But this is a **compliance document**, and the sections referenced may not exist under those names — or at all. Rewriting or deleting links inside a privacy policy is not a developer's call.
+`about:blank` is not a valid destination. Separately, `SD_ChangesPrivacyPolicy`, `SD_ChoicesAboutUse`, and `a585939` exist as **no `id` or `name` on either page** — so even a repaired href lands nowhere. All four also carry `target="_blank"`, wrong for a same-page jump. `notice-at-collection` is clean.
 
-**Options for George:**
-- **(a)** Point each link at the matching existing section, adding `id`s — a real fix if the sections exist under different wording. Recommended if they do.
-- **(b)** Strip the link, keep the text as a plain cross-reference in prose. Safe, minimal, defensible.
-- **(c)** Leave as-is. Not recommended — the link checker CI gate (Phase F) will fail on these, which is exactly what that gate is for.
+Boilerplate legal text carried from a template whose internal cross-references were never wired up.
+
+#### Tier 2 — wrong destination (4 links) — mechanical, will be fixed in C2/F
+
+| Page | Link text | href | Problem |
+|---|---|---|---|
+| ccpa | `https://leviacore.com/privacy-policy` | `…/privacy-policy.html` | **Text and href disagree**; `.html` extension the live site doesn't use |
+| ccpa | `https://leviacore.com/privacy-policy.html` | same | Same, with the `.html` visible in the copy |
+| privacy-policy | `https://leviacore.com/ccpa` | `https://leviacore.com/ccpa` | Non-`www`; canonical host is `www.leviacore.com` |
+| privacy-policy | `www.leviacore.com` | `http://www.leviacore.com/` | Plain `http://` |
+
+The `.html` links would 404 on the new site unless the Phase F redirect map catches them.
+
+#### Tier 3 — dead external references (2 links) ⚠️ CONTENT ISSUE, NEEDS A DECISION
+
+Both in privacy-policy, both `http://`:
+
+- `http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager07.html` — **Macromedia ceased to exist in 2005 (acquired by Adobe); Flash Player reached end-of-life in December 2020.** The policy still carries a Flash cookies section pointing here.
+- `http://www.networkadvertising.org/managing/opt_out.asp` — NAI opt-out moved years ago; legacy `.asp` path.
+
+#### Tier 4 — hygiene (all three pages) — mechanical
+
+- **Empty anchor in every footer:** `<a href="https://www.webflow.com" target="_blank" class="text-style-link"></a>` — no link text. **Fails the axe gate** (link with no accessible name), and an outbound Webflow link has no reason to survive the migration. Remove.
+- `target="_blank"` with no `rel="noopener"`: 12 / 8 / 4 across the three pages. Add for correctness — modern browsers imply `noopener`, so this is tidiness, not a live vulnerability.
+
+---
+
+**Why Tiers 1 and 3 are not being fixed silently:** repairing Tier 1 means deciding which sections those cross-references point at, and the referenced sections may not exist under those names or at all. Tier 3 touches policy substance. Neither is a developer's call inside a compliance document.
+
+**Options for George — Tier 1:**
+- **(a)** Point each link at the matching existing section, adding `id`s. The real fix, if those sections exist under different wording.
+- **(b)** Strip the link, keep the text as plain prose. Safe, minimal, defensible.
+- **(c)** Leave as-is. Not recommended — the Phase F link-checker gate will fail on these, which is what that gate is for.
+
+**Recommendation:** route Tiers 1 and 3 to counsel as **one content review** rather than patching links around stale text. The Flash section is concrete evidence of the staleness that prompted this migration, and after cutover editing the policy is a text-file change.
 
 > Related context: the migration was prompted in part by the privacy policy being out of date because updating it was too cumbersome. This is the same problem showing up a second way. Whichever option is chosen, it is worth asking counsel whether the policy needs a content review at the same time — the cost of editing it after this migration is a text file edit.
 
