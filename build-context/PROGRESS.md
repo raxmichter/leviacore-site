@@ -38,7 +38,7 @@ Violating these is how a session dies mid-phase.
 | **A** | Scaffold, token/component/interaction extraction, asset localization | Opus 5 + 3 subagents | ✅ **Complete** |
 | B | Layout shell and components | Sonnet 5 ×3 | ✅ **Complete** |
 | C1 | Static pages — home, services, projects shell, team, contact | Sonnet 5 ×2 | ✅ **Complete** |
-| C2 | Legal and utility pages — privacy, CCPA, notice-at-collection, 404, 401 | Sonnet 5 | ⬜ Not started |
+| C2 | Legal and utility pages — privacy, CCPA, notice-at-collection, 404 | Sonnet 5 | ✅ **Complete** |
 | D1 | Case study system — collection, schema, `/project/[slug]` template | Sonnet 5 | ⬜ Not started |
 | D2 | Content migration — 11 bios, 5 case studies, alt text | Haiku 4.5 ×2 | ⬜ Blocked on CSV (content only) |
 | D3 | Blog structure, **shipped disabled** | Sonnet 5 | ⬜ Not started |
@@ -155,6 +155,36 @@ Opens, `aria-expanded` toggles, Escape closes and restores focus. **Panel is 375
 ### Known, accepted
 - `id="mobile-menu"` appears twice **on the gallery page only**, because the gallery instantiates `MobileMenu` directly in addition to the one `SiteHeader` renders. Production renders it once. Not a component defect.
 - ⚠️ **Phase F must delete `src/pages/dev/components.astro` or confirm it is excluded from the sitemap.** It is `noindex` today, but it should not ship.
+
+---
+
+## Phase C2 — COMPLETE
+
+Legal pages are now a schema-validated Markdown collection (`src/content.config.ts`, `src/content/legal/*.md`) at `/privacy-policy`, `/ccpa`, `/notice-at-collection`, plus a rebuilt `/404`. **9 routes, `npm run build:verify` passes.**
+
+### The legal link audit is fully applied — and the count was wrong twice
+
+| Tier | Status |
+|---|---|
+| 1 — four broken `about:blank` jump links | ✅ Fixed. Section titles promoted from bold-text-in-a-paragraph to real headings with stable ids (privacy 12, ccpa 8 `h2` + 4 `h3`), links repointed as same-page fragments, `target="_blank"` dropped. **All verified resolving in built HTML.** |
+| 2 — self-referencing URLs | ✅ Fixed — **7 of them, not the 5 previously documented** (see below) |
+| 3 — two dead external links | ✅ Removed. Prose left untouched per direction; the dangling "…see this website" sentence is deliberate and must not be reworded |
+| 4 — hygiene | ✅ Empty webflow.com anchor gone (footer component). `rel="noopener"` — see deviation below |
+
+**⚠️ The Tier 2 count was under-reported twice — first as 4, then 5. It is 7.** The audit regex required anchor text to be plain characters (`>[^<]*</a>`), so any link whose text contained nested markup — a `<br>`, a `<strong>`, a zero-width joiner — was silently skipped. Three hid that way, including the only one in `notice-at-collection`, which an earlier revision wrongly called clean. `../legal-page-url-reference.md` is corrected and now carries a re-check command that matches on `href=` alone.
+
+**Lesson, and it generalizes:** an audit that constrains *both* ends of a pattern will silently under-report. Match the narrowest reliable anchor — here, the attribute — and filter afterwards.
+
+### New permanent gate: fragment resolution
+
+`verify-pages.mjs` check 8 now fails the build if any `href="#foo"` has no matching `id`, and separately on any `about:blank` href. **This is the exact defect that shipped on the live legal pages for years.** It cannot return silently.
+
+### Deviation: `rel="noopener"` / `target="_blank"` dropped rather than added
+
+Every remaining candidate link has visible text that is itself a bare URL or email. Astro's GFM autolink-literals re-linkifies that text even inside a hand-written `<a>`, producing invalid nested `<a><a>…</a></a>` — confirmed by build test; entity-encoding did not avoid it. Resolved by using plain Markdown link syntax throughout, which fixes the nesting bug but cannot carry `target`/`rel`. Net effect: `mailto:` links never benefited from those attributes anyway, and one external link loses new-tab behaviour. **Valid HTML was the better trade.**
+
+### Left alone deliberately
+`notice-at-collection` contains the typo **"set for thin the CCPA"** (clearly "set forth in"). Not in the authorized fix list, so preserved verbatim. Flagged for the next content review — it is a one-word fix once someone with authority over the text says so.
 
 ---
 

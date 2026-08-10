@@ -1,0 +1,168 @@
+---
+/**
+ * /notice-at-collection — Phase C2a.
+ *
+ * Source: _webflow-export/notice-at-collection.html. Body content lives in
+ * src/content/legal/notice-at-collection.md.
+ *
+ * This document has no Tier 1 issues (build-context/OPEN.md item 5 confirms it's the one
+ * clean page for broken jump links) and no heading structure was added — it stays the
+ * single flowing block it was in source, matching how the OPEN.md fix was scoped to
+ * privacy-policy and ccpa specifically ("these documents" = the two with broken links).
+ *
+ * One Tier 2 fix applied that the standing reference doc (../../legal-page-url-reference.md)
+ * doesn't list: this page's one self-referencing link (https://leviacore.com/ccpa) was
+ * marked "clean, no self-referencing URLs" there, which is incorrect — the link exists and
+ * has the same missing-www defect as the five enumerated elsewhere. Fixed here for
+ * consistency with the stated canonical-host rule; worth a correction pass on that
+ * reference doc separately (out of this phase's file ownership).
+ *
+ * `lastUpdated` is intentionally omitted from this document's frontmatter (see
+ * content.config.ts) — the source states no date of its own anywhere in the body, unlike
+ * privacy-policy and ccpa which both say "November 9, 2021".
+ *
+ * `title`/`description`/`canonicalPath` below are ported verbatim from the export's own
+ * <head>. Note this page's <title> ("Notice at Collection | Leviathan Core") and its <h1>
+ * ("California Residents - Notice at Collection", from the content collection's `title`)
+ * genuinely differ in the source — not a bug, preserved as-is.
+ */
+import { getEntry, render } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SectionHeading from '../components/SectionHeading.astro'
+
+const entry = await getEntry('legal', 'notice-at-collection')
+if (!entry) throw new Error('Missing content collection entry: legal/notice-at-collection')
+const { Content } = await render(entry)
+
+const lastUpdatedDisplay = entry.data.lastUpdated
+  ? entry.data.lastUpdated.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'UTC',
+    })
+  : null
+---
+
+<BaseLayout
+  title="Notice at Collection | Leviathan Core"
+  description="You can't buy hype, but you can earn it. Partnering with the right influencers and connecting with the right audiences is how it’s done. We help brands build hype with both."
+  canonicalPath="/notice-at-collection"
+>
+  <section class="section-licensing">
+    <div class="page-padding">
+      <div class="container-default">
+        <div class="padding-vertical">
+          <div class="legal-heading-wrap">
+            <SectionHeading as="h1" variant="display-xl" class="legal-title">
+              {entry.data.title}
+            </SectionHeading>
+            {lastUpdatedDisplay && <p class="legal-updated">Last updated: {lastUpdatedDisplay}</p>}
+          </div>
+          <div class="legal-container-small">
+            <div class="text-rich-text">
+              <Content />
+            </div>
+            <div class="legal-divider" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* See privacy-policy.astro for the rationale behind building this shape locally rather
+     than through SectionShell (narrower container, xhuge vertical rhythm). */
+  .page-padding {
+    padding-inline: var(--page-padding);
+  }
+  .container-default {
+    width: 100%;
+    max-width: var(--container-lg);
+    margin-inline: auto;
+  }
+  .padding-vertical {
+    padding-block: 8rem;
+  }
+  @media screen and (max-width: 991px) {
+    .padding-vertical {
+      padding-block: 6rem;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .padding-vertical {
+      padding-block: 4rem;
+    }
+  }
+
+  .legal-heading-wrap {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+  }
+  .legal-updated {
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    line-height: var(--lh-relaxed);
+    color: var(--color-ink);
+  }
+
+  .legal-container-small {
+    width: 100%;
+    max-width: var(--container-sm);
+    margin-inline: auto;
+  }
+
+  .legal-divider {
+    margin-top: var(--space-lg);
+    border-top: var(--divider-width) solid var(--divider-color);
+  }
+
+  /* ---------- Prose rhythm for the converted rich-text body ---------- */
+  .text-rich-text :global(p) {
+    margin-top: var(--space-sm);
+  }
+  .text-rich-text :global(> :first-child) {
+    margin-top: 0;
+  }
+  .text-rich-text :global(h2),
+  .text-rich-text :global(h3) {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+  }
+  .text-rich-text :global(ul),
+  .text-rich-text :global(ol) {
+    margin-top: var(--space-sm);
+    padding-left: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+  .text-rich-text :global(ul) {
+    list-style: disc;
+  }
+  .text-rich-text :global(ol) {
+    list-style: decimal;
+  }
+  .text-rich-text :global(ul ul),
+  .text-rich-text :global(ol ul) {
+    list-style: circle;
+    margin-top: 0.5em;
+  }
+  .text-rich-text :global(li) {
+    display: list-item;
+  }
+  .text-rich-text :global(table) {
+    width: 100%;
+    margin-top: var(--space-sm);
+    border-collapse: collapse;
+  }
+  .text-rich-text :global(th),
+  .text-rich-text :global(td) {
+    border: 1px solid var(--divider-color);
+    padding: var(--space-sm);
+    text-align: left;
+    vertical-align: top;
+  }
+</style>

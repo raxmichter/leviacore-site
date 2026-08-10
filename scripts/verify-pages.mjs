@@ -71,24 +71,34 @@ function check(file, html) {
   const unresolved = fors.filter((f) => !ids.includes(f))
   if (unresolved.length) fail(`label[for] with no matching id: ${unresolved.join(', ')}`)
 
-  // 8. Title and description must exist and be non-trivial.
+  // 8. Same-page fragment links must resolve to an id that exists on the page.
+  //    This is the defect that shipped on the live legal pages for years: four
+  //    "jump to section" links pointing at anchors that were never created. The
+  //    hrefs were also `https://about:blank/#...`, so check for that shape too.
+  if (/href="https?:\/\/about:blank/i.test(html)) fail('href="https://about:blank/..." — invalid link')
+  const fragments = [...html.matchAll(/href="#([^"]+)"/g)].map((m) => m[1])
+  const unresolvedFragments = [...new Set(fragments)].filter((f) => !ids.includes(f))
+  if (unresolvedFragments.length)
+    fail(`fragment link(s) with no matching id: ${unresolvedFragments.map((f) => '#' + f).join(', ')}`)
+
+  // 9. Title and description must exist and be non-trivial.
   const title = (html.match(/<title>([^<]*)<\/title>/) || [])[1] || ''
   if (!title.trim()) fail('missing <title>')
   else if (!isDev && title.trim() === 'Leviathan Core')
     fail('bare "Leviathan Core" title — the original homepage SEO defect has returned')
   if (!/<meta name="description" content="[^"]+"/.test(html)) fail('missing or empty meta description')
 
-  // 9. Canonical on indexable pages; noindex pages must not carry one.
+  // 10. Canonical on indexable pages; noindex pages must not carry one.
   const hasCanonical = /rel="canonical"/.test(html)
   const hasNoindex = /name="robots"[^>]*noindex/.test(html)
   if (!hasCanonical && !hasNoindex) fail('no canonical link and no noindex')
   if (hasCanonical && hasNoindex) fail('has both a canonical link and noindex')
 
-  // 10. The placeholder contact endpoint must never reach production.
+  // 11. The placeholder contact endpoint must never reach production.
   if (/contact-form-endpoint-todo/.test(html))
     warn('contact form still points at the placeholder endpoint (OPEN.md item 2)')
 
-  // 11. GA4 must survive the migration.
+  // 12. GA4 must survive the migration.
   if (!isDev && !/G-EG4F7ZLTZQ/.test(html)) warn('GA4 tag missing')
 
   pagesChecked++

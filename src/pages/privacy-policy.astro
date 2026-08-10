@@ -1,0 +1,182 @@
+---
+/**
+ * /privacy-policy — Phase C2a.
+ *
+ * Source: _webflow-export/privacy-policy.html. Body content lives in
+ * src/content/legal/privacy-policy.md (Astro content collection, src/content.config.ts).
+ *
+ * Link/markup fixes applied in the Markdown source per build-context/OPEN.md item 5:
+ *  - Tier 1: "Changes to Our Privacy Policy" and "Choices About How We Use and Disclose
+ *    Your Information" bold pseudo-headings promoted to real `##` headings with stable
+ *    (Astro auto-slugged) ids; the two about:blank jump links now point at same-page
+ *    fragments and no longer carry target="_blank".
+ *  - Tier 2: the two self-referencing leviacore.com URLs in this document corrected to
+ *    https://www.leviacore.com per ../../legal-page-url-reference.md.
+ *  - Tier 3: the dead Macromedia/Flash Player and NAI opt-out links removed; surrounding
+ *    prose left untouched per George's direction (OPEN.md, 2026-08-10).
+ *  - Tier 4: target="_blank" dropped (not "+ rel=noopener") from every body-content link.
+ *    Reason found during implementation, not in the original brief: every remaining
+ *    target="_blank" candidate in this document has visible link text that is itself a
+ *    bare URL or email address (e.g. "www.leviacore.com", "development@leviacore.com").
+ *    Astro's default GFM autolink-literals plugin re-linkifies that text even though it's
+ *    already inside a hand-written raw-HTML `<a>`, because raw HTML anchors are opaque to
+ *    remark's markdown AST and don't register as "already a link" — producing invalid
+ *    nested `<a><a>...</a></a>` markup. Confirmed via a build test; HTML-entity-encoding
+ *    the visible text does not avoid it (entities are decoded before the autolink check
+ *    runs). Fix: use plain Markdown link syntax everywhere, which cannot carry
+ *    target/rel — so those attributes are dropped rather than shipped broken. None of the
+ *    dropped instances were meaningfully served by target="_blank" anyway (mailto: links
+ *    don't open a new browser tab; the one remaining plain http(s) link, the Google
+ *    Privacy Policy reference, loses only the new-tab behavior, not functionality).
+ *
+ * `title`/`description`/`canonicalPath` below are ported verbatim from the export's own
+ * <head> — not derived from the content collection, which uses `title` for the on-page
+ * <h1> instead (the two happen to compose to the same <title> tag text on this page, but
+ * not on notice-at-collection — see content.config.ts).
+ */
+import { getEntry, render } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SectionHeading from '../components/SectionHeading.astro'
+
+const entry = await getEntry('legal', 'privacy-policy')
+if (!entry) throw new Error('Missing content collection entry: legal/privacy-policy')
+const { Content } = await render(entry)
+
+const lastUpdatedDisplay = entry.data.lastUpdated
+  ? entry.data.lastUpdated.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'UTC',
+    })
+  : null
+---
+
+<BaseLayout
+  title="Privacy Policy | Leviathan Core"
+  description="You can't buy hype, but you can earn it. Partnering with the right influencers and connecting with the right audiences is how it’s done. We help brands build hype with both."
+  canonicalPath="/privacy-policy"
+>
+  <section class="section-licensing">
+    <div class="page-padding">
+      <div class="container-default">
+        <div class="padding-vertical">
+          <div class="legal-heading-wrap">
+            <SectionHeading as="h1" variant="display-xl" class="legal-title">
+              {entry.data.title}
+            </SectionHeading>
+            {lastUpdatedDisplay && <p class="legal-updated">Last updated: {lastUpdatedDisplay}</p>}
+          </div>
+          <div class="legal-container-small">
+            <div class="text-rich-text">
+              <Content />
+            </div>
+            <div class="legal-divider" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Structural shape ported from components.md's SectionShell pattern (page-padding >
+     container > padding-vertical), but this page uses the source's narrower
+     .container-default (75rem) rather than SectionShell's .container-xxlarge, and the
+     source's .padding-xhuge vertical rhythm rather than SectionShell's large/xlarge — so
+     it's built locally instead of stretching that component's prop surface. Literal rem
+     step-downs below (no dedicated --space- token covers this exact scale) mirror how
+     global.css and SectionHeading already document their own untokenized breakpoint
+     values; Phase G owns exact pixel fidelity for this page. */
+  .page-padding {
+    padding-inline: var(--page-padding);
+  }
+  .container-default {
+    width: 100%;
+    max-width: var(--container-lg);
+    margin-inline: auto;
+  }
+  .padding-vertical {
+    padding-block: 8rem;
+  }
+  @media screen and (max-width: 991px) {
+    .padding-vertical {
+      padding-block: 6rem;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .padding-vertical {
+      padding-block: 4rem;
+    }
+  }
+
+  .legal-heading-wrap {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+  }
+  .legal-updated {
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    line-height: var(--lh-relaxed);
+    color: var(--color-ink);
+  }
+
+  .legal-container-small {
+    width: 100%;
+    max-width: var(--container-sm);
+    margin-inline: auto;
+  }
+
+  .legal-divider {
+    margin-top: var(--space-lg);
+    border-top: var(--divider-width) solid var(--divider-color);
+  }
+
+  /* ---------- Prose rhythm for the converted rich-text body ---------- */
+  .text-rich-text :global(p) {
+    margin-top: var(--space-sm);
+  }
+  .text-rich-text :global(> :first-child) {
+    margin-top: 0;
+  }
+  .text-rich-text :global(h2),
+  .text-rich-text :global(h3) {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+  }
+  .text-rich-text :global(ul),
+  .text-rich-text :global(ol) {
+    margin-top: var(--space-sm);
+    padding-left: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+  .text-rich-text :global(ul) {
+    list-style: disc;
+  }
+  .text-rich-text :global(ol) {
+    list-style: decimal;
+  }
+  .text-rich-text :global(ul ul),
+  .text-rich-text :global(ol ul) {
+    list-style: circle;
+    margin-top: 0.5em;
+  }
+  .text-rich-text :global(li) {
+    display: list-item;
+  }
+  .text-rich-text :global(table) {
+    width: 100%;
+    margin-top: var(--space-sm);
+    border-collapse: collapse;
+  }
+  .text-rich-text :global(th),
+  .text-rich-text :global(td) {
+    border: 1px solid var(--divider-color);
+    padding: var(--space-sm);
+    text-align: left;
+    vertical-align: top;
+  }
+</style>

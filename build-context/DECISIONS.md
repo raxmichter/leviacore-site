@@ -58,5 +58,31 @@ Color + underline for links inside rich-text prose. The sitewide `a { color: inh
 ### 2026-08-10 · Phase B — `--radius-shell` base value corrected to `0`
 Token extraction emitted `--radius-shell: 4rem` at `:root` while its own comment read "none at base." The rounding is a tablet/mobile treatment only; above 991px there is no radius. Base corrected to `0` so the max-width overrides supply the real values.
 
+### 2026-08-10 · Phase C2 — `401.html` NOT migrated
+The export ships Webflow's password-protection page. It posts to **`/.wf_auth`**, a Webflow platform endpoint that does not exist on a static host, and **no content on this site is password-protected**.
+
+Migrating it would ship a password form that looks functional and can never authenticate anything — worse than not having the page. Same category as the e-commerce scaffolding: platform residue, not site content.
+
+The migration plan listed 401 under Phase C2. This is a deliberate deviation. If password-protected content is ever wanted, it needs a real auth mechanism chosen for the new host, not a ported form.
+
+### 2026-08-10 · Phase C2 — `404` heading structure and title corrected
+The source 404 page has an `<h2>` as its only heading and **no `<h1>` at all** — a heading-order defect and an axe finding. Rebuilt with the page heading as `<h1>`. Its `<title>` was the bare `"Not Found"`; brought into the sitewide `"X | Leviathan Core"` house style. Marked `noindex` — an error page should not be indexed.
+
+### 2026-08-10 · Phase C2 — legal "last updated" is explicit frontmatter, NOT git-derived
+**This reverses a detail of the migration plan, deliberately.**
+
+The plan specified that each legal page carry a "last updated" date auto-derived from the file's git history, so it could not silently go stale. Applied literally at migration time, that would have been actively harmful:
+
+- Both `privacy-policy.html` and `ccpa.html` state **"Last modified: November 9, 2021"** in their own body text. That is the truthful date the policy was last revised — nearly five years stale, and precisely the evidence that motivated this migration.
+- This repository's git history begins **2026-08-10**. A git-derived date would display *2026-08-10* on every legal page, asserting that the privacy policy was revised today.
+
+**Overwriting a truthful 2021 date with a false 2026 one on a compliance document is worse than the staleness it was meant to prevent.** A migration must not make a legal document appear freshly reviewed when no lawyer has looked at it.
+
+**Design used instead:**
+1. `lastUpdated` is an **explicit frontmatter field**, seeded with the real `2021-11-09`, and rendered as the visible date.
+2. Git is used as a **staleness *check*, not as the date**: if a legal file's content changes without `lastUpdated` being bumped, the build warns. That preserves the plan's actual intent — the date cannot silently drift out of sync with the content — without ever asserting a date nobody stands behind.
+
+Changing the displayed date is a content decision belonging to George or counsel, not to the build.
+
 ### 2026-08-10 · Design tokens derived, not copied
 The compiled Webflow CSS defines only two custom properties (`--black`, `--white`). Every other token in `tokens.md` is derived by observing repeated literal values across 110KB of compiled CSS. Values there are extracted, not estimated — but the *grouping* into semantic names is a judgment call, and near-duplicate colors are listed rather than silently collapsed.

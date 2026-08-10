@@ -1,0 +1,167 @@
+---
+/**
+ * /ccpa — Phase C2a.
+ *
+ * Source: _webflow-export/ccpa.html. Body content lives in src/content/legal/ccpa.md.
+ *
+ * Link/markup fixes applied in the Markdown source per build-context/OPEN.md item 5:
+ *  - Tier 1: both "Exercising Your Rights to Know or Delete" about:blank jump links now
+ *    point at the same-page fragment for the (newly promoted) heading of that name and no
+ *    longer carry target="_blank". This document's zero-heading-structure problem is fixed
+ *    throughout, not just at the two link targets — 8 `##` + 4 `###` headings replace what
+ *    was previously flat bold-in-paragraph text.
+ *  - Tier 2: every self-referencing leviacore.com URL in this document corrected to
+ *    https://www.leviacore.com per ../../legal-page-url-reference.md. That reference
+ *    document enumerates 5 URLs total across all three pages; this page alone actually
+ *    contains 6 distinct occurrences (two bare "https://leviacore.com" links, not one —
+ *    both fixed here for consistency with the stated canonical-host rule).
+ *  - Tier 3: does not apply to this document (both dead links are in privacy-policy).
+ *  - Tier 4: target="_blank" dropped from every body-content mailto: link. See
+ *    privacy-policy.astro's header comment for why — GFM autolink-literals double-wraps
+ *    raw-HTML anchors whose visible text is itself a URL/email, producing invalid nested
+ *    `<a>` markup. Plain Markdown link syntax avoids the bug but can't carry target/rel;
+ *    moot here anyway since mailto: links don't open a new tab.
+ *
+ * `title`/`description`/`canonicalPath` below are ported verbatim from the export's own
+ * <head>, independent of the content collection's `title` (used for the on-page <h1>).
+ */
+import { getEntry, render } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SectionHeading from '../components/SectionHeading.astro'
+
+const entry = await getEntry('legal', 'ccpa')
+if (!entry) throw new Error('Missing content collection entry: legal/ccpa')
+const { Content } = await render(entry)
+
+const lastUpdatedDisplay = entry.data.lastUpdated
+  ? entry.data.lastUpdated.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'UTC',
+    })
+  : null
+---
+
+<BaseLayout
+  title="CCPA | Leviathan Core"
+  description="You can't buy hype, but you can earn it. Partnering with the right influencers and connecting with the right audiences is how it’s done. We help brands build hype with both."
+  canonicalPath="/ccpa"
+>
+  <section class="section-licensing">
+    <div class="page-padding">
+      <div class="container-default">
+        <div class="padding-vertical">
+          <div class="legal-heading-wrap">
+            <SectionHeading as="h1" variant="display-xl" class="legal-title">
+              {entry.data.title}
+            </SectionHeading>
+            {lastUpdatedDisplay && <p class="legal-updated">Last updated: {lastUpdatedDisplay}</p>}
+          </div>
+          <div class="legal-container-small">
+            <div class="text-rich-text">
+              <Content />
+            </div>
+            <div class="legal-divider" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* See privacy-policy.astro for the rationale behind building this shape locally rather
+     than through SectionShell (narrower container, xhuge vertical rhythm). */
+  .page-padding {
+    padding-inline: var(--page-padding);
+  }
+  .container-default {
+    width: 100%;
+    max-width: var(--container-lg);
+    margin-inline: auto;
+  }
+  .padding-vertical {
+    padding-block: 8rem;
+  }
+  @media screen and (max-width: 991px) {
+    .padding-vertical {
+      padding-block: 6rem;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .padding-vertical {
+      padding-block: 4rem;
+    }
+  }
+
+  .legal-heading-wrap {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+  }
+  .legal-updated {
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    line-height: var(--lh-relaxed);
+    color: var(--color-ink);
+  }
+
+  .legal-container-small {
+    width: 100%;
+    max-width: var(--container-sm);
+    margin-inline: auto;
+  }
+
+  .legal-divider {
+    margin-top: var(--space-lg);
+    border-top: var(--divider-width) solid var(--divider-color);
+  }
+
+  /* ---------- Prose rhythm for the converted rich-text body ---------- */
+  .text-rich-text :global(p) {
+    margin-top: var(--space-sm);
+  }
+  .text-rich-text :global(> :first-child) {
+    margin-top: 0;
+  }
+  .text-rich-text :global(h2),
+  .text-rich-text :global(h3) {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+  }
+  .text-rich-text :global(ul),
+  .text-rich-text :global(ol) {
+    margin-top: var(--space-sm);
+    padding-left: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+  .text-rich-text :global(ul) {
+    list-style: disc;
+  }
+  .text-rich-text :global(ol) {
+    list-style: decimal;
+  }
+  .text-rich-text :global(ul ul),
+  .text-rich-text :global(ol ul) {
+    list-style: circle;
+    margin-top: 0.5em;
+  }
+  .text-rich-text :global(li) {
+    display: list-item;
+  }
+  .text-rich-text :global(table) {
+    width: 100%;
+    margin-top: var(--space-sm);
+    border-collapse: collapse;
+  }
+  .text-rich-text :global(th),
+  .text-rich-text :global(td) {
+    border: 1px solid var(--divider-color);
+    padding: var(--space-sm);
+    text-align: left;
+    vertical-align: top;
+  }
+</style>
