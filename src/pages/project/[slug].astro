@@ -29,17 +29,22 @@
  *   a full-width banner directly below the hero grid — the standard place for it in this exact
  *   card pattern (compare `ProjectCard`'s cover image). Flagged here as a page-local addition,
  *   not a literal port.
- * - **Challenge/Solution icons dropped, gallery column repurposed as the metrics block.** The
- *   source binds Challenge and Solution as two *separate* rich-text fields, each with its own
- *   icon (icon-05/icon-06). The schema and the governing migration plan instead give one
- *   Markdown body per case study ("Body holds Challenge and Solution copy"), rendered as a
- *   single `.text-rich-text` flow — so there's no per-field seam left to hang a per-heading
- *   icon on without parsing the rendered output. The icons are decorative only (no information
- *   loss), so they're omitted rather than faked. The source's right-hand column in this section
- *   is an empty CMS image gallery with no corresponding schema field (`heroImage` is the only
- *   image field) — rather than render nothing or fake gallery items, that column is repurposed
- *   for the structured `metrics` field (three stat/label pairs), which is real schema data and
- *   satisfies the same "Metrics that Matter" content the source names in that section.
+ * - **Challenge/Solution icons dropped.** The source binds Challenge and Solution as two
+ *   *separate* rich-text fields, each with its own icon (icon-05/icon-06). The schema and the
+ *   governing migration plan instead give one Markdown body per case study ("Body holds
+ *   Challenge and Solution copy"), rendered as a single `.text-rich-text` flow — so there's no
+ *   per-field seam left to hang a per-heading icon on without parsing the rendered output. The
+ *   icons are decorative only (no information loss), so they're omitted rather than faked.
+ *
+ * Corrected post-D1 (Phase D2, against the real captured pages): the live pages carry BOTH the
+ * "Metrics that Matter" stat block AND an image gallery — D1 built against
+ * `detail_project.html`, whose CMS fields (metrics text and the gallery) were both stripped by
+ * the static export, so the gallery column looked empty and D1 repurposed it for metrics. Real
+ * content restores the source's actual structure: metrics stay in the left column, stacked
+ * after the Challenge/Solution copy (matching the live DOM, where the "Metrics that Matter"
+ * heading and list sit inside `.project-content-grid-left-inner` alongside Challenge/Solution);
+ * the gallery renders in the right column, exactly where the source's `w-dyn-list` was. Reading
+ * order is therefore Challenge, Solution, Metrics that Matter, gallery — matching the live page.
  *
  * The closing CTA is built page-local rather than via `ContactCTA` — that component's shape
  * (eyebrow + heading + tagline + social row + embedded `ContactForm`) doesn't match this
@@ -71,7 +76,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props
 const { Content } = await render(entry)
-const { title, client, year, timeline, services, website, heroImage, heroImageAlt, metrics, description } =
+const { title, client, year, timeline, services, website, heroImage, heroImageAlt, metrics, gallery, description } =
   entry.data
 ---
 
@@ -125,14 +130,13 @@ const { title, client, year, timeline, services, website, heroImage, heroImageAl
   </SectionShell>
 
   <SectionShell sectionClass="section-project-content">
-    <div class:list={['project-content-grid', { 'project-content-grid--solo': !metrics || metrics.length === 0 }]}>
-      <div class="text-rich-text">
-        <Content />
-      </div>
-      {
-        metrics && metrics.length > 0 && (
-          <>
-            <Divider orientation="vertical" responsive="hide-mobile-landscape" />
+    <div class:list={['project-content-grid', { 'project-content-grid--solo': !gallery || gallery.length === 0 }]}>
+      <div class="project-content-left">
+        <div class="text-rich-text">
+          <Content />
+        </div>
+        {
+          metrics && metrics.length > 0 && (
             <div class="project-metrics">
               <SectionHeading as="h2" variant="h4" uppercase class="metrics-heading">
                 Metrics that Matter
@@ -145,6 +149,20 @@ const { title, client, year, timeline, services, website, heroImage, heroImageAl
                   </li>
                 ))}
               </ul>
+            </div>
+          )
+        }
+      </div>
+      {
+        gallery && gallery.length > 0 && (
+          <>
+            <Divider orientation="vertical" responsive="hide-mobile-landscape" />
+            <div class="project-gallery">
+              {gallery.map((item) => (
+                <div class="project-gallery-item">
+                  <Image src={item.src} alt={item.alt} class="image-cover" />
+                </div>
+              ))}
             </div>
           </>
         )
@@ -161,7 +179,7 @@ const { title, client, year, timeline, services, website, heroImage, heroImageAl
             It's time to find your fandom
           </SectionHeading>
         </div>
-        <Image src={icon02} alt="" class="cta-icon" aria-hidden="true" />
+        <Image src={icon02} alt="Campaigns icon" class="cta-icon" />
       </div>
       <Divider orientation="vertical" responsive="hide-tablet" />
       <Divider orientation="horizontal" responsive="show-tablet" />
@@ -292,6 +310,12 @@ const { title, client, year, timeline, services, website, heroImage, heroImageAl
     }
   }
 
+  .project-content-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
   .text-rich-text {
     max-width: var(--width-2xl);
   }
@@ -363,6 +387,21 @@ const { title, client, year, timeline, services, website, heroImage, heroImageAl
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
     color: var(--color-text-muted);
+  }
+
+  .project-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .project-gallery-item {
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .project-gallery-item :global(img) {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
   }
 
   /* ---------- Closing CTA ---------- */

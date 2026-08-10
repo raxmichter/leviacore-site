@@ -16,6 +16,7 @@
  * see that file's header for the full note.
  */
 import { Image } from 'astro:assets'
+import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import SectionShell from '../components/SectionShell.astro'
 import SectionHeading from '../components/SectionHeading.astro'
@@ -113,6 +114,38 @@ const valuesItems = [
   },
 ]
 
+/**
+ * Featured projects teaser — Phase D1. Source: components.md §6 "index.html —
+ * FeaturedProjectsTeaser". The export shows two side-by-side CMS-bound lists (likely one
+ * featured item + a grid of the rest), but both are empty and components.md explicitly flags
+ * that the count-per-list split can't be confirmed without Webflow dashboard access — deferred
+ * to the CSV, which hasn't arrived.
+ *
+ * Rather than invent a split that can't be verified, this renders ONE simple list from the
+ * same `projects` collection `/projects` itself uses (order asc, year desc), capped at 3 —
+ * a plain, defensible "teaser" size for a homepage section whose own copy already says "just a
+ * few of our favorites," and small enough that it reads as a teaser rather than a duplicate of
+ * the full `/projects` grid. No placeholder cards are rendered for an empty collection (same
+ * rule as `/projects`); today this is empty in production since only the draft fixture exists.
+ */
+const isProd = import.meta.env.PROD
+const featuredProjectEntries = await getCollection('projects', (entry) => !isProd || !entry.data.draft)
+const featuredProjects = featuredProjectEntries
+  .sort((a, b) => {
+    const orderA = a.data.order ?? Number.POSITIVE_INFINITY
+    const orderB = b.data.order ?? Number.POSITIVE_INFINITY
+    if (orderA !== orderB) return orderA - orderB
+    return b.data.year - a.data.year
+  })
+  .slice(0, 3)
+  .map((entry) => ({
+    title: entry.data.title,
+    client: entry.data.client,
+    image: entry.data.heroImage,
+    imageAlt: entry.data.heroImageAlt,
+    href: `/project/${entry.id}`,
+  }))
+
 const contactSocialLinks = [
   // Verbatim from index.html's contact-hero social row: Twitter is real, LinkedIn is the
   // source's own `href="#"` placeholder (never wired up in this specific block — see
@@ -203,13 +236,27 @@ const contactSocialLinks = [
       </p>
       <Button href="/projects" variant="primary">See more</Button>
     </div>
-    <!--
-      The export's two side-by-side CMS-bound project-preview lists both ship empty (Webflow
-      CMS content is excluded from static exports — components.md §6). Phase D1 adds the
-      case-study content collection and query; Phase D2 supplies the 5 real case studies.
-      Until then this teaser is intro copy + CTA only — no placeholder cards are invented, and
-      no empty grid/divider scaffolding is rendered for content that doesn't exist yet.
-    -->
+    {
+      featuredProjects.length > 0 && (
+        <ul class="home-projects-grid">
+          {featuredProjects.map((project) => (
+            <li class="home-project-preview-item">
+              <a href={project.href} class="home-project-preview-image-wrapper">
+                <Image src={project.image} alt={project.imageAlt} class="image-cover" />
+              </a>
+              <div class="home-project-preview-content">
+                <a href={project.href} class="home-project-preview-title-link">
+                  <SectionHeading as="h3" variant="h4" uppercase>
+                    {project.title}
+                  </SectionHeading>
+                </a>
+                <p class="home-project-preview-meta">{project.client}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )
+    }
   </SectionShell>
 
   <SectionShell sectionClass="section-home-how">
@@ -342,6 +389,47 @@ const contactSocialLinks = [
   .projects-heading,
   .home-projects-intro .lead-text {
     max-width: var(--width-sm);
+  }
+  .home-projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--space-lg);
+    margin: var(--space-xl) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .home-project-preview-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .home-project-preview-image-wrapper {
+    display: block;
+    margin-bottom: var(--space-sm);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+  }
+  .home-project-preview-image-wrapper :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .home-project-preview-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xxs);
+  }
+  .home-project-preview-title-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .home-project-preview-meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
   }
 
   /* ---------- How we work ---------- */

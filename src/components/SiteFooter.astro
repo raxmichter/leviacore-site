@@ -9,9 +9,15 @@
  *  - The empty `<a href="https://www.webflow.com" class="text-style-link">`
  *    "made in Webflow" credit link is dropped entirely — no link text, an
  *    axe failure, and pointless post-migration (OPEN.md, components.md §3).
+ *
+ * Phase D3 adds one more conditional entry: "Blog" in the Pages column, gate 2 of
+ * the six-gate checklist in docs/enable-blog.md. Purely additive — when
+ * features.blog is false (the committed default) the spread below is a no-op and
+ * the rendered footer is byte-identical to before this line existed.
  */
 import { Image } from 'astro:assets'
 import logo from '../assets/images/LC-SITE-NAV.png'
+import { features } from '../config'
 
 export interface Props {
   currentPath: string
@@ -24,6 +30,7 @@ const pageLinks = [
   { href: '/services', label: 'Services' },
   { href: '/team', label: 'Team' },
   { href: '/projects', label: 'Projects' },
+  ...(features.blog ? [{ href: '/blog', label: 'Blog' }] : []),
   { href: '/contact', label: 'Contact us' },
 ]
 

@@ -13,8 +13,15 @@
  * ⚠️ Phase D3: the Blog link must be re-added here CONDITIONALLY, behind the
  * `features.blog` flag — that is gate 1 of the six-gate enablement checklist
  * in docs/enable-blog.md. Never add an unconditional Blog link.
+ *
+ * Done: inserted between Team and Contact, matching the source's own nav order
+ * (Services, Projects, Team, Blog, Contact — Shop is permanently dropped, see
+ * components.md §2 note above). Purely additive/conditional: when features.blog
+ * is false (the committed default), the spread below is a no-op and the rendered
+ * markup is byte-identical to before this line existed.
  */
 import Button from './Button.astro'
+import { features } from '../config'
 
 export interface Props {
   currentPath: string
@@ -26,6 +33,7 @@ const navLinks = [
   { href: '/services', label: 'Services' },
   { href: '/projects', label: 'Projects' },
   { href: '/team', label: 'Team' },
+  ...(features.blog ? [{ href: '/blog', label: 'Blog' }] : []),
   { href: '/contact', label: 'Contact' },
 ]
 

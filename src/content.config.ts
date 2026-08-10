@@ -73,9 +73,23 @@ const projects = defineCollection({
       /** Required, non-empty: every image on this site must have meaningful alt.
        *  The live site ships alt="" on all of them. */
       heroImageAlt: z.string().min(1),
-      /** The three result stats. Exactly the shape the live layout renders. */
+      /** The three "Metrics that Matter" stats. Exactly the shape the live layout renders. */
       metrics: z
         .array(z.object({ value: z.string(), label: z.string() }))
+        .optional(),
+      /**
+       * Image gallery, rendered after the metrics block.
+       *
+       * ⚠️ Added after Phase D1. The template was first built against
+       * `_webflow-export/detail_project.html`, where Webflow had stripped all CMS
+       * content — so this gallery looked like an empty column and was repurposed for
+       * the metrics cards. The LIVE pages show it holds real images: two for most
+       * projects, one for Warframe. Captured in `_case-study-source/images/`.
+       *
+       * `alt` is required per image — the live site ships alt="" on all of them.
+       */
+      gallery: z
+        .array(z.object({ src: image(), alt: z.string().min(1) }))
         .optional(),
       /** Meta description. Case study descriptions on the live site are well
        *  written — port them verbatim rather than writing new ones. */

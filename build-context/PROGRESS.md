@@ -16,6 +16,23 @@ If you are starting a session cold, or recovering from a context compaction, rea
 
 Total re-hydration cost: ~2–5k tokens. **Do not re-read the Webflow export to "get oriented."** Everything durable has already been distilled into `build-context/`. If something you need is missing from these artifacts, that is a bug in the artifact — fix the artifact, don't work around it by re-reading source.
 
+## Reference: Astro content collections
+
+<https://docs.astro.build/en/guides/content-collections/> — the authority for `content.config.ts`, `getCollection`, and dynamic routes.
+
+**Verified against this repo on 2026-08-10. We are on the current API; do not "modernize" it:**
+
+| Concern | What we do | Status |
+|---|---|---|
+| Define | `defineCollection({ loader: glob({ pattern, base }), schema })` | ✅ current |
+| Query | `getCollection('name', filterFn)` | ✅ current |
+| **Render body** | `import { render } from 'astro:content'` → `await render(entry)` | ✅ current — **NOT** the deprecated `entry.render()` |
+| Routes | `getStaticPaths()` → `params: { slug: entry.id }` | ✅ current |
+| Slugs | `entry.id` derives from the filename | ✅ this is what pins our slugs to the live URLs |
+| Images | `schema: ({ image }) => …` with `image()` | ✅ works (proven by build) |
+
+⚠️ **The filename→slug link is load-bearing.** Renaming `borderlands3.md` changes the live URL and breaks URL parity — the migration's one non-negotiable rule.
+
 ## Hard context rules
 
 Violating these is how a session dies mid-phase.

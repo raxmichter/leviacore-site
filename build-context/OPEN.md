@@ -153,6 +153,33 @@ Remove the empty `<a href="https://www.webflow.com">` from all three footers. Ad
 
 > Related context: the migration was prompted in part by the privacy policy being out of date because updating it was too cumbersome. This is the same problem showing up a second way. Whichever option is chosen, it is worth asking counsel whether the policy needs a content review at the same time — the cost of editing it after this migration is a text file edit.
 
+### 7. 🆕 Case study metrics disagree between the text and the infographic images
+**Gates:** nothing. Migrated verbatim. Flagged because it is a credibility detail on client-facing work, not a build problem.
+
+Each case study states its "Metrics that Matter" as text **and** carries a stats infographic image showing the same figures. On at least one project the two do not match:
+
+| Borderlands 3 | Text on page | Number in the infographic image |
+|---|---|---|
+| ROI | 9,000% Return on Investment | **9,051% ROI** |
+| Minutes watched | 85,729,450 Total Minutes Watched | **85.7M Organic Minutes Watched** — note "Organic", a different measure |
+
+The minutes figure is not just rounded — the image says *Organic* while the text says *Total*. Those are different claims about the same campaign.
+
+A second instance, found independently:
+
+| Spiritfarer | Text on page | Number in the infographic image |
+|---|---|---|
+| Minutes watched | **+7 Million** Minutes Watched | **10.6 million total** — 7.0M sponsored + 3.6M organic |
+
+Here the headline stat quotes the *sponsored* figure while the image totals sponsored **and** organic. The larger, more favourable number is the one in the image and the smaller one is the headline — so this is understatement, not inflation. But it means two of the two projects checked disagree with their own graphics, which suggests the pattern holds across all five.
+
+**This is pre-existing on the live site and was ported verbatim** per the don't-rewrite-copy rule. Alt text describes what each image actually shows rather than silently reconciling the numbers.
+
+**For George:** worth a pass over all five to confirm which figure is correct in each case. The rebuild makes fixing it a one-line frontmatter edit, but choosing the right number is a business call. The other four were not diffed in detail — assume the same class of drift until checked.
+
+### 8. 🆕 The "box art" images are actually stats infographics
+Not an open question, recorded so nobody re-derives it. The 1403×1080 plain-named CMS images (`spiritfarer.png`, `borderlands3.png`, etc.) are **not** game box art as their filenames suggest — they are the "Metrics that Matter" infographics (circular peak-viewer / minutes-watched graphics). Localized as `<slug>-stats.png`. Warframe has no such image; its gallery holds only the hero.
+
 ### 6. 🆕 Satoshi renders as faux-bold on the live site — replicate, or license the real weights?
 **Gates:** nothing. **Default is already implemented.** This is a redesign question parked here so it isn't lost.
 

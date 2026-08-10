@@ -1,40 +1,49 @@
 ---
 /**
- * Projects page (`/projects`) — Phase C1a.
+ * Projects page (`/projects`) — Phase C1a shell, wired to real content in Phase D1.
  *
  * Port of _webflow-export/projects.html: hero + case-study grid. Per components.md §2 and §6,
  * the export's `.work-projects-list` Collection List has zero items — Webflow CMS content is
- * excluded from static exports, and the CSV of the 5 real case studies has not arrived yet
- * (the project's one hard blocker, per build-context/PROGRESS.md).
+ * excluded from static exports. The CSV of the 5 real case studies is still the project's one
+ * hard blocker (build-context/PROGRESS.md) and has not arrived, so this collection currently
+ * holds only the Phase D1 `_example-fixture.md` (draft, filtered out below in production).
+ * Nothing is fabricated here — no placeholder client names, metrics, or copy; the template is
+ * verified against the fixture, and Phase D2 supplies the 5 real case studies as content only.
  *
- * `projects` below is a typed array shaped exactly like ProjectCard's props, declared empty.
- * Phase D1 replaces this with a real `astro:content` collection + query; Phase D2 supplies the
- * 5 case studies (content only). Nothing is fabricated here — no placeholder client names,
- * metrics, or copy.
+ * `getCollection` filters drafts in production (`import.meta.env.PROD`) so `_example-fixture.md`
+ * never ships. Sort: `order` ascending (lower sorts first, per content.config.ts), falling back
+ * to `year` descending for entries that don't set `order`.
  *
  * The live site's empty state prints a literal "No items found." (Webflow's default
  * `w-dyn-empty` fallback) — documented as a known defect (#3) on the site's fix list. This
  * page deliberately does NOT reproduce it: `projects.map(...)` over an empty array renders
- * nothing, and no fallback message is ever shown.
+ * nothing, and no fallback message is ever shown — true today (fixture excluded, no real
+ * content yet) and true again if a future edit ever empties the collection.
  */
-import type { ImageMetadata } from 'astro'
+import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import SectionShell from '../components/SectionShell.astro'
 import SectionHeading from '../components/SectionHeading.astro'
 import ProjectCard from '../components/ProjectCard.astro'
 
-interface ProjectSummary {
-  title: string
-  description: string
-  tags: string[]
-  image: ImageMetadata
-  imageAlt: string
-  href: string
-  ctaText?: string
-}
+const isProd = import.meta.env.PROD
+const entries = await getCollection('projects', (entry) => !isProd || !entry.data.draft)
 
-// Empty by design — see file header. Phase D1/D2 populate this from real content.
-const projects: ProjectSummary[] = []
+const projects = entries
+  .sort((a, b) => {
+    const orderA = a.data.order ?? Number.POSITIVE_INFINITY
+    const orderB = b.data.order ?? Number.POSITIVE_INFINITY
+    if (orderA !== orderB) return orderA - orderB
+    return b.data.year - a.data.year
+  })
+  .map((entry) => ({
+    title: entry.data.title,
+    description: entry.data.description,
+    tags: entry.data.services,
+    image: entry.data.heroImage,
+    imageAlt: entry.data.heroImageAlt,
+    href: `/project/${entry.id}`,
+  }))
 ---
 
 <BaseLayout
@@ -69,7 +78,6 @@ const projects: ProjectSummary[] = []
                     image={project.image}
                     imageAlt={project.imageAlt}
                     href={project.href}
-                    ctaText={project.ctaText}
                   />
                 </div>
               ))}
