@@ -22,6 +22,19 @@
  * The outer wrapper's `margin-bottom.margin-xxhuge` (around the eyebrow+heading group) hits
  * the tokens.md BLOCKER-2 trap: resolved to 1rem, frozen at every viewport, not the nominal
  * `--space-5xl` (12rem, responsive). Ported as literal `1rem`.
+ *
+ * C1a addition (index.astro): index.html's instance of this block uses a genuinely different
+ * headline — "IT'S TIME TO FIND<br>YOUR FANDOM" (all-caps, source `<br>`-split) — vs. the
+ * services/contact instances' "It's time to find your fandom." (sentence case, no break).
+ * `headingText` already carried the copy difference; the line break needed a way in without
+ * accepting raw markup through a string prop, so a literal `\n` in `headingText` now renders
+ * as a line break (`white-space: pre-line` added below) — inert for every existing caller,
+ * since none of them pass a newline.
+ *
+ * C1a addition: `headingLevel` (optional, defaults to `'h1'` — unchanged behavior for every
+ * existing caller). index.astro's page `<h1>` is its hero headline, so this component's own
+ * heading must render as `<h2>` there to keep exactly one `<h1>` per page; contact.html (where
+ * this block is the page's only content) still wants it as the real `<h1>`.
  */
 import SectionShell from './SectionShell.astro'
 import SectionHeading from './SectionHeading.astro'
@@ -37,6 +50,7 @@ interface SocialLink {
 
 interface Props {
   headingText?: string
+  headingLevel?: 'h1' | 'h2'
   tagline: string
   socialLinks: SocialLink[]
   withTopDivider?: boolean
@@ -47,6 +61,7 @@ interface Props {
 
 const {
   headingText = "It's time to find your fandom.",
+  headingLevel = 'h1',
   tagline,
   socialLinks,
   withTopDivider = true,
@@ -59,7 +74,7 @@ const {
     <div class="contact-hero-grid-left">
       <div class="heading-group">
         <Eyebrow class="eyebrow-spacing">Contact</Eyebrow>
-        <SectionHeading as="h1" variant="display-xl">{headingText}</SectionHeading>
+        <SectionHeading as={headingLevel} variant="display-xl" class="cta-heading">{headingText}</SectionHeading>
       </div>
       <div>
         <Eyebrow class="tagline">{tagline}</Eyebrow>
@@ -89,6 +104,10 @@ const {
   }
   .heading-group {
     margin-bottom: 1rem; /* frozen combo value — see file header */
+  }
+  .cta-heading {
+    /* Allows a literal `\n` in `headingText` to render as a line break — see file header. */
+    white-space: pre-line;
   }
   .eyebrow-spacing {
     margin-bottom: var(--space-sm);

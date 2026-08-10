@@ -1,0 +1,41 @@
+---
+/**
+ * /contact — Phase C1b.
+ *
+ * Source: _webflow-export/contact.html. Single section, the "Contact" hero-style block
+ * (`section-home-contact`), built entirely from the existing `ContactCTA` component per
+ * components.md §2 (contact.html's composition map: SiteHeader → ContactCTA → SiteFooter,
+ * nothing else).
+ *
+ * Structural divergence from the index.html/services.html instances of this same block
+ * (components.md §7, already modeled as `withTopDivider` on ContactCTA): this page's
+ * instance omits the `.line` divider before the padded content — go straight from
+ * `.container-xxlarge` to `.padding-vertical.padding-xlarge`.
+ *
+ * ContactCTA hardcodes its heading as <h1> — correct here, since this block is the page's
+ * only content and its heading is rightly this page's one <h1> (matches source exactly).
+ *
+ * Contact form has no working submit endpoint in the source export (Webflow's own backend
+ * handled it via excluded JS) — tracked as an open item in build-context/OPEN.md; ContactForm
+ * ships a clearly-marked placeholder `action`. Not addressed here, per the brief.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import ContactCTA from '../components/ContactCTA.astro'
+
+const socialLinks = [
+  { platform: 'twitter' as const, href: '#', label: 'Tw' },
+  { platform: 'linkedin' as const, href: '#', label: 'IN' },
+]
+---
+
+<BaseLayout
+  title="Contact | Leviathan Core"
+  description="It's time to find your fandom. We can help. With planning, negotiations, execution – the works."
+  canonicalPath="/contact"
+>
+  <ContactCTA
+    tagline="We can help. With PLANNING, NEGOTIATIONS, execution – the works."
+    socialLinks={socialLinks}
+    withTopDivider={false}
+  />
+</BaseLayout>

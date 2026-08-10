@@ -23,7 +23,6 @@ import ContactCTA from '../../components/ContactCTA.astro'
 import ContactForm from '../../components/ContactForm.astro'
 import Divider from '../../components/Divider.astro'
 import Eyebrow from '../../components/Eyebrow.astro'
-import MobileMenu from '../../components/MobileMenu.astro'
 import ProjectCard from '../../components/ProjectCard.astro'
 import SectionHeading from '../../components/SectionHeading.astro'
 import SectionShell from '../../components/SectionShell.astro'
@@ -124,15 +123,16 @@ const sectionHeadingVariants = [
     <section class="gallery-section">
       <h2 class="gallery-label">MobileMenu.astro</h2>
       <p class="gallery-note">
-        Ships with a hardcoded <code>hidden</code> attribute and no prop to override it or its id, so it
-        is normally invisible until SiteHeader's own toggle script runs. Forced visible below purely
-        with page-level CSS so its markup can be reviewed; note this instance's <code>id="mobile-menu"</code>
-        duplicates the id already used by the page's own header (a limitation of testing this component
-        a second time in isolation, not fixed here).
+        <strong>Not re-instantiated here.</strong> SiteHeader already renders exactly one MobileMenu on
+        this page, and it hardcodes <code>id="mobile-menu"</code> — a second instance produced a duplicate
+        id, which is invalid HTML and broke the <code>verify-pages</code> structural gate even though the
+        component itself is fine.
       </p>
-      <div class="force-visible-mobile-menu">
-        <MobileMenu currentPath="/dev/components" />
-      </div>
+      <p class="gallery-note">
+        To inspect it, narrow the viewport to ≤991px and use the header's hamburger, which is also the
+        only way to exercise its real behaviour (<code>aria-expanded</code>, Escape-to-close, focus
+        restoration). Forcing a detached copy visible with CSS tested the markup but not the component.
+      </p>
     </section>
 
     <section class="gallery-section">

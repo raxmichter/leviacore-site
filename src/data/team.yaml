@@ -1,0 +1,91 @@
+# Team roster — transcribed verbatim from _webflow-export/team.html (Phase C1b).
+#
+# Source has no bios and no social links for any member (confirmed in build-context/
+# components.md §5: photo + name + role, full stop). Only those four fields exist here.
+#
+# Ordering: the 11 real members follow the source's document order. "We're Hiring!" is
+# placed last (record 12) per the C1b build brief, rather than preserved in its original
+# mid-grid slot (it originally sat between Max Richter and Audrey Lennon, in the 3rd of 6
+# two-up rows).
+#
+# Role text is transcribed verbatim, including inconsistent casing (e.g. Jordi
+# Chapdelaine's role reads "Chief revenue Officer", lowercase "revenue" — a plausible
+# authoring typo in the source, left as-is per the migration rule against rewriting ported
+# copy). `alt` text is newly authored for this migration (the source ships alt="" on every
+# headshot) and uses corrected, readable casing since it is not ported copy.
+#
+# Image filenames match src/assets/images/ exactly, including the source's own misspelled
+# "JordiChapdelanie-FINAL.jpg" (the filename misspells "Chapdelaine" — kept as-is since
+# renaming gains nothing; the displayed `name` below is spelled correctly).
+
+- name: George DePree
+  role: Founder & Chief Executive Officer
+  image: GeorgeDePree-FINAL.jpg
+  alt: Portrait of George DePree, Founder and Chief Executive Officer at Leviathan Core
+  hiring: false
+
+- name: Colin Fisher
+  role: Chief Marketing Officer
+  image: ColinFisher-FINAL.jpg
+  alt: Portrait of Colin Fisher, Chief Marketing Officer at Leviathan Core
+  hiring: false
+
+- name: Jordi Chapdelaine
+  role: Chief revenue Officer
+  image: JordiChapdelanie-FINAL.jpg
+  alt: Portrait of Jordi Chapdelaine, Chief Revenue Officer at Leviathan Core
+  hiring: false
+
+- name: Alex Owen
+  role: General Counsel
+  image: AlexOwen-FINAL.jpg
+  alt: Portrait of Alex Owen, General Counsel at Leviathan Core
+  hiring: false
+
+- name: Max Richter
+  role: Chief Technology Officer
+  image: MaxRichter-FINAL.jpg
+  alt: Portrait of Max Richter, Chief Technology Officer at Leviathan Core
+  hiring: false
+
+- name: Audrey Lennon
+  role: Operations manager
+  image: AudreyLennon-FINAL.jpg
+  alt: Portrait of Audrey Lennon, Operations Manager at Leviathan Core
+  hiring: false
+
+- name: Isa Yusuf
+  role: Finance & accounting lead
+  image: IsaYusuf-FINAL.jpg
+  alt: Portrait of Isa Yusuf, Finance and Accounting Lead at Leviathan Core
+  hiring: false
+
+- name: Sonia Pearson
+  role: Assistant Project Manager
+  image: sonia.jpg
+  alt: Portrait of Sonia Pearson, Assistant Project Manager at Leviathan Core
+  hiring: false
+
+- name: Miko Riva
+  role: Project lead
+  image: MikoRiva-FINAL.jpg
+  alt: Portrait of Miko Riva, Project Lead at Leviathan Core
+  hiring: false
+
+- name: Edward Revill-Johnson
+  role: Project lead
+  image: Edshot.remini-enhanced.png
+  alt: Portrait of Edward Revill-Johnson, Project Lead at Leviathan Core
+  hiring: false
+
+- name: Susan Flynn
+  role: Accounts receivable
+  image: SusanHeadshot-modified.remini-enhanced.png
+  alt: Portrait of Susan Flynn, Accounts Receivable at Leviathan Core
+  hiring: false
+
+- name: We're Hiring!
+  role: Director of business development
+  image: were-hiring.jpg
+  alt: "We're hiring: Director of Business Development at Leviathan Core"
+  hiring: true

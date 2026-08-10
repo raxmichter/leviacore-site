@@ -9,7 +9,9 @@ Last reviewed: 2026-08-10
 ## Blocking — CTO
 
 ### 1. Projects Collection CSV + 5 case study hero images ⛔ THE ONE HARD BLOCKER
-**Gates:** Phase D2 content only — five Markdown files. Does **not** block D1 (schema + template), and does not block any other phase.
+**Gates:** Phase D2 content (five Markdown files) — **and, discovered in C1, part of Phase G.** Does **not** block D1 (schema + template) or any build phase.
+
+> **🆕 Phase G implication (found 2026-08-10 during C1a).** `/projects` and the homepage's featured-projects teaser both render from an empty array until the CSV lands. The live site shows five case study cards in those slots. **Visual regression on those two pages cannot pass until the content exists** — the diff would be reporting missing content, not a layout defect. Every other page is fully diffable now. Plan Phase G accordingly: run the other pages to threshold first, and treat these two as a second pass after content migration.
 
 Webflow Collection content does not export. `projects.html`, `index.html`, and `detail_project.html` all contain empty `w-dyn-list` blocks where the five case studies would render. Needed: CSV export from the CMS panel, plus the five hero images.
 

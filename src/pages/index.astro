@@ -1,112 +1,358 @@
 ---
-/*
- * PHASE A SHELL — placeholder.
+/**
+ * Homepage (`/`) — Phase C1a.
  *
- * This exists only to satisfy the Phase A exit criterion: prove the extracted
- * design tokens and self-hosted fonts actually render. Phase C1 replaces this
- * file entirely with the real homepage.
+ * Port of _webflow-export/index.html. Section order per build-context/components.md §2:
+ * hero → client logos → services summary → featured projects teaser → how we work → values
+ * → contact. SiteHeader/SiteFooter come from BaseLayout.
  *
- * Do not build on this page. Build on the layout and components from Phase B.
+ * Copy is ported verbatim except the <title>, which the build brief explicitly calls out as
+ * a defect: the export ships only "Leviathan Core" (weakest SEO on the highest-value page)
+ * while interior pages correctly use "X | Leviathan Core". Fixed here, nowhere else.
+ *
+ * Heading hierarchy: this page's one <h1> is the hero headline below. ContactCTA normally
+ * renders its own heading as <h1> (it's the sole heading on contact.html), so here it's
+ * called with `headingLevel="h2"` — an additive prop added to ContactCTA.astro this phase,
+ * see that file's header for the full note.
  */
-import '../styles/tokens.css'
-import '../styles/fonts.css'
+import { Image } from 'astro:assets'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SectionShell from '../components/SectionShell.astro'
+import SectionHeading from '../components/SectionHeading.astro'
+import Eyebrow from '../components/Eyebrow.astro'
+import Divider from '../components/Divider.astro'
+import Button from '../components/Button.astro'
+import ClientLogoStrip from '../components/ClientLogoStrip.astro'
+import ValuesList from '../components/ValuesList.astro'
+import ContactCTA from '../components/ContactCTA.astro'
+
+import heroImage from '../assets/images/LC-Team-Final.jpg'
+import amazonGames from '../assets/images/amazon_games.png'
+import bungie from '../assets/images/bungie.png'
+import thunderLotus from '../assets/images/thunder_lotus.png'
+import digitalExtremes from '../assets/images/digital_extremes.png'
+import grindingGear from '../assets/images/grinding_gear.png'
+import northBeach from '../assets/images/north_beach.png'
+import twoK from '../assets/images/2K_2021_Logo.png'
+import privateDivision from '../assets/images/private_division.png'
+import icon01 from '../assets/images/icon-01.svg'
+import icon02 from '../assets/images/icon-02.svg'
+import icon03 from '../assets/images/icon-03.svg'
+import icon04 from '../assets/images/icon-04.svg'
+
+const clientLogos = [
+  { src: amazonGames, alt: 'Amazon Games' },
+  { src: bungie, alt: 'Bungie' },
+  { src: thunderLotus, alt: 'Thunder Lotus Games' },
+  { src: digitalExtremes, alt: 'Digital Extremes' },
+  { src: grindingGear, alt: 'Grinding Gear Games' },
+  { src: northBeach, alt: 'North Beach Games' },
+  { src: twoK, alt: '2K' },
+  { src: privateDivision, alt: 'Private Division' },
+]
+
+// Copy/casing/order ported verbatim from index.html's `.home-services-item` blocks. The
+// mixed casing ("Consulting" vs "campaigns"/"legal"/"finance") is the source's own
+// inconsistency, preserved per the "don't improve copy" rule — CSS uppercases all four
+// visually regardless.
+const services = [
+  {
+    icon: icon01,
+    alt: 'Consulting service icon',
+    title: 'Consulting',
+    description:
+      'Guidance for everything from influencer marketing trends to creator programs and strategies.',
+  },
+  {
+    icon: icon02,
+    alt: 'Campaigns service icon',
+    title: 'campaigns',
+    description:
+      'From coordinating logistics to facilitating paid collaborations, we help shape influencer campaigns for impact.',
+  },
+  {
+    icon: icon03,
+    alt: 'Legal service icon',
+    title: 'legal',
+    description: 'The legal landscape of influencer marketing is constantly changing. We help brands navigate it.',
+  },
+  {
+    icon: icon04,
+    alt: 'Finance service icon',
+    title: 'finance',
+    description:
+      'Coordinating finances and payments to influencers, protecting brand reputations in the process.',
+  },
+]
+const serviceRows = [services.slice(0, 2), services.slice(2, 4)]
+
+const valuesItems = [
+  {
+    number: '01',
+    title: 'AUTHENTICITY',
+    description:
+      "This crew loves what we do. It helps us push harder, and we love working with brands and communities that feel the same way.",
+  },
+  {
+    number: '02',
+    title: 'TRANSPARENCY',
+    description:
+      "Blame it on our Midwestern roots, but we believe in the power of integrity. We'll always give it to you straight, and never keep you in the dark.",
+  },
+  {
+    number: '03',
+    title: 'ADAPTIVITY',
+    description:
+      "Stop innovating in the gaming realm and you'll become irrelevant. We'd rather be irreplaceable by adapting to every challenge that comes our way.",
+  },
+  {
+    number: '04',
+    title: 'TEAMWORK',
+    description:
+      "Building games is a team sport. So is building fanbases. Collaboration isn't just smart, it makes the process more fun and enjoyable for everyone.",
+  },
+]
+
+const contactSocialLinks = [
+  // Verbatim from index.html's contact-hero social row: Twitter is real, LinkedIn is the
+  // source's own `href="#"` placeholder (never wired up in this specific block — see
+  // components.md #5). Not a link this phase is asked to fix.
+  { platform: 'twitter' as const, href: 'https://twitter.com/leviacore', label: 'Tw' },
+  { platform: 'linkedin' as const, href: '#', label: 'IN' },
+]
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Phase A shell — Leviathan Core</title>
-    <link
-      rel="preload"
-      href="/fonts/syne-latin-wght-normal.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/fonts/Satoshi-Regular.woff"
-      as="font"
-      type="font/woff"
-      crossorigin
-    />
-  </head>
-  <body>
-    <main>
-      <p class="meta">Phase A — token &amp; font smoke test</p>
-      <h1>Leviathan Core</h1>
-      <h2>Design tokens are live</h2>
-      <p>
-        Body copy in Satoshi at <code>--fs-body</code>, <code>--lh-body</code>. This paragraph
-        contains <strong>bold text</strong>, which is browser-synthesised — matching the live
-        site exactly, by design.
-      </p>
-      <div class="swatches">
-        <span style="background: var(--color-ink)"></span>
-        <span style="background: var(--color-bg); outline: 1px solid var(--color-ink)"></span>
-        <span style="background: var(--color-ink-button)"></span>
-        <span style="background: var(--color-text-muted)"></span>
+<BaseLayout
+  title="Influencer Marketing Agency for Gaming Brands | Leviathan Core"
+  description="You can't buy hype, but you can earn it. Partnering with the right influencers and connecting with the right audiences is how it's done. We help brands build hype with both."
+  canonicalPath="/"
+>
+  <SectionShell sectionClass="section-home-hero" withTopDivider={false}>
+    <div class="home-hero-grid">
+      <div class="home-hero-grid-left">
+        <SectionHeading as="h1" variant="display-xl" class="hero-heading">
+          You can't buy hype,<br />But you can earn it.
+        </SectionHeading>
+        <p class="lead-text hero-intro">
+          Partnering with the right influencers and connecting with the right audiences is how it's done. We help
+          brands build hype with both.
+        </p>
       </div>
-      <hr />
-      <p class="meta">Syne · Roboto Mono · Satoshi — all self-hosted, no third-party font loader</p>
-    </main>
-  </body>
-</html>
+      <div class="home-hero-image-wrapper">
+        <Image src={heroImage} alt="The Leviathan Core team" class="image-cover" />
+      </div>
+    </div>
+  </SectionShell>
+
+  <SectionShell sectionClass="section-home-clients">
+    <ClientLogoStrip logos={clientLogos} />
+  </SectionShell>
+
+  <SectionShell sectionClass="section-home-services">
+    <div class="home-services-grid">
+      <div class="home-services-intro">
+        <SectionHeading as="h2" variant="h1" uppercase>Services that stand out</SectionHeading>
+        <p class="lead-text lead-text--md">
+          Hands-on guidance and innovative, end-to-end solutions tailor-made for the gaming industry. It's
+          influencer marketing with next-level professionalism.
+        </p>
+      </div>
+      <!-- Source only marks the divider `hide-mobile-landscape` here (unlike ClientLogoStrip's
+           grid, there is no paired `show-mobile-landscape` swap element) — ported as a single
+           divider that disappears at <=767 rather than inventing a horizontal replacement. -->
+      <Divider orientation="vertical" responsive="hide-mobile-landscape" />
+      <div class="home-services-grid-right">
+        {
+          serviceRows.map((row, rowIndex) => (
+            <>
+              {rowIndex > 0 && <Divider />}
+              <div class="home-services-grid-right-row">
+                {row.map((item, itemIndex) => (
+                  <>
+                    {itemIndex > 0 && (
+                      <>
+                        <Divider orientation="vertical" responsive="hide-tablet" />
+                        <Divider orientation="horizontal" responsive="show-tablet" />
+                      </>
+                    )}
+                    <div class="home-services-item">
+                      <Image src={item.icon} alt={item.alt} class="service-icon" />
+                      <div>
+                        <SectionHeading as="h3" uppercase class="service-item-title">
+                          {item.title}
+                        </SectionHeading>
+                        <p class="service-item-description">{item.description}</p>
+                      </div>
+                    </div>
+                  </>
+                ))}
+              </div>
+            </>
+          ))
+        }
+      </div>
+    </div>
+  </SectionShell>
+
+  <SectionShell sectionClass="section-home-projects">
+    <div class="home-projects-intro">
+      <SectionHeading as="h2" variant="h1" uppercase class="projects-heading">Featured projects</SectionHeading>
+      <p class="lead-text lead-text--md">
+        See how our innovative, hands-on approach has helped brands like yours grow fanbases, generate buzz, and
+        break records.
+      </p>
+      <Button href="/projects" variant="primary">See more</Button>
+    </div>
+    <!--
+      The export's two side-by-side CMS-bound project-preview lists both ship empty (Webflow
+      CMS content is excluded from static exports — components.md §6). Phase D1 adds the
+      case-study content collection and query; Phase D2 supplies the 5 real case studies.
+      Until then this teaser is intro copy + CTA only — no placeholder cards are invented, and
+      no empty grid/divider scaffolding is rendered for content that doesn't exist yet.
+    -->
+  </SectionShell>
+
+  <SectionShell sectionClass="section-home-how">
+    <Eyebrow class="how-eyebrow">How we work</Eyebrow>
+    <SectionHeading as="h2" variant="display-xl" class="how-heading">
+      PEOPLE SHARE WHAT THEY LOVE. GAMERS AREN'T ANY DIFFERENT.
+    </SectionHeading>
+    <p class="lead-text how-copy">
+      Gamers aren't dumb. They know when they're being played, and when their favorite streamers are being paid to
+      fake fandom. It shows. We use our deep community roots to connect brands with influencers who will actually
+      appreciate them – and share those brands with their friends.
+    </p>
+  </SectionShell>
+
+  <ValuesList items={valuesItems} portraitAlt="Portrait photo representing the Leviathan Core team" />
+
+  <ContactCTA
+    headingText={"IT'S TIME TO FIND\nYOUR FANDOM"}
+    headingLevel="h2"
+    tagline="We can help. With PLANNING, NEGOTIATIONS, execution – the works."
+    socialLinks={contactSocialLinks}
+  />
+</BaseLayout>
 
 <style>
-  body {
+  .lead-text {
     margin: 0;
-    padding: var(--page-padding);
-    background: var(--color-bg);
-    color: var(--color-ink);
     font-family: var(--font-body);
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
+    font-size: var(--fs-xl);
+    line-height: var(--lh-loose);
   }
-  main {
-    max-width: var(--container-md);
-    margin-inline: auto;
+  .lead-text--md {
+    font-size: var(--fs-lg);
+    line-height: var(--lh-looser);
   }
-  h1 {
-    font-family: var(--font-display);
-    font-size: var(--fs-display-lg);
-    line-height: var(--lh-tight);
-    font-weight: var(--fw-regular);
-    margin: 0 0 var(--space-sm);
+
+  /* ---------- Hero ---------- */
+  .home-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    align-items: center;
   }
-  h2 {
-    font-family: var(--font-display);
-    font-size: var(--fs-h3);
-    line-height: var(--lh-snug);
-    font-weight: var(--fw-regular);
-    margin: 0 0 var(--space-md);
+  @media screen and (max-width: 991px) {
+    .home-hero-grid {
+      grid-template-columns: 1fr;
+    }
   }
-  .meta {
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    line-height: var(--lh-relaxed);
-    letter-spacing: var(--ls-wide);
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-  }
-  .swatches {
+  .home-hero-grid-left {
     display: flex;
-    gap: var(--space-xs);
-    margin: var(--space-md) 0;
+    flex-direction: column;
+    gap: var(--space-sm);
   }
-  .swatches span {
-    inline-size: var(--space-xl);
-    block-size: var(--space-xl);
-    border-radius: var(--radius-sm);
+  .hero-heading {
+    max-width: var(--width-2xl);
   }
-  hr {
-    border: 0;
-    border-top: var(--divider-width) solid var(--divider-color);
-    margin: var(--space-lg) 0;
+  .hero-intro {
+    max-width: var(--width-lg);
   }
-  code {
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
+  .home-hero-image-wrapper {
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .home-hero-image-wrapper :global(img) {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* ---------- Services summary ---------- */
+  .home-services-grid {
+    display: grid;
+    grid-template-columns: auto var(--divider-width) 1fr;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+  @media screen and (max-width: 767px) {
+    .home-services-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto var(--divider-width) auto;
+    }
+  }
+  .home-services-intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    max-width: var(--width-sm);
+  }
+  .home-services-grid-right {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .home-services-grid-right-row {
+    display: grid;
+    grid-template-columns: 1fr var(--divider-width) 1fr;
+    gap: var(--space-md);
+    align-items: start;
+  }
+  @media screen and (max-width: 767px) {
+    .home-services-grid-right-row {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto var(--divider-width) auto;
+    }
+  }
+  .home-services-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .home-services-item :global(.service-icon) {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  .service-item-title {
+    margin-bottom: var(--space-xs);
+  }
+  .service-item-description {
+    margin: 0;
+    font-family: var(--font-body);
+  }
+
+  /* ---------- Featured projects teaser ---------- */
+  .home-projects-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+  .projects-heading,
+  .home-projects-intro .lead-text {
+    max-width: var(--width-sm);
+  }
+
+  /* ---------- How we work ---------- */
+  .how-eyebrow {
+    margin-bottom: var(--space-xs);
+  }
+  .how-heading {
+    max-width: var(--width-2xl);
+    margin-bottom: var(--space-md);
+  }
+  .how-copy {
+    max-width: none;
   }
 </style>

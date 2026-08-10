@@ -37,7 +37,7 @@ Violating these is how a session dies mid-phase.
 | — | Recon: export inspected, interactions inventoried, font risk closed | Opus 5 | ✅ Complete |
 | **A** | Scaffold, token/component/interaction extraction, asset localization | Opus 5 + 3 subagents | ✅ **Complete** |
 | B | Layout shell and components | Sonnet 5 ×3 | ✅ **Complete** |
-| C1 | Static pages — home, services, projects shell, team, contact | Sonnet 5 | ⬜ Not started |
+| C1 | Static pages — home, services, projects shell, team, contact | Sonnet 5 ×2 | ✅ **Complete** |
 | C2 | Legal and utility pages — privacy, CCPA, notice-at-collection, 404, 401 | Sonnet 5 | ⬜ Not started |
 | D1 | Case study system — collection, schema, `/project/[slug]` template | Sonnet 5 | ⬜ Not started |
 | D2 | Content migration — 11 bios, 5 case studies, alt text | Haiku 4.5 ×2 | ⬜ Blocked on CSV (content only) |
@@ -157,6 +157,72 @@ Opens, `aria-expanded` toggles, Escape closes and restores focus. **Panel is 375
 - ⚠️ **Phase F must delete `src/pages/dev/components.astro` or confirm it is excluded from the sitemap.** It is `noindex` today, but it should not ship.
 
 ---
+
+## Phase C1 — COMPLETE
+
+Five pages: `/`, `/services`, `/projects`, `/team`, `/contact`. Six routes built including the dev gallery. **`npm run build:verify` passes all structural checks.**
+
+Two agents ran in parallel with **asymmetric component-edit rights** to prevent write collisions:
+- **C1a** — `index.astro`, `projects.astro`. Held exclusive component-edit rights; changes had to be strictly additive.
+- **C1b** — `services.astro`, `team.astro`, `contact.astro`, `src/data/team.yaml`. No component edits — reported instead.
+
+That split worked: zero collisions, and the one shared need (`ContactCTA` needing a `headingLevel`) was implemented once by C1a and reconciled into C1b's page afterwards.
+
+### 🆕 `npm run verify` — structural gate
+
+`scripts/verify-pages.mjs` runs over `dist/` and fails the build on any of these. **This is the Phase F link/structure gate in embryo — extend it rather than starting over.**
+
+| # | Check |
+|---|---|
+| 1 | Exactly one `<h1>` per page (dev pages exempt) |
+| 2 | No internal `.html` links — protects URL parity, the one non-negotiable rule |
+| 3 | Every `<img>` has non-empty `alt` |
+| 4 | The Webflow `"No items found."` artifact never appears |
+| 5 | No empty `<a>` to webflow.com |
+| 6 | No duplicate element ids |
+| 7 | Every `label[for]` resolves to a real id |
+| 8 | Title + meta description present; **fails if the bare `"Leviathan Core"` homepage title returns** |
+| 9 | Canonical on indexable pages; noindex pages carry no canonical |
+| 10 | *(warn)* contact form still on the placeholder endpoint |
+| 11 | *(warn)* GA4 tag missing |
+
+Currently: **0 failures, 4 warnings** — all four are the known placeholder contact endpoint, which stays a warning until the CTO supplies a real one (`OPEN.md` item 2).
+
+### Reconciliations applied by the main thread
+
+1. **`services.astro` now uses `<ContactCTA headingLevel="h2">`.** C1b hand-built that block because the prop didn't exist yet; C1a added it mid-flight for the homepage. Duplicate markup removed, unused imports cleaned.
+2. **`js-yaml` promoted to an explicit dependency.** `team.astro` loads `team.yaml` via `?raw` + `js-yaml`, which resolved only as a transitive dependency of Astro — a silent build break waiting to happen on a fresh install. Now `js-yaml@^5.2.3` + `@types/js-yaml`. Build verified against the pinned version.
+3. **Dev gallery no longer re-instantiates `MobileMenu`.** It produced a duplicate `id="mobile-menu"` (SiteHeader already renders one), which the new gate correctly caught. The gallery now directs reviewers to exercise the real instance via the header hamburger — which is also the only way to test its actual behaviour.
+
+### Services section IDs renamed (source IDs did not match content)
+
+`branding → consulting`, `design → campaigns`, `video → legal`, `content → finance`. The hero jump-nav was updated to match. **Verified no cross-page breakage:** those anchors are only linked from services' own hero, and the homepage's service cards use the source's own `href="#"` placeholders.
+
+### ⚠️ Phase E note — where the Label hover lives
+
+`a-77`/`a-78` "Label Hover [In]/[Out]" are **live** and target `.label` → children `.label-text` / `.label-text-hover`, `translateY 0% → -100%`, 500ms, outQuint.
+
+`.label` appears on **`services.html` only** among migrated pages (4 jump-nav links; the other pages carrying it are all out of scope). So it was correctly built page-local rather than promoted to a component. **The class names differ from the source** — attach to these:
+
+| Source | Rebuild |
+|---|---|
+| `.label` | `.service-jump-link` |
+| `.label-inner` | `.service-jump-link-inner` |
+| `.label-text` | `.service-jump-link-text` |
+| `.label-text-hover` | `.service-jump-link-text-hover` |
+
+The dual-span structure is present and the hover copy carries `aria-hidden="true"`. Styles are scoped inside `services.astro`, so Phase E edits that file for this one.
+
+### Other C1 decisions
+- **Service CTA button text normalized** to "Let's make it happen". The source had three different capitalizations of the same phrase across the four blocks; `components.md` flagged this as inconsistency to resolve, not preserve.
+- **`services.html` ships two `<h1>`s on the live site** (hero + contact block). The rebuild emits one. Deliberate fix, not a preserved bug.
+- **Homepage `<title>`** is now `"Influencer Marketing Agency for Gaming Brands | Leviathan Core"`, replacing the bare `"Leviathan Core"`. Check 8 above prevents regression.
+
+### 📌 Scope change: team bios move from D2 → C1b
+
+The plan assigned the 11 team bios to Phase D2. C1b now transcribes them into `src/data/team.yaml` as part of building `team.astro`, because it is already reading `team.html` — doing it in D2 would mean reading that file a second time for no benefit.
+
+**D2's remaining scope is therefore: the 5 case studies (blocked on CSV) + alt text for the ~34 non-headshot images + the OG image localization.** Team alt text is written by C1b at transcription time.
 
 ## Phase B follow-ups (main thread — do not lose these)
 

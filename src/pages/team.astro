@@ -1,0 +1,206 @@
+---
+/**
+ * /team — Phase C1b.
+ *
+ * Source: _webflow-export/team.html. Composition per build-context/components.md:
+ *   1. Studio hero — h1 + intro paragraph (no top divider, matches every page's hero)
+ *   2. "Our Team" — intro copy (left) + 11 real members + 1 "We're Hiring" card (right),
+ *      2-up rows with a vertical hairline between the pair, hidden at <=991 (tablet)
+ *   3. ValuesList — byte-identical to the block on the (not-yet-rebuilt) homepage
+ *   4. SiteFooter — rendered by BaseLayout
+ *
+ * No ContactCTA/contact form on this page — matches the source exactly.
+ *
+ * Roster data lives in src/data/team.yaml (not hardcoded here) per the C1b brief. YAML is
+ * loaded via a raw text import + js-yaml's `load()` rather than Astro content collections,
+ * to match the brief's "src/data/team.yaml" file shape without touching astro.config.mjs or
+ * adding a content collection config (both out of scope for this phase). js-yaml is not a
+ * direct dependency in package.json — it resolves today only because `astro` itself depends
+ * on it directly (see package-lock.json), so it's a stable, if implicit, dependency. Flagged
+ * in the C1b build summary in case the main thread wants it promoted to an explicit
+ * dependency.
+ *
+ * Team photos are resolved by filename via import.meta.glob against src/assets/images/ —
+ * the standard Astro pattern for turning a content-authored filename string into an
+ * ImageMetadata object that astro:assets can optimize.
+ */
+import { load } from 'js-yaml'
+import type { ImageMetadata } from 'astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SectionShell from '../components/SectionShell.astro'
+import SectionHeading from '../components/SectionHeading.astro'
+import Divider from '../components/Divider.astro'
+import TeamMemberCard from '../components/TeamMemberCard.astro'
+import ValuesList from '../components/ValuesList.astro'
+
+import teamYamlRaw from '../data/team.yaml?raw'
+
+interface TeamMemberRecord {
+  name: string
+  role: string
+  image: string
+  alt: string
+  hiring?: boolean
+}
+
+const team = load(teamYamlRaw) as TeamMemberRecord[]
+
+const imageModules = import.meta.glob<{ default: ImageMetadata }>('../assets/images/*', {
+  eager: true,
+})
+
+function resolveImage(filename: string): ImageMetadata {
+  const mod = imageModules[`../assets/images/${filename}`]
+  if (!mod) {
+    throw new Error(`team.yaml references missing image: ${filename}`)
+  }
+  return mod.default
+}
+
+// Rows of 2, matching the source's studio-team-grid-right-row pairing.
+const teamRows: TeamMemberRecord[][] = []
+for (let i = 0; i < team.length; i += 2) {
+  teamRows.push(team.slice(i, i + 2))
+}
+
+const valuesItems = [
+  {
+    number: '01',
+    title: 'AUTHENTICITY',
+    description:
+      'This crew loves what we do. It helps us push harder, and we love working with brands and communities that feel the same way.',
+  },
+  {
+    number: '02',
+    title: 'TRANSPARENCY',
+    description:
+      "Blame it on our Midwestern roots, but we believe in the power of integrity. We'll always give it to you straight, and never keep you in the dark.",
+  },
+  {
+    number: '03',
+    title: 'ADAPTIVITY',
+    description:
+      "Stop innovating in the gaming realm and you'll become irrelevant. We'd rather be irreplaceable by adapting to every challenge that comes our way.",
+  },
+  {
+    number: '04',
+    title: 'TEAMWORK',
+    description:
+      "Building games is a team sport. So is building fanbases. Collaboration isn't just smart, it makes the process more fun and enjoyable for everyone.",
+  },
+]
+---
+
+<BaseLayout
+  title="Team | Leviathan Core"
+  description="Meet the team that makes it happen. We’re a talented, passionate group that loves what we do – helping brands build influence with creators and fanbases in the gaming community."
+  canonicalPath="/team"
+>
+  <SectionShell sectionClass="section-studio-hero" withTopDivider={false}>
+    <div class="hero-heading-wrap">
+      <SectionHeading as="h1" variant="display-lg">Meet the team that makes it happen.</SectionHeading>
+    </div>
+    <p class="text-size-large">
+      We’re a talented, passionate group that loves what we do – helping brands build influence
+      with creators and fanbases in the gaming community.
+    </p>
+    <!-- Source's .studio-hero-image-wrapper is empty (no <img> inside it at all) — dead
+         markup per components.md §2, dropped rather than repurposed. -->
+  </SectionShell>
+
+  <SectionShell sectionClass="section-studio-team">
+    <div class="studio-team-grid">
+      <div class="studio-team-intro">
+        <div class="intro-heading-wrap">
+          <SectionHeading as="h2" variant="h1" uppercase>Our Team</SectionHeading>
+        </div>
+        <p class="text-size-large">
+          When you’re lucky enough to do what you love, we believe in giving it your absolute
+          best. Each of us brings unique skills and perspectives to the table, and we’re
+          committed to doing so with the utmost level of professionalism and integrity.
+        </p>
+      </div>
+      <Divider orientation="vertical" responsive="hide-mobile-landscape" />
+      <div class="team-rows">
+        {
+          teamRows.map((row) => (
+            <div class="team-row">
+              {row.map((member, idx) => (
+                <>
+                  <TeamMemberCard
+                    name={member.name}
+                    role={member.role}
+                    image={resolveImage(member.image)}
+                    alt={member.alt}
+                    hiring={member.hiring}
+                  />
+                  {idx === 0 && row.length > 1 && (
+                    <Divider orientation="vertical" responsive="hide-tablet" />
+                  )}
+                </>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </SectionShell>
+
+  <ValuesList
+    items={valuesItems}
+    portraitAlt="Portrait photo representing the Leviathan Core team"
+  />
+</BaseLayout>
+
+<style>
+  .hero-heading-wrap {
+    margin-bottom: var(--space-md);
+  }
+  .text-size-large {
+    font-family: var(--font-body);
+    font-size: var(--fs-lg);
+    line-height: var(--lh-looser);
+  }
+
+  .studio-team-grid {
+    display: grid;
+    /* Ratio inferred — undocumented in tokens.md/components.md for this grid. Matches the
+       narrower-intro / wider-content split used by the sibling ValuesList section directly
+       below on this same page. */
+    grid-template-columns: 1fr var(--divider-width) 2fr;
+    gap: var(--space-lg);
+  }
+  @media screen and (max-width: 991px) {
+    .studio-team-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto var(--divider-width) auto;
+    }
+  }
+  .studio-team-intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .intro-heading-wrap {
+    max-width: var(--width-xs);
+  }
+  .studio-team-intro .text-size-large {
+    max-width: var(--width-sm);
+  }
+
+  .team-rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+  .team-row {
+    display: grid;
+    /* Cards stay 2-up at every width — TeamMemberCard's own responsive image height
+       (18vw → 25vw @<=991 → 50vw @<=767) only makes sense against a 2-column row, so this
+       grid does not collapse to 1 column at any documented breakpoint. Only the vertical
+       divider between the pair hides at <=991 (Divider's own hide-tablet rule). */
+    grid-template-columns: 1fr var(--divider-width) 1fr;
+    gap: var(--space-md);
+    align-items: start;
+  }
+</style>

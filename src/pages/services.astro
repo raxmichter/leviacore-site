@@ -1,0 +1,273 @@
+---
+/**
+ * /services — Phase C1b.
+ *
+ * Source: _webflow-export/services.html. Composition per build-context/components.md:
+ *   1. Services hero — h1 + pill jump-nav (4 anchors) + intro paragraph
+ *   2-5. ServiceDetailBlock ×4 — Consulting / Campaigns / Legal / Finance
+ *   6. Contact section (the "section-home-contact" block) + ContactForm
+ *   7. SiteFooter — rendered by BaseLayout
+ *
+ * ⚠️ SECTION ID RENAME (components.md #18, explicitly flagged for this phase): the source's
+ * anchor ids are legacy leftovers that no longer describe their content —
+ *   branding → holds Consulting   →  renamed "consulting"
+ *   design   → holds Campaigns    →  renamed "campaigns"
+ *   video    → holds Legal        →  renamed "legal"
+ *   content  → holds Finance      →  renamed "finance"
+ * The hero's 4 jump-nav links are updated to match. These ids are only linked internally
+ * (this page's own hero); no other page in this phase's scope links to them. Report this
+ * mapping so the homepage's services teaser (built in a later/earlier phase, still the
+ * Phase A placeholder as of this writing) can be checked for matching anchors if it ever
+ * grows any.
+ *
+ * ⚠️ TODO(C1b) — NO "Label" COMPONENT EXISTS. components.md #19 documents a pill-style
+ * jump-link ("Label": `a.label > .label-inner > (.label-text, .label-text-hover)`, same
+ * hover-swap idiom as Button) used only in this hero's subnav. It was not among the 16
+ * components Phase B built, and this agent does not have component-edit rights to add one.
+ * Implemented page-locally below (`.service-jump-link`) instead — visually/structurally
+ * matches the source (same hover-swap dual-span shape, ready for Phase E), styled from the
+ * same token family Button.astro uses (mono font, --radius-sm — components.md's comment
+ * "6px — .label, .button" confirms the two share a radius token). Reported here for the
+ * main thread to decide whether this should be promoted to src/components/Label.astro.
+ *
+ * ⚠️ TODO(C1b) — CONTACT SECTION BUILT PAGE-LOCAL, NOT VIA <ContactCTA>. ContactCTA.astro
+ * hardcodes its heading as `as="h1"` with no prop to override the level. That's correct on
+ * /contact, where it's the page's only heading — but here the hero above already supplies
+ * this page's one <h1> ("We Help Brands Stand Out"), and rule 6 requires exactly one <h1>
+ * per page. (The live source actually ships two <h1>s on services.html — this hero's and
+ * the contact block's — which is the same defect ContactCTA's hardcoding would reproduce;
+ * fixing it here is a deliberate improvement, not a preserved bug.) Rather than edit
+ * ContactCTA (out of scope for this agent), the block is rebuilt page-locally below with an
+ * <h2>, reusing SectionShell/Eyebrow/SocialBadge/ContactForm/SectionHeading — everything
+ * ContactCTA itself composes from. Recommend the main thread add a `headingLevel` prop to
+ * ContactCTA (mirroring the one TeamMemberCard already has) so this page can go back to
+ * using the shared component.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SectionShell from '../components/SectionShell.astro'
+import SectionHeading from '../components/SectionHeading.astro'
+import ContactCTA from '../components/ContactCTA.astro'
+import ServiceDetailBlock from '../components/ServiceDetailBlock.astro'
+
+import icon01 from '../assets/images/icon-01.svg'
+import icon02 from '../assets/images/icon-02.svg'
+import icon03 from '../assets/images/icon-03.svg'
+import icon04 from '../assets/images/icon-04.svg'
+
+const jumpLinks = [
+  { href: '#consulting', text: 'Consulting' },
+  { href: '#campaigns', text: 'Campaigns' },
+  { href: '#legal', text: 'Legal' },
+  { href: '#finance', text: 'Finance' },
+]
+
+// CTA label casing: the source has three different capitalizations of the same phrase
+// across the 4 blocks ("let's make it happen" / "Let's make it happen" / "Let's Make it
+// happen") — components.md #18/§7 explicitly flags this as inconsistency to resolve, not
+// preserve, when rebuilding. Normalized to one casing here.
+const ctaText = "Let's make it happen"
+
+const serviceBlocks = [
+  {
+    id: 'consulting',
+    icon: icon01,
+    iconAlt: 'Consulting service icon',
+    title: 'Consulting',
+    tags: ['influencer trends', 'Creator programs', 'patterns of success', 'activation strategies'],
+    headline:
+      'Whether you’re seasoned veterans or relative noobs to influencer marketing, expert guidance always helps.',
+    body: 'The gaming industry is a tricky beast. So is influencer marketing. Their offerings, audiences, trends, and strategies are constantly evolving. It takes experience and expertise just to keep up with it all, let alone chart a course for success. We’re passionate about this space. We know it inside and out. It’s how we help brands capitalize on every opportunity they can, time and time again.',
+  },
+  {
+    id: 'campaigns',
+    icon: icon02,
+    iconAlt: 'Campaigns service icon',
+    title: 'Campaigns',
+    tags: ['paid & organic', 'Creator collaborations', 'logistics & event coordination', 'early access planning'],
+    headline: 'Influencer campaigns should influence. We make sure they do.',
+    body: 'There’s more to influencer marketing than picking names out of a hat. The most effective campaigns are the ones that pair brands with the right creators and the right audiences. That’s where we can help. We also help with ideation, logistics, execution, and more to make your road to more effective influencer campaigns as smooth and painless as possible.',
+  },
+  {
+    id: 'legal',
+    icon: icon03,
+    iconAlt: 'Legal service icon',
+    title: 'Legal',
+    tags: ['negotiations', 'contracts', 'compliance'],
+    headline: 'Mistakes are costly in this game. We help brands minimize risk and plan ahead.',
+    body: 'If you’ve ever played a game, you’ve probably seen the terms and conditions. If you’re like most people, you’ve probably never read them. Not us. We never miss a word. We’re experts in the increasingly complex and nuanced legal landscape of gaming and influencer marketing, helping brands navigate everything from creator contracts to compliance checks.',
+  },
+  {
+    id: 'finance',
+    icon: icon04,
+    iconAlt: 'Finance service icon',
+    title: 'Finance',
+    tags: ['Creator payments', 'budget planning & Forecasting', 'creator tax forms'],
+    headline: 'If you want influencer marketing that pays off, make sure it pays out, too.',
+    body: 'Influencer marketing is complicated enough. We help brands keep things simple(r) by streamlining the financial side, offering assistance with everything from budget planning to coordinating creator payments. We have the tools, insights, and guidance to manage your campaign finances so you can better build your brand’s reputation – and maintain it.',
+  },
+]
+
+const contactSocialLinks = [
+  { platform: 'twitter' as const, href: '#', label: 'Tw' },
+  { platform: 'linkedin' as const, href: '#', label: 'IN' },
+]
+---
+
+<BaseLayout
+  title="Services | Leviathan Core"
+  description="We help brands stand out. The gaming community has never been deeper or more complex. It helps to have a partner who knows their way around. We can help. With negotiations, planning, execution – the works."
+  canonicalPath="/services"
+>
+  <SectionShell sectionClass="section-services-hero" withTopDivider={false}>
+    <div class="services-hero-grid">
+      <div>
+        <div class="hero-heading-wrap">
+          <div class="hero-heading-inner">
+            <SectionHeading as="h1" variant="display-2xl">We Help Brands Stand Out</SectionHeading>
+          </div>
+        </div>
+        <nav class="service-jump-nav" aria-label="Jump to service">
+          {
+            jumpLinks.map((link) => (
+              <a href={link.href} class="service-jump-link">
+                <span class="service-jump-link-inner">
+                  <span class="service-jump-link-text">{link.text}</span>
+                  <span class="service-jump-link-text-hover" aria-hidden="true">
+                    {link.text}
+                  </span>
+                </span>
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+      <p class="text-size-xlarge">
+        The gaming community has never been deeper or more complex. It helps to have a partner
+        who knows their way around. We can help. With negotiations, planning, execution – the
+        works.
+      </p>
+    </div>
+  </SectionShell>
+
+  {
+    serviceBlocks.map((block) => (
+      <ServiceDetailBlock
+        id={block.id}
+        icon={block.icon}
+        iconAlt={block.iconAlt}
+        title={block.title}
+        tags={block.tags}
+        ctaText={ctaText}
+        ctaHref="/contact"
+        headline={block.headline}
+        body={block.body}
+      />
+    ))
+  }
+
+  {/*
+    Reconciled by the main thread after C1a landed. C1b hand-built this block because
+    ContactCTA hardcoded `as="h1"`, which would have produced a second <h1> on this page.
+    C1a added the optional `headingLevel` prop for exactly that reason on the homepage, so
+    the duplicate markup is now unnecessary — this uses the shared component.
+  */}
+  <ContactCTA
+    headingLevel="h2"
+    tagline="FOLLOW US on social for the latest."
+    socialLinks={contactSocialLinks}
+    formIdPrefix="services-contact"
+  />
+</BaseLayout>
+
+<style>
+  .services-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+  }
+  @media screen and (max-width: 991px) {
+    .services-hero-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .hero-heading-wrap {
+    margin-bottom: 1rem; /* frozen margin-bottom.margin-xxhuge combo, matches ContactCTA */
+  }
+  .hero-heading-inner {
+    margin-bottom: var(--space-sm); /* margin-bottom.margin-small */
+  }
+  .service-jump-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+  .text-size-xlarge {
+    font-family: var(--font-body);
+    font-size: var(--fs-xl);
+    line-height: var(--lh-loose);
+  }
+
+  /* .service-jump-link — page-local stand-in for the un-built "Label" component.
+     Same token family as Button.astro (font-mono, --radius-sm, ls-wide, uppercase) since
+     components.md documents --radius-sm as shared between .label and .button. */
+  .service-jump-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-ink);
+    border-radius: var(--radius-sm);
+    background: var(--color-transparent);
+    color: var(--color-ink-button);
+    text-decoration: none;
+    padding: var(--space-xs) var(--space-sm);
+  }
+  .service-jump-link:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  .service-jump-link-inner {
+    position: relative;
+    display: inline-flex;
+    overflow: hidden;
+  }
+  .service-jump-link-text,
+  .service-jump-link-text-hover {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+  }
+  .service-jump-link-text-hover {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+  }
+  @media screen and (max-width: 991px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .heading-group {
+    margin-bottom: 1rem; /* frozen margin-bottom.margin-xxhuge combo */
+  }
+  .eyebrow-spacing {
+    margin-bottom: var(--space-sm);
+  }
+  .tagline {
+    margin-bottom: var(--space-sm);
+  }
+  .social-row {
+    display: flex;
+    gap: var(--space-xs);
+  }
+  .form-shell {
+    max-width: var(--width-lg);
+  }
+</style>

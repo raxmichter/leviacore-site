@@ -1,0 +1,125 @@
+---
+/**
+ * Projects page (`/projects`) — Phase C1a.
+ *
+ * Port of _webflow-export/projects.html: hero + case-study grid. Per components.md §2 and §6,
+ * the export's `.work-projects-list` Collection List has zero items — Webflow CMS content is
+ * excluded from static exports, and the CSV of the 5 real case studies has not arrived yet
+ * (the project's one hard blocker, per build-context/PROGRESS.md).
+ *
+ * `projects` below is a typed array shaped exactly like ProjectCard's props, declared empty.
+ * Phase D1 replaces this with a real `astro:content` collection + query; Phase D2 supplies the
+ * 5 case studies (content only). Nothing is fabricated here — no placeholder client names,
+ * metrics, or copy.
+ *
+ * The live site's empty state prints a literal "No items found." (Webflow's default
+ * `w-dyn-empty` fallback) — documented as a known defect (#3) on the site's fix list. This
+ * page deliberately does NOT reproduce it: `projects.map(...)` over an empty array renders
+ * nothing, and no fallback message is ever shown.
+ */
+import type { ImageMetadata } from 'astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SectionShell from '../components/SectionShell.astro'
+import SectionHeading from '../components/SectionHeading.astro'
+import ProjectCard from '../components/ProjectCard.astro'
+
+interface ProjectSummary {
+  title: string
+  description: string
+  tags: string[]
+  image: ImageMetadata
+  imageAlt: string
+  href: string
+  ctaText?: string
+}
+
+// Empty by design — see file header. Phase D1/D2 populate this from real content.
+const projects: ProjectSummary[] = []
+---
+
+<BaseLayout
+  title="Projects | Leviathan Core"
+  description="Driving results that matter. We've innovated to help brands and titles break through and make waves with the right audiences again and again. These featured stories are just a few of our favorites."
+  canonicalPath="/projects"
+>
+  <SectionShell sectionClass="section-work-hero" withTopDivider={false}>
+    <div class="work-hero-grid">
+      <SectionHeading as="h1" variant="display-2xl" class="work-hero-heading">
+        Driving Results That Matter
+      </SectionHeading>
+      <p class="lead-text">
+        We've innovated to help brands and titles break through and make waves with the right audiences again and
+        again. These featured stories are just a few of our favorites.
+      </p>
+    </div>
+  </SectionShell>
+
+  {
+    projects.length > 0 && (
+      <section class="section-work-projects">
+        <div class="page-padding">
+          <div class="container-xxlarge">
+            <div class="work-projects-list">
+              {projects.map((project) => (
+                <div class="work-projects-item">
+                  <ProjectCard
+                    title={project.title}
+                    description={project.description}
+                    tags={project.tags}
+                    image={project.image}
+                    imageAlt={project.imageAlt}
+                    href={project.href}
+                    ctaText={project.ctaText}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .lead-text {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-xl);
+    line-height: var(--lh-loose);
+    max-width: var(--width-lg);
+  }
+
+  .work-hero-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .work-hero-heading {
+    /* Source: `margin-bottom margin-xxhuge` around the heading resolves to a frozen 1rem in
+       that two-class combo (tokens.md BLOCKER-2), not the nominal --space-5xl (12rem). */
+    margin-bottom: 1rem;
+    max-width: var(--width-2xl);
+  }
+
+  .page-padding {
+    padding-inline: var(--page-padding);
+  }
+  .container-xxlarge {
+    width: 100%;
+    max-width: var(--container-3xl);
+    margin-inline: auto;
+  }
+  .work-projects-list {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: var(--space-xl);
+  }
+  .work-projects-item {
+    padding-block: var(--space-lg);
+    border-top: var(--divider-width) solid var(--divider-color);
+  }
+  .work-projects-item:first-child {
+    border-top: none;
+  }
+</style>
