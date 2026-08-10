@@ -31,9 +31,21 @@ export interface Props {
 
 const { title, description, ogImage, canonicalPath, noindex = false } = Astro.props
 
-const DEFAULT_OG_IMAGE = 'https://i.imgur.com/dYUCEcI.png'
-const resolvedOgImage = ogImage ?? DEFAULT_OG_IMAGE
+/**
+ * Social preview card. Localized in Phase D2.
+ *
+ * The export pointed og:image and twitter:image at https://i.imgur.com/dYUCEcI.png —
+ * the site's primary social preview hosted on a third-party image host nobody here
+ * controls. If that link ever rotted, every share of every page would lose its
+ * preview image silently. The identical asset (1200×630 branded card) now ships
+ * from this repo.
+ *
+ * Absolute URL is required: og:image must be fully qualified, since crawlers and
+ * chat clients fetch it out of page context.
+ */
+const DEFAULT_OG_IMAGE = '/og-image.png'
 const canonicalUrl = new URL(canonicalPath, Astro.site)
+const resolvedOgImage = new URL(ogImage ?? DEFAULT_OG_IMAGE, Astro.site).href
 ---
 
 <html lang="en">

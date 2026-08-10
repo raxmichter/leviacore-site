@@ -164,7 +164,7 @@ Roughly ten minutes of work, and it **must happen before cutover**. Without a pr
 Not blocking, but will cause a defect if forgotten.
 
 - ~~**Satoshi weight coverage**~~ ✅ **Resolved — see item 6 below.** Not a blocker.
-- **OG/Twitter card image is hosted on `i.imgur.com`** — an external host for the site's primary social preview. Localize into the repo.
+- ~~**OG/Twitter card image is hosted on `i.imgur.com`**~~ ✅ **Done (Phase D2).** The real asset (1200×630 branded card) was fetched and now ships from `public/og-image.png`, referenced as an absolute URL on our own origin. `verify-pages` check 11 fails the build if `og:image` or `twitter:image` ever points off-origin again.
 - **Footer reads "© Leviathan Core, LLC 2025"** — already stale. Make the year dynamic at build time.
 - **GA4 tag `G-EG4F7ZLTZQ`** — present in every page head. Must survive migration.
 - **Homepage `<title>` is only "Leviathan Core"** — weakest SEO on the highest-value page. Interior pages are correct (`Spiritfarer | Leviathan Core`). Fixed in D2.

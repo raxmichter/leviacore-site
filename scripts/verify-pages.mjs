@@ -94,11 +94,21 @@ function check(file, html) {
   if (!hasCanonical && !hasNoindex) fail('no canonical link and no noindex')
   if (hasCanonical && hasNoindex) fail('has both a canonical link and noindex')
 
-  // 11. The placeholder contact endpoint must never reach production.
+  // 11. og:image / twitter:image must be absolute AND on our own origin. The export
+  //      served the site's primary social card from i.imgur.com — a third-party host
+  //      nobody here controls. If it rotted, every share of every page would silently
+  //      lose its preview. Localized in Phase D2; this stops it coming back.
+  for (const m of html.matchAll(/(?:property|name)="(og:image|twitter:image)" content="([^"]+)"/g)) {
+    const [, prop, url] = m
+    if (!url.startsWith('https://www.leviacore.com/'))
+      fail(`${prop} is not on our own origin: ${url}`)
+  }
+
+  // 12. The placeholder contact endpoint must never reach production.
   if (/contact-form-endpoint-todo/.test(html))
     warn('contact form still points at the placeholder endpoint (OPEN.md item 2)')
 
-  // 12. GA4 must survive the migration.
+  // 13. GA4 must survive the migration.
   if (!isDev && !/G-EG4F7ZLTZQ/.test(html)) warn('GA4 tag missing')
 
   pagesChecked++
