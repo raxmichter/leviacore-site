@@ -78,7 +78,46 @@ Both in privacy-policy, both `http://`:
 - **(b)** Strip the link, keep the text as plain prose. Safe, minimal, defensible.
 - **(c)** Leave as-is. Not recommended — the Phase F link-checker gate will fail on these, which is what that gate is for.
 
-**Recommendation:** route Tiers 1 and 3 to counsel as **one content review** rather than patching links around stale text. The Flash section is concrete evidence of the staleness that prompted this migration, and after cutover editing the policy is a text-file change.
+---
+
+## ✅ RESOLVED — George, 2026-08-10. This supersedes the recommendation below.
+
+### 🔑 Root cause found: **every in-body link in the legal pages is invisible**
+
+The site's global CSS applies `a { color: inherit; text-decoration: inherit; font-size: inherit; }`, and **none of the in-body legal links carry a class**. There is no `.text-rich-text a` rule restoring link styling. They render with no color and no underline — visually identical to surrounding body text.
+
+This is why the broken links were never noticed. It affects the *working* links equally: the three `mailto:development@leviacore.com` contact links and the Google privacy policy link are all invisible too.
+
+**Action (Phase C2):** restore visible link styling inside rich-text content. This is a deliberate visual change from the live site — **flag it in `fidelity.md` during Phase G so it does not read as a regression.**
+
+### Tier 1 → **mechanical, no counsel needed. Do it in C2.**
+
+The target sections **exist**; they are pseudo-headings, not real headings:
+
+| Link text | Exists in source as |
+|---|---|
+| Changes to Our Privacy Policy | `<strong>Changes to Our Privacy Policy:</strong>` (privacy-policy) |
+| Choices About How We Use and Disclose Your Information | `<strong>Choices About How We Use and Disclose Your Information:</strong>` (privacy-policy) |
+| Exercising Your Rights to Know or Delete | `<strong><em>Exercising Your Rights to Know or Delete</em></strong>` (ccpa) |
+
+**Fix:** promote every section title to a real `<h2>`/`<h3>` with a stable `id`, repoint the four links as same-page fragments, drop `target="_blank"`. **No policy text changes** — this is markup structure only, which is why it does not need counsel.
+
+> Both documents currently have **zero heading structure** (only the page `<h1>`). Promoting section titles fixes a real accessibility defect and an axe failure for free — a screen reader user currently cannot navigate these documents.
+
+### Tier 2 → confirmed **body text**, not footer. Mechanical, fix in C2.
+Footer legal links are separate relative links and are correct.
+
+### Tier 3 → **remove. George: "we don't need them."**
+
+- **NAI opt-out** — service still exists at a new URL. Repoint rather than delete, unless told otherwise.
+- **Macromedia / Flash Player settings** — ⚠️ deleting the link leaves dangling prose: *"…see this website"* pointing nowhere. **Recommendation: remove the entire Flash cookies bullet**, since Flash has been EOL since December 2020. That deletes a paragraph from a privacy policy, so **confirm with George before doing it.** Removing only the link is the fallback.
+
+### Tier 4 → **clean up. George: "we're moving off Webflow."**
+Remove the empty `<a href="https://www.webflow.com">` from all three footers. Add `rel="noopener"` where `target="_blank"` remains.
+
+---
+
+*Superseded recommendation, kept for the record:* route Tiers 1 and 3 to counsel as one content review. This was written before it was established that the Tier 1 target sections exist in the document — which makes Tier 1 a markup fix, not a content decision.
 
 > Related context: the migration was prompted in part by the privacy policy being out of date because updating it was too cumbersome. This is the same problem showing up a second way. Whichever option is chosen, it is worth asking counsel whether the policy needs a content review at the same time — the cost of editing it after this migration is a text file edit.
 
