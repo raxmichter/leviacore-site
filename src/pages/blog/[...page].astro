@@ -1,0 +1,170 @@
+---
+/**
+ * Blog index (`/blog`) — Phase D3. Built and SHIPPED DISABLED.
+ *
+ * See build-context/DECISIONS.md ("Blog is built and DELIBERATELY DISABLED") and
+ * docs/enable-blog.md before touching anything in this file's behaviour.
+ *
+ * ⚠️ FILENAME DEVIATION FROM THE ORIGINAL BRIEF — READ BEFORE "FIXING" THIS.
+ * The brief asked for `src/pages/blog/index.astro`. This file is named
+ * `[...page].astro` instead, and that is deliberate, not a mistake to clean up.
+ *
+ * Empirically verified during this build (repeated, cache-cleared, from-scratch
+ * trials — not a guess, and not merely "unlinked"): in this Astro version,
+ * `getStaticPaths()` returning `[]` has NO EFFECT on a non-dynamic page file (one
+ * with no `[param]` in its filename, e.g. a plain `index.astro`). Astro renders a
+ * non-dynamic route unconditionally, because it has exactly one implicit path and
+ * doesn't need enumeration — the exported `getStaticPaths` function is simply never
+ * invoked. A plain `blog/index.astro` guarded by `if (!features.blog) return []`
+ * was built and tested: `dist/blog/index.html` was emitted anyway, every time, flag
+ * or no flag. That fails GATE 3 outright — an indexable, crawlable `/blog` page
+ * shipping while `features.blog` is `false`, exactly the failure mode the brief
+ * calls "worse than not having built the blog at all."
+ *
+ * `getStaticPaths()` DOES work reliably on genuinely dynamic (bracketed) routes —
+ * confirmed both by this file and independently by `blog/[slug].astro` and the
+ * case-study system's `project/[slug].astro`. So this file uses Astro's *rest*
+ * parameter (`[...page]`) to become a dynamic route that can resolve to the exact
+ * same URL, `/blog` (no trailing segment, matching `trailingSlash: 'never'`), while
+ * actually letting `getStaticPaths()` govern whether it exists. An *optional single*
+ * segment (`[[page]]`) was tried first and rejected: Astro's static-path validator
+ * throws `GetStaticPathsExpectedParams` if `params` has no keys, and separately
+ * throws `Missing parameter` if a required-looking dynamic segment's value is
+ * `undefined` — there is no value that satisfies both checks for `[[page]]`. A rest
+ * parameter has neither problem: its own resolver (`params[key] ?? ''`, in Astro's
+ * route generator) treats an `undefined` value as "no segment" instead of throwing,
+ * so `getStaticPaths()` returning `[{ params: { page: undefined } }]` legitimately
+ * generates the bare `/blog` URL. The `page` param is never real — this file only
+ * ever returns `[]` or that one entry — it exists purely so Astro classifies the
+ * route as dynamic. Named `page` (not `slug`) specifically to avoid any ambiguity
+ * with the sibling `[slug].astro` article route; despite both routes structurally
+ * overlapping (a rest param matches any depth, including one segment), Astro's
+ * route priority favours the more specific `[slug]` match for real article paths,
+ * and this file's own `getStaticPaths()` never generates a one-segment path anyway
+ * — confirmed empirically: both `/blog` and `/blog/example-post` build correctly
+ * side by side with no route-collision error.
+ *
+ * GATE 3 of 6 (docs/enable-blog.md's six-gate checklist): route suppression.
+ * `getStaticPaths()` returns `[]` whenever `features.blog` is false — the committed
+ * value in src/config.ts — so Astro emits zero files under `dist/blog/` for the
+ * index. Verified against the actual build output, not assumed.
+ *
+ * When enabled, this mirrors projects.astro's hero + card-grid shape exactly, and
+ * reuses ProjectCard.astro rather than inventing a parallel BlogCard component — a
+ * post summary (title/description/tags/image/href) is the same shape as a project
+ * summary. ProjectCard is only imported here, never edited (D3 does not own it).
+ *
+ * Posts without a `heroImage` are filtered out of the grid: ProjectCard requires an
+ * image, and `heroImage` is intentionally optional at the schema level (not every
+ * post need have one) — so a post that omits it simply doesn't appear as a card
+ * until it has one. docs/enable-blog.md calls this out for anyone adding real posts.
+ */
+import type { ImageMetadata } from 'astro'
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import SectionShell from '../../components/SectionShell.astro'
+import SectionHeading from '../../components/SectionHeading.astro'
+import ProjectCard from '../../components/ProjectCard.astro'
+import { features } from '../../config'
+
+export async function getStaticPaths() {
+  if (!features.blog) return []
+  return [{ params: { page: undefined } }]
+}
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft)
+
+const posts = allPosts
+  .filter((post): post is typeof post & { data: { heroImage: ImageMetadata } } =>
+    Boolean(post.data.heroImage),
+  )
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+---
+
+<BaseLayout
+  title="Blog | Leviathan Core"
+  description="Insights, updates, and behind-the-scenes stories from the Leviathan Core team."
+  canonicalPath="/blog"
+>
+  <SectionShell sectionClass="section-blog-hero" withTopDivider={false}>
+    <div class="blog-hero-grid">
+      <SectionHeading as="h1" variant="display-2xl" class="blog-hero-heading">
+        News &amp; Insights
+      </SectionHeading>
+      <p class="lead-text">
+        Updates, perspectives, and behind-the-scenes stories from the team connecting brands and
+        audiences in the gaming space.
+      </p>
+    </div>
+  </SectionShell>
+
+  {
+    posts.length > 0 && (
+      <section class="section-blog-posts">
+        <div class="page-padding">
+          <div class="container-xxlarge">
+            <div class="blog-posts-list">
+              {posts.map((post) => (
+                <div class="blog-posts-item">
+                  <ProjectCard
+                    title={post.data.title}
+                    description={post.data.description}
+                    tags={post.data.tags}
+                    image={post.data.heroImage}
+                    imageAlt={post.data.heroImageAlt ?? post.data.title}
+                    href={`/blog/${post.id}`}
+                    ctaText="Read Article"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .lead-text {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-xl);
+    line-height: var(--lh-loose);
+    max-width: var(--width-lg);
+  }
+
+  .blog-hero-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .blog-hero-heading {
+    /* Source: `margin-bottom margin-xxhuge` around the heading resolves to a frozen 1rem in
+       that two-class combo (tokens.md BLOCKER-2), not the nominal --space-5xl (12rem) — same
+       resolved value projects.astro uses for its own hero heading. */
+    margin-bottom: 1rem;
+    max-width: var(--width-2xl);
+  }
+
+  .page-padding {
+    padding-inline: var(--page-padding);
+  }
+  .container-xxlarge {
+    width: 100%;
+    max-width: var(--container-3xl);
+    margin-inline: auto;
+  }
+  .blog-posts-list {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: var(--space-xl);
+  }
+  .blog-posts-item {
+    padding-block: var(--space-lg);
+    border-top: var(--divider-width) solid var(--divider-color);
+  }
+  .blog-posts-item:first-child {
+    border-top: none;
+  }
+</style>

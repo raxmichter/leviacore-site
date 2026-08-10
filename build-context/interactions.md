@@ -50,6 +50,50 @@ doesn't know which interactions exist.
    through a custom property the rAF loop reads. Needs three gates: `≥992px`, `pointer: fine`, and not
    `prefers-reduced-motion`.
 
+### 🎯 PHASE E READINESS MAP — selector reality check
+
+Compiled in the main thread after Phase D, by diffing the built output against the source. **Read this before writing any Phase E code.** The build already got burned once by trusting an interaction's *name* instead of its *target* (see `DECISIONS.md`, the reverted button-span entry).
+
+| Interaction | Source selector | Exists in rebuild? | Action |
+|---|---|---|---|
+| Button Hover In/Out | `.button` → `.button-inner-text`, `.button-inner-text-hover` | ✅ present | Attach CSS transition |
+| Label Hover In/Out | `.label` → `.label-text`, `.label-text-hover` | ⚠️ **renamed** | Attach to `.service-jump-link` → `.service-jump-link-text`, `.service-jump-link-text-hover`. Scoped inside `services.astro` |
+| Line / Line Vertical | `.line`, `.line-vertical` | ✅ present | IntersectionObserver, **fire-once** |
+| Scale In | `.image-icon` | ❌ **absent** | See below |
+| Mobile Menu Open/Close | `.mobile-menu*` | ✅ present | Structural JS already exists in `SiteHeader`; add the transition only |
+| Cursor Move / View Show / View Hide | `.cursor-wrapper`, `.cursor`, `.cursor-text.view` | ❌ **MISSING ENTIRELY** | See below |
+| Image Parallax | (per §1.x) | verify before building | — |
+
+#### ⚠️ The custom cursor markup does not exist in the rebuild — Phase E must create it
+
+Phase B/C never built it, because it is presentational scaffolding with no content, and nothing in `components.md` flagged it. Exact source markup, sitting immediately before `<header>`:
+
+```html
+<div class="cursor-wrapper">
+  <div class="cursor">
+    <div class="cursor-text view">View</div>
+  </div>
+</div>
+```
+
+**Scope it precisely — it is NOT sitewide.** Verified by grepping every export page and every captured live page:
+
+| Page | Cursor markup |
+|---|---|
+| `/`, `/services`, `/team`, `/projects`, `/contact` | ✅ present (3 elements each) |
+| `/project/<slug>` — all five, export **and** live | ❌ absent |
+| `/privacy-policy`, `/ccpa`, `/notice-at-collection`, `/404` | ❌ absent |
+
+Adding it sitewide would be a change to the live design, not a migration. Put it in the five static pages only — **not** in `BaseLayout`, which every page uses.
+
+Gates required, from §"Two behaviours to preserve": `≥992px`, `pointer: fine`, and not `prefers-reduced-motion`.
+
+#### ⚠️ `Scale In` targets `.image-icon`, which is a detail-page element
+
+`e-1158` fires `SCROLL_INTO_VIEW` on `.image-icon`, and the decode records its pages as *detail_blog-category, detail_category, detail_post, detail_product, detail_project* — i.e. **CMS detail templates, not the static pages.** Of those, only `detail_project` is in scope. The class appears **once** in the captured live Spiritfarer page and **zero** times in any static page.
+
+`.image-icon` does not exist in our rebuild. Before implementing: identify which element on the live case study page carries it, confirm our `project/[slug].astro` renders an equivalent, and attach there. **Do not apply Scale In sitewide** — and remember it is one of the three fire-once interactions that never reset.
+
 ### Accuracy notes carried up from the decode
 
 - Durations, delays, from/to values, units, and scroll offsets are **exact**.

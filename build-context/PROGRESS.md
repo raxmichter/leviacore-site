@@ -56,10 +56,10 @@ Violating these is how a session dies mid-phase.
 | B | Layout shell and components | Sonnet 5 ×3 | ✅ **Complete** |
 | C1 | Static pages — home, services, projects shell, team, contact | Sonnet 5 ×2 | ✅ **Complete** |
 | C2 | Legal and utility pages — privacy, CCPA, notice-at-collection, 404 | Sonnet 5 | ✅ **Complete** |
-| D1 | Case study system — collection, schema, `/project/[slug]` template | Sonnet 5 | ⬜ Not started |
-| D2 | Content migration — 11 bios, 5 case studies, alt text | Haiku 4.5 ×2 | ⬜ Blocked on CSV (content only) |
-| D3 | Blog structure, **shipped disabled** | Sonnet 5 | ⬜ Not started |
-| E | Interactions — the 19 action lists | Opus 5 | ⬜ Not started |
+| D1 | Case study system — collection, schema, `/project/[slug]` template | Sonnet 5 | ✅ **Complete** |
+| D2 | Content migration — 5 case studies, alt text, OG image | Sonnet 5 | ✅ **Complete** (CSV blocker removed — captured from live) |
+| D3 | Blog structure, **shipped disabled** | Sonnet 5 | ✅ **Complete** |
+| E | Interactions — 13 live action lists | Opus 5 | 🔄 **In progress** |
 | F | SEO, structured data, redirects, CI gates | Sonnet 5 | ⬜ Not started |
 | G | Visual fidelity convergence | Opus 5 + auditor | ⬜ Not started |
 | H | Handoff — README, docs, final review | Opus 5 | ⬜ Not started |
@@ -72,7 +72,7 @@ Violating these is how a session dies mid-phase.
 | C1 | `tokens.md`, `components.md`, the 5 static page HTMLs |
 | C2 | `tokens.md`, `components.md`, legal page HTMLs |
 | D1 | `components.md` (CMS placeholder section), `content-map.md` |
-| D2 | `content-map.md`, `assets.md`, `components.md` (team section) |
+| D2 | `assets.md`, `components.md` (team section), `_case-study-source/` |
 | D3 | `tokens.md`, `components.md`, `detail_post.html` (once) |
 | E | `interactions.md` |
 | F | `content-map.md`, `PROGRESS.md` |
