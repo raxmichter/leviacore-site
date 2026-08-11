@@ -167,3 +167,87 @@ strong {
   color: var(--color-ink);
   text-decoration: underline;
 }
+
+/* =========================================================================
+   Reduced motion — the single site-wide override
+   Implements build-context/interactions.md §3 ("Reduced-motion plan") verbatim,
+   per-interaction. It is deliberately NOT a blanket
+   `*{animation:none;transition:none}` sweep: that plan distinguishes three
+   tiers, and collapsing them would remove affordances users still want.
+
+     suppress  a-8 / a-165 / a-166 custom cursor, a-139 image parallax
+     soften    a-174 scale-in (opacity only), a-175 / a-176 rules (instant),
+               a-172 / a-173 mobile menu (fade only, no slide, no icon tween)
+     keep      a-74 / a-75 / a-77 / a-78 hover rolls — small, local,
+               user-initiated micro-interactions, shortened 500ms -> 150ms
+
+   ⚠️ `!important` is used ONLY inside this block, and only because every rule
+   it overrides lives in an Astro *scoped* <style>, which compiles to
+   `.foo[data-astro-cid-…]` — higher specificity than anything this global
+   sheet can write. Without it the block would silently lose the cascade, which
+   is the worst possible failure mode for an accessibility guarantee. This is
+   the sole intentional exception to the codebase's zero-!important property.
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  /* a-8 / a-165 / a-166 — suppress entirely and restore the native cursor.
+     The rAF loop is additionally gated in JS so it never mounts. */
+  .cursor-wrapper {
+    display: none !important;
+  }
+
+  /* a-139 — drop the ±7% scroll travel, keep the static scale(1.1) end state
+     so overflow-clipped wrappers do not reveal edge gaps. */
+  .image-cover,
+  .post-preview-image {
+    animation: none !important;
+    transform: scale(1.1) !important;
+  }
+
+  /* a-175 / a-176 — render the rules at their final state, instantly.
+     Forcing the end value (not just `transition: none`) also guarantees they
+     are visible even if the IntersectionObserver is gated off in JS. */
+  .line {
+    transform: scaleX(1) !important;
+    transition: none !important;
+  }
+
+  .line-vertical {
+    transform: scaleY(1) !important;
+    transition: none !important;
+  }
+
+  /* a-174 — opacity-only: drop scale(0->1), fade at 200ms linear.
+     NOTE for the scroll-reveal implementation: this softens the motion but does
+     not reveal the element on its own. The Scale In observer must STILL run and
+     still add its reveal class under reduced motion, or `.image-icon` stays at
+     opacity 0 and the content is invisible. */
+  .image-icon {
+    transform: none !important;
+    transition: opacity 0.2s linear !important;
+  }
+
+  /* a-172 / a-173 — the menu must still open; only the movement goes. Keeps the
+     fade at 150ms and keeps `display` in the transition list so the discrete
+     close still waits for the fade out instead of snapping. */
+  .mobile-menu {
+    transform: none !important;
+    transition:
+      opacity 0.15s linear,
+      display 0.15s allow-discrete !important;
+  }
+
+  /* Snap the hamburger straight to its X state — no rotate/collapse tween. */
+  .mobile-menu-toggle-line {
+    transition: none !important;
+  }
+
+  /* a-74 / a-75 / a-77 / a-78 — kept, shortened. A 100%-of-own-height slide on a
+     small text node, triggered by the user's own pointer, is not what
+     reduced-motion protects against; removing it would cost the affordance. */
+  .button-inner-text,
+  .button-inner-text-hover,
+  .service-jump-link-text,
+  .service-jump-link-text-hover {
+    transition-duration: 0.15s !important;
+  }
+}

@@ -1,0 +1,55 @@
+# Redirects — Netlify / Cloudflare Pages `_redirects` format.
+#
+# Purpose: resolve every URL the Webflow site served that this rebuild does not,
+# so external links and search results land somewhere real instead of a 404.
+# The migration plan's rule is that dead paths are resolved deliberately rather
+# than left to rot.
+#
+# Format: <from> <to> <status>
+# 301 = permanent. Use 301 so search engines transfer signal and update their index.
+
+# ── Template residue from the purchased Webflow theme ────────────────────────
+# These served Lorem Ipsum and fabricated articles to the public, linked from the
+# primary navigation. They are not migrated. See build-context/DECISIONS.md.
+/template-info/blog        /    301
+/template-info/shop        /    301
+/template-info/styleguide  /    301
+/template-info/licensing   /    301
+/template-info/changelog   /    301
+/template-info/*           /    301
+
+# ── /blog ────────────────────────────────────────────────────────────────────
+# Returned 404 on the live site. The blog is built but shipped disabled, so this
+# redirect stands in for it.
+#
+# ⚠️ WHEN THE BLOG IS ENABLED, DELETE THIS LINE. Netlify and Cloudflare both
+# apply _redirects BEFORE serving a static file at the same path, so leaving it
+# would shadow the real /blog index and the blog would appear not to work.
+# This is called out in docs/enable-blog.md.
+/blog                      /    301
+
+# ── /gcx ─────────────────────────────────────────────────────────────────────
+# A dated event landing page ("GCX, Orlando, Aug 4-5") that was never in the site
+# inventory. Dropped by direction. The URL is live today, so it redirects rather
+# than 404s.
+/gcx                       /    301
+
+# ── E-commerce scaffolding ───────────────────────────────────────────────────
+# No such functionality has ever existed on this site; these are unremoved
+# artifacts of the purchased template.
+/checkout                  /    301
+/paypal-checkout           /    301
+/order-confirmation        /    301
+
+# ── Extension-stripping ──────────────────────────────────────────────────────
+# The rebuilt site serves extensionless URLs. Anything that hardcoded a .html
+# extension — including two links inside the CCPA document itself, see
+# legal-page-url-reference.md — must still resolve.
+/index.html                /                        301
+/privacy-policy.html       /privacy-policy          301
+/ccpa.html                 /ccpa                    301
+/notice-at-collection.html /notice-at-collection    301
+/services.html             /services                301
+/projects.html             /projects                301
+/team.html                 /team                    301
+/contact.html              /contact                 301

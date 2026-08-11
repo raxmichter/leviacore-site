@@ -96,10 +96,40 @@ const classes = ['button', variant === 'primary' ? 'primary' : '', className].fi
     overflow: hidden;
   }
 
+  /* Phase E — a-74 / a-75 "Button Hover [In]/[Out]" (interactions.md §1.4–1.5).
+     Both spans translateY 0% -> -100%, 500ms, outQuint. The hover copy is parked
+     exactly one line-height BELOW the visible copy (inset: 100% 0 auto) so that a
+     single shared -100% shift rolls one out of the clipped .button-inner while the
+     other rolls in. Phase B parked it at `inset: 0; opacity: 0` as a placeholder —
+     the static, un-hovered appearance is identical either way (the span sits
+     outside the overflow:hidden box), so this is not a layout/size/spacing change. */
   .button-inner-text-hover {
     position: absolute;
-    inset: 0;
-    opacity: 0;
+    inset: 100% 0 auto;
     pointer-events: none;
+  }
+
+  .button-inner-text,
+  .button-inner-text-hover {
+    transform: translateY(0);
+    /* outQuint — cubic-bezier approximation of (t-1)^5+1, per interactions.md §0.2.
+       Labelled approximate there; error < 1% of travel. */
+    transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  /* Source gated this on mediaQueries: ["main"] (>=992px). `hover: hover` additionally
+     keeps it off touch pointers, where :hover sticks after a tap. */
+  @media (hover: hover) and (min-width: 992px) {
+    .button:hover .button-inner-text,
+    .button:hover .button-inner-text-hover {
+      transform: translateY(-100%);
+    }
+  }
+
+  /* Webflow omitted the keyboard path entirely. Deliberately NOT gated by width or
+     pointer type — a keyboard user gets the same affordance at every breakpoint. */
+  .button:focus-visible .button-inner-text,
+  .button:focus-visible .button-inner-text-hover {
+    transform: translateY(-100%);
   }
 </style>

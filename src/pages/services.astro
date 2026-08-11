@@ -237,11 +237,35 @@ const contactSocialLinks = [
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
   }
+  /* Phase E — a-77 / a-78 "Label Hover [In]/[Out]" (interactions.md §1.6–1.7).
+     Same mechanism and the same 500ms outQuint as the button roll; the source
+     classes were .label / .label-text / .label-text-hover, renamed here per the
+     Phase E readiness map. The third a-78 item (translateY 103%) has an empty
+     target in the IX2 data and never ran — deliberately not ported.
+     Hover copy parked one line-height below the visible copy; static appearance
+     is unchanged because .service-jump-link-inner clips it. */
   .service-jump-link-text-hover {
     position: absolute;
-    inset: 0;
-    opacity: 0;
+    inset: 100% 0 auto;
     pointer-events: none;
+  }
+  .service-jump-link-text,
+  .service-jump-link-text-hover {
+    transform: translateY(0);
+    /* outQuint — cubic-bezier approximation per interactions.md §0.2 (approximate). */
+    transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  /* Source gated on mediaQueries: ["main"] (>=992px). */
+  @media (hover: hover) and (min-width: 992px) {
+    .service-jump-link:hover .service-jump-link-text,
+    .service-jump-link:hover .service-jump-link-text-hover {
+      transform: translateY(-100%);
+    }
+  }
+  /* Keyboard parity — ungated, as with Button.astro. */
+  .service-jump-link:focus-visible .service-jump-link-text,
+  .service-jump-link:focus-visible .service-jump-link-text-hover {
+    transform: translateY(-100%);
   }
 
   .contact-grid {

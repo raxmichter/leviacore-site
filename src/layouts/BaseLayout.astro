@@ -46,6 +46,44 @@ const { title, description, ogImage, canonicalPath, noindex = false } = Astro.pr
 const DEFAULT_OG_IMAGE = '/og-image.png'
 const canonicalUrl = new URL(canonicalPath, Astro.site)
 const resolvedOgImage = new URL(ogImage ?? DEFAULT_OG_IMAGE, Astro.site).href
+
+/**
+ * JSON-LD Organization schema — Phase F.
+ *
+ * The live site has no structured data at all. This is free search-result
+ * enhancement that was simply never added.
+ *
+ * Emitted on the homepage only. Repeating an Organization block on every page
+ * adds no signal and risks search engines treating the site as declaring many
+ * organisations rather than one.
+ *
+ * Every value below is taken from the site's own content — the footer tagline
+ * ("...in the gaming space since 2017"), the header social links, and the
+ * homepage meta description. Nothing here is invented.
+ */
+const isHomepage = canonicalPath === '/'
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': new URL('/#organization', Astro.site).href,
+  name: 'Leviathan Core',
+  legalName: 'Leviathan Core, LLC',
+  url: new URL('/', Astro.site).href,
+  logo: new URL('/og-image.png', Astro.site).href,
+  description:
+    "Influencer marketing for the gaming industry. Partnering with the right influencers and connecting with the right audiences.",
+  foundingDate: '2017',
+  sameAs: [
+    'https://twitter.com/leviacore',
+    'https://www.linkedin.com/company/leviathan-core/',
+  ],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    email: 'development@leviacore.com',
+    url: new URL('/contact', Astro.site).href,
+  },
+}
 ---
 
 <html lang="en">
@@ -59,6 +97,16 @@ const resolvedOgImage = new URL(ogImage ?? DEFAULT_OG_IMAGE, Astro.site).href
         <meta name="robots" content="noindex,nofollow" />
       ) : (
         <link rel="canonical" href={canonicalUrl} />
+      )
+    }
+
+    {
+      /* JSON-LD Organization — homepage only. Absent from the live site entirely. */
+      isHomepage && !noindex && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(organizationSchema)}
+        />
       )
     }
 

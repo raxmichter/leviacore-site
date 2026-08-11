@@ -246,13 +246,20 @@ const sectionHeadingVariants = [
 
     <section class="gallery-section">
       <h2 class="gallery-label">ProjectCard.astro</h2>
+      <!--
+        Sample props point at a REAL case study. An earlier revision invented a
+        "Bungie: Destiny 2 Launch Campaign" with a fabricated /projects/bungie-destiny-2
+        link — which broke the link checker AND put imaginary client work in the repo.
+        Sample data on this page must reference real content or be obviously labelled
+        as a fixture; never a plausible-looking fake engagement.
+      -->
       <ProjectCard
-        title="Bungie: Destiny 2 Launch Campaign"
-        description="A coordinated influencer push across Twitch and YouTube timed to a major content drop."
+        title="Spiritfarer"
+        description="To help this new indie title set sail, we needed to get creative with the creators we targeted."
         tags={projectTags}
         image={lcTeamPhoto}
-        imageAlt="Screenshot montage from the Destiny 2 launch campaign"
-        href="/projects/bungie-destiny-2"
+        imageAlt="Placeholder image standing in for the Spiritfarer case study hero"
+        href="/project/spiritfarer"
       />
     </section>
 

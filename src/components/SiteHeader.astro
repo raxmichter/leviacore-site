@@ -121,8 +121,12 @@ const isCurrent = (path: string) => currentPath === path
 </header>
 
 <script>
-  // Structural open/close only — no animated transition (Phase E owns motion,
-  // including the documented 20px-scroll auto-close, tokens.md/interactions.md).
+  // Structural open/close only. Phase E added the a-172/a-173 motion purely in CSS
+  // (panel fade/slide in MobileMenu.astro, hamburger morph below) driven off the
+  // `hidden` attribute and the `is-active` class this script already sets — nothing
+  // here changed. STILL OUTSTANDING: the documented 20px-scroll auto-close at
+  // <=991px (interactions.md §1.17, 40 of a-173's 42 events). That is behaviour,
+  // not motion, so it was out of the CSS-interaction brief.
   const toggle = document.getElementById('mobile-menu-toggle')
   const menu = document.getElementById('mobile-menu')
 
@@ -289,6 +293,47 @@ const isCurrent = (path: string) => currentPath === path
     inline-size: var(--space-md);
     block-size: 1px;
     background: var(--color-ink);
+    transform-origin: 50% 50%;
+  }
+
+  /* Phase E — a-172 / a-173 hamburger morph (interactions.md §1.16–1.17).
+     Source targets .mobile-menu-toggle-line._01/._02/._03; the rebuild emits three
+     unnumbered spans, so the ordinal is read off :nth-child instead. No markup or
+     class changes — the `is-active` class is already toggled by the existing script.
+
+       open  : middle collapses (500ms outQuart, no delay), then the outer two
+               rotate to -39deg / +39deg (500ms outQuart, 300ms delay) = 800ms total
+       close : outer two return to 0deg (500ms outQuart, no delay), then the middle
+               re-expands (500ms outQuart, 300ms delay) = 800ms total
+
+     Note ±39°, not ±45° — that is the decoded value, not a rounding.
+     Source animated width 100% -> 0% on the middle bar; scaleX is the compositor-
+     friendly equivalent (the bar is centred in a flex column, so it collapses from
+     both ends either way) and leaves the static 1px rule byte-identical. */
+  .mobile-menu-toggle-line:nth-child(1),
+  .mobile-menu-toggle-line:nth-child(3) {
+    transform: rotate(0deg);
+    transition: transform 500ms cubic-bezier(0.165, 0.84, 0.44, 1) 0ms;
+  }
+
+  .mobile-menu-toggle-line:nth-child(2) {
+    transform: scaleX(1);
+    transition: transform 500ms cubic-bezier(0.165, 0.84, 0.44, 1) 300ms;
+  }
+
+  .mobile-menu-toggle.is-active .mobile-menu-toggle-line:nth-child(1) {
+    transform: rotate(-39deg);
+    transition-delay: 300ms;
+  }
+
+  .mobile-menu-toggle.is-active .mobile-menu-toggle-line:nth-child(3) {
+    transform: rotate(39deg);
+    transition-delay: 300ms;
+  }
+
+  .mobile-menu-toggle.is-active .mobile-menu-toggle-line:nth-child(2) {
+    transform: scaleX(0);
+    transition-delay: 0ms;
   }
 
   @media screen and (max-width: 991px) {

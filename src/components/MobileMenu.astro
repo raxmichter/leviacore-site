@@ -69,6 +69,22 @@ const isCurrent = (path: string) => currentPath === path
 </div>
 
 <style>
+  /* Phase E — a-172 / a-173 "Mobile Menu [Open]/[Close]" (interactions.md §1.16–1.17).
+     Panel half of the interaction; the hamburger half lives in SiteHeader.astro.
+
+       open  : opacity 0 -> 1, 300ms linear
+               translateY 10px -> 0px, 500ms outQuart
+       close : opacity 1 -> 0, 300ms linear
+               translateY 0px -> 10px, 300ms outQuart
+               then display: none
+
+     The panel's shown/hidden state is the existing `hidden` attribute toggled by
+     SiteHeader's script — untouched. `transition-behavior: allow-discrete` plus
+     `@starting-style` is what lets a display:none <-> display:block element animate
+     without changing that logic (interactions.md advises visibility/inert instead,
+     but that would mean rewriting the toggle; this reaches the same result in CSS
+     only and keeps the element out of the a11y tree while closed).
+     The 20px scroll auto-close is behaviour, not motion — not implemented here. */
   .mobile-menu {
     display: none;
     position: fixed;
@@ -79,10 +95,33 @@ const isCurrent = (path: string) => currentPath === path
     z-index: var(--z-overlay);
     background: var(--color-bg);
     overflow-y: auto;
+    opacity: 0;
+    transform: translateY(10px);
+    /* Closed state carries the CLOSE timings (300ms), per a-173. outQuart is the
+       approximate cubic-bezier from interactions.md §0.2. */
+    transition:
+      opacity 300ms linear,
+      transform 300ms cubic-bezier(0.165, 0.84, 0.44, 1),
+      display 300ms allow-discrete;
   }
 
   .mobile-menu:not([hidden]) {
     display: block;
+    opacity: 1;
+    transform: translateY(0);
+    /* Open state carries the OPEN timings — a-172's translate runs 500ms, its
+       opacity 300ms. Asymmetric in/out is the source's own behaviour. */
+    transition:
+      opacity 300ms linear,
+      transform 500ms cubic-bezier(0.165, 0.84, 0.44, 1),
+      display 500ms allow-discrete;
+  }
+
+  @starting-style {
+    .mobile-menu:not([hidden]) {
+      opacity: 0;
+      transform: translateY(10px);
+    }
   }
 
   .mobile-menu-wrapper {

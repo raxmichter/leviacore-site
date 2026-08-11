@@ -25,3 +25,6 @@ tests/visual/__screenshots__/
 tests/visual/__diffs__/
 test-results/
 playwright-report/
+
+# Playwright browsers are installed globally, not vendored
+.cache/

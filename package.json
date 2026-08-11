@@ -11,10 +11,16 @@
     "preview": "astro preview",
     "astro": "astro",
     "verify": "node scripts/verify-pages.mjs",
-    "build:verify": "astro build && node scripts/verify-pages.mjs",
-    "assets:localize": "node scripts/localize-assets.mjs"
+    "build:verify": "astro build && npm run check:all",
+    "assets:localize": "node scripts/localize-assets.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "check:a11y": "node scripts/check-a11y.mjs",
+    "check:structure": "node scripts/verify-pages.mjs",
+    "check:all": "node scripts/verify-pages.mjs && node scripts/check-links.mjs && node scripts/check-a11y.mjs",
+    "check:visual": "node scripts/visual-regression.mjs"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/syne": "^5.3.0",
     "@fontsource/roboto-mono": "^5.3.0",
     "astro": "^7.2.0",
@@ -23,6 +29,10 @@
   "private": true,
   "description": "www.leviacore.com — static site (Astro). Migrated off Webflow.",
   "devDependencies": {
-    "@types/js-yaml": "^4.0.9"
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "^1.62.1",
+    "@types/js-yaml": "^4.0.9",
+    "pixelmatch": "^7.2.0",
+    "pngjs": "^7.0.0"
   }
 }

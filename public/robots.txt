@@ -1,0 +1,10 @@
+# www.leviacore.com
+
+User-agent: *
+Allow: /
+
+# Dev-only component gallery. Not site content; also carries a noindex meta tag
+# and is excluded from the sitemap. Listed here as defence in depth.
+Disallow: /dev/
+
+Sitemap: https://www.leviacore.com/sitemap-index.xml

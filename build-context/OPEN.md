@@ -6,6 +6,17 @@ Last reviewed: 2026-08-10
 
 ---
 
+## ⛔ Standing directives from George — 2026-08-10, overnight autonomous run
+
+**Do not violate these. They are explicit instructions, not defaults.**
+
+1. **Case study metrics: DO NOT ADJUST.** The text/infographic discrepancies in item 7 are under review by George. Port and leave verbatim. Do not "correct" a number to match its graphic.
+2. **Privacy policy: DO NOT EDIT CONTENT.** A full replacement is already drafted and will be supplied *after* this replication is complete. Do not rewrite, restructure, or update the policy text. The Phase C2 markup conversion is done; nothing further is authorized.
+3. **Autonomous execution E→F→G→H.** George is asleep. Do not ask for approval, do not block on questions. Make reasonable calls, document them in `DECISIONS.md`, and keep going.
+4. **Astro trouble → the docs.** <https://docs.astro.build/en/getting-started/>. Consult before improvising around framework behaviour.
+5. **Deliverable:** a previewable site George can review in the morning, with decisions documented, before handing to the CTO.
+6. **One deliverable to produce, not execute:** evaluate whether Astro's own contact-form handling (server islands / Actions / an API route) is a more elegant solution than the current placeholder. If yes, write it up as an **optional additional phase** and present it — **do not build it** as part of E–H.
+
 ## Blocking — CTO
 
 ### 1. ~~Projects Collection CSV + 5 case study hero images~~ ✅ **UNBLOCKED 2026-08-10 — no CSV required**
