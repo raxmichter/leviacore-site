@@ -96,7 +96,7 @@ Full guide: **[docs/editing-content.md](docs/editing-content.md)**. Reviewing th
 
 | To change | Edit |
 |---|---|
-| A case study | `src/content/projects/<slug>.md` |
+| A case study | `src/content/projects/<slug>.md` — template + guide: `docs/case-study-template.md`, `docs/adding-a-case-study.md` |
 | Team roster | `src/data/team.yaml` |
 | Legal pages | `src/content/legal/*.md` |
 | Enable the blog | `docs/enable-blog.md` — **follow the doc, do not just flip the flag** |

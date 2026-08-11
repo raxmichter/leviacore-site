@@ -43,7 +43,9 @@ draft: false
 
 Below that block is the page copy, written in Markdown — `## Challenge` and `## Solution` create the section headings.
 
-**To add a new case study:** copy an existing file, rename it to the URL you want (lowercase, hyphens, no spaces), and replace the contents. Put its images in `src/assets/images/projects/`.
+**To add a new case study:** copy **[case-study-template.md](case-study-template.md)** to `src/content/projects/<slug>.md` and fill it in. Put its images in `src/assets/images/projects/`.
+
+**Gathering the material?** **[adding-a-case-study.md](adding-a-case-study.md)** is a checklist for whoever collects the copy, images and numbers — image sizes, character limits, and the three headline stats. It is written to be handed to someone who never touches the repo.
 
 **`draft: true`** hides a case study from the live site while you work on it.
 
