@@ -28,10 +28,9 @@ const classes = [
 <div class={classes} aria-hidden="true"></div>
 
 <style>
-  .line {
-    width: 100%;
-    border-top: var(--divider-width) solid var(--divider-color);
-  }
+  /* .line / .line-vertical are global primitives in global.css — they appear in
+     five components plus page-local markup, and scoping them here left every
+     page-rendered divider invisible. Do not re-declare the base rule locally. */
   .line-vertical {
     align-self: stretch;
     border-left: var(--divider-width) solid var(--divider-color);

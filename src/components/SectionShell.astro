@@ -38,10 +38,9 @@ const { sectionClass, padding = 'xlarge', withTopDivider = true, id } = Astro.pr
   /* .page-padding and .container-xxlarge are declared globally in global.css —
      the header and footer use the same class names, and scoping them here left
      both unstyled. Do not re-declare them locally. */
-  .line {
-    border-top: var(--divider-width) solid var(--divider-color);
-    width: 100%;
-  }
+  /* .line / .line-vertical are global primitives in global.css — they appear in
+     five components plus page-local markup, and scoping them here left every
+     page-rendered divider invisible. Do not re-declare the base rule locally. */
   /* `.padding-vertical.padding-large` has NO combo override in source, so the
      plain responsive `.padding-large` applies: 3rem / 2.5rem @≤991 / 1.5rem @≤767,
      which is exactly --space-lg. Verified against the source. */

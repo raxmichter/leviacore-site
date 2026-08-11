@@ -149,10 +149,9 @@ const isCurrent = (path: string) => currentPath === path
     text-decoration: underline;
   }
 
-  .line {
-    block-size: var(--divider-width);
-    background: var(--divider-color);
-  }
+  /* .line / .line-vertical are global primitives in global.css — they appear in
+     five components plus page-local markup, and scoping them here left every
+     page-rendered divider invisible. Do not re-declare the base rule locally. */
 
   .button.primary {
     display: inline-flex;

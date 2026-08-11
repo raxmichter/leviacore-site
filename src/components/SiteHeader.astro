@@ -264,14 +264,9 @@ const isCurrent = (path: string) => currentPath === path
     gap: var(--space-xs);
   }
 
+  /* Box/sizing for .badge is global (global.css): 40px, .small 32px, .large 50px,
+     per source. Only the properties global.css does NOT set belong here. */
   .badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-circle);
-    border: 1px solid var(--color-ink);
-    inline-size: var(--space-xl);
-    block-size: var(--space-xl);
     font-family: var(--font-mono);
     font-size: var(--fs-mono-xs);
     letter-spacing: var(--ls-wide);
@@ -342,8 +337,7 @@ const isCurrent = (path: string) => currentPath === path
     }
   }
 
-  .line {
-    block-size: var(--divider-width);
-    background: var(--divider-color);
-  }
+  /* .line / .line-vertical are global primitives in global.css — they appear in
+     five components plus page-local markup, and scoping them here left every
+     page-rendered divider invisible. Do not re-declare the base rule locally. */
 </style>

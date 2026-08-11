@@ -156,19 +156,9 @@ const year = new Date().getFullYear()
     justify-content: center;
   }
 
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-circle);
-    border: 1px solid var(--color-ink);
-    inline-size: var(--space-xl);
-    block-size: var(--space-xl);
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    letter-spacing: var(--ls-wide);
-    text-transform: uppercase;
-  }
+  /* .badge is a global primitive in global.css (40px, .small 32px). This file
+     previously re-declared it at --space-xl (64px); being scoped, it won and the
+     footer pills rendered oversized. Do not re-declare it locally. */
 
   .line-vertical {
     width: var(--divider-width);
@@ -236,10 +226,9 @@ const year = new Date().getFullYear()
     text-decoration: underline;
   }
 
-  .line {
-    block-size: var(--divider-width);
-    background: var(--divider-color);
-  }
+  /* .line / .line-vertical are global primitives in global.css — they appear in
+     five components plus page-local markup, and scoping them here left every
+     page-rendered divider invisible. Do not re-declare the base rule locally. */
 
   .footer-bottom {
     padding-block: var(--space-md);

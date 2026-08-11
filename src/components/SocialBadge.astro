@@ -30,15 +30,9 @@ const rel = target === '_blank' ? 'noopener noreferrer' : undefined
 </a>
 
 <style>
+  /* Box/sizing for .badge is global (global.css): 40px, .small 32px, .large 50px,
+     per source. Only the properties global.css does NOT set belong here. */
   .badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    /* Fixed circular chip size — no dedicated token in tokens.md for this dimension. */
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
-    border-radius: var(--radius-circle);
-    border: var(--divider-width) solid var(--color-ink);
     color: var(--color-ink);
     text-decoration: none;
   }

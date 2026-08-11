@@ -31,7 +31,12 @@ const OUT = join(process.cwd(), 'tests', 'visual', '__diffs__')
 const LIVE = 'https://www.leviacore.com'
 const PORT = 4400
 
-const WIDTHS = [375, 767, 768, 1280, 1920]
+/**
+ * Widths to capture. 1439 and 1440 sit either side of the min-width:1440 breakpoint —
+ * several layouts change column count there, and capturing only up to 1280 then jumping
+ * to 1920 hid the /projects hero going two-column. Boundaries are where layout breaks.
+ */
+const WIDTHS = [375, 767, 768, 1280, 1439, 1440, 1920]
 
 /**
  * Pages to compare. Local path first; the live URL is the same path.

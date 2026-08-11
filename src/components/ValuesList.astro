@@ -139,15 +139,7 @@ const { headingText = 'the values at our core.', items, portraitAlt } = Astro.pr
     gap: var(--space-md);
     align-items: start;
   }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    inline-size: 2.75rem; /* matches SocialBadge — no dedicated token in tokens.md */
-    block-size: 2.75rem;
-    border-radius: var(--radius-circle);
-    border: var(--divider-width) solid var(--color-ink);
-  }
+  /* .badge is fully covered by the global primitive in global.css. */
   .text-meta {
     font-family: var(--font-mono);
     font-size: var(--fs-mono-md);

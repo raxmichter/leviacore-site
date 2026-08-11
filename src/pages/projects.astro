@@ -72,6 +72,12 @@ const projects = entries
       <section class="section-work-projects">
         <div class="page-padding">
           <div class="container-xxlarge">
+            {/*
+              Rule between the hero and the project list. This section was hand-rolled
+              rather than wrapped in SectionShell, so it never got the divider that
+              SectionShell adds by default — the missing border on this page.
+            */}
+            <div class="line" aria-hidden="true" />
             <div class="work-projects-list">
               {projects.map((project) => (
                 <div class="work-projects-item">
@@ -102,10 +108,35 @@ const projects = entries
     max-width: var(--width-lg);
   }
 
+  /* Source `.work-hero-grid` (leviathan-core-2023-r1.webflow.css:3521) is a GRID
+     whose column count changes at the wide breakpoints — it was built here as a
+     single-column flex stack, so the heading and intro stacked at every width.
+
+       base / ≤1439 : 1.5fr        single column, stacked
+       ≥1440px      : 2.25fr 1fr   heading left, intro right
+       ≥1920px      : 1.5fr 1fr    same, intro column wider
+       ≤991px       : 1fr          single column
+
+     The two-column form only appears above 1440px, which is why it was missed —
+     the earlier verification matrix tops out at 1920 but the 1440 boundary itself
+     was never captured. Worth adding 1440 to the Phase G widths. */
   .work-hero-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1.5fr;
     gap: var(--space-md);
+  }
+
+  @media screen and (min-width: 1440px) {
+    .work-hero-grid {
+      grid-template-columns: 2.25fr 1fr;
+      column-gap: var(--space-xl);
+    }
+  }
+
+  @media screen and (min-width: 1920px) {
+    .work-hero-grid {
+      grid-template-columns: 1.5fr 1fr;
+    }
   }
   .work-hero-heading {
     /* Source: `margin-bottom margin-xxhuge` around the heading resolves to a frozen 1rem in

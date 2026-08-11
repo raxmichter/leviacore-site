@@ -89,6 +89,41 @@ button {
   margin-inline: auto;
 }
 
+/* ---------- Dividers ----------
+   Source rules at leviathan-core-2023-r1.webflow.css:1729 and :3002.
+
+   ⚠️ These MUST be global. `.line` was previously declared inside FIVE separate
+   scoped component styles (Divider, SectionShell, SiteHeader, SiteFooter,
+   MobileMenu), each compiling to `.line[data-astro-cid-…]`. Any `.line` rendered
+   by a PAGE rather than by one of those components therefore got no styling at
+   all and was invisible — the missing rule under the /projects hero, among others.
+
+   This is the FOURTH time the same mistake produced a visual bug (see also
+   .page-padding, .container-xxlarge and .badge). Rule of thumb: if a class name
+   appears in more than one component, it is a global primitive and belongs here,
+   not in a scoped block.
+
+   `transform-origin` is load-bearing — the Line / Line Vertical scroll reveals
+   scale from the centre outward (interactions.md a-175/a-176). */
+.line {
+  inline-size: 100%;
+  block-size: var(--divider-width);
+  background-color: var(--divider-color);
+  border-top-width: 0;
+  transform-origin: 50%;
+  perspective-origin: 50%;
+}
+
+/* Fills its grid cell; the 1px comes from the grid track it sits in, which is
+   why the content grids declare a `var(--divider-width)` column. */
+.line-vertical {
+  inline-size: 100%;
+  block-size: 100%;
+  background-color: var(--divider-color);
+  transform-origin: 50%;
+  perspective-origin: 50%;
+}
+
 /* ---------- Badge (social pills) ----------
    Source rules at leviathan-core-2023-r1.webflow.css:1948/1965/1976.
    Global for the same reason as the layout primitives above: SiteHeader writes
