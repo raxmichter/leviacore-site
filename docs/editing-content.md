@@ -66,7 +66,7 @@ One file: `src/data/team.yaml`. One block per person.
 
 **To add someone:** copy a block, change the details, and put their headshot in `src/assets/images/`. Order in the file is the order on the page.
 
-**The "We're Hiring" card** is the last entry, marked `hiring: true`. Edit its role text to change what the opening says, or delete the block to remove it.
+**Advertising an open role?** Add an entry with `hiring: true` and use the `were-hiring.jpg` image — it renders as a "We're Hiring!" card with the role name. There isn't one on the site today: the last opening, Director of Business Development, was filled by Lauren Escobedo in August 2026 and her entry replaced the card.
 
 > Note: the image file `JordiChapdelanie-FINAL.jpg` misspells the surname. The filename is left alone deliberately — renaming it gains nothing and risks breaking the link. The *displayed* name is spelled correctly.
 
