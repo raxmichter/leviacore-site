@@ -6,6 +6,58 @@ Governing plan: `../../leviacore-build-plan.md` · Rationale doc: `../../leviaco
 
 ---
 
+## ⏱️ CURRENT STATE — 2026-08-11
+
+**All eight phases are built. The site is complete, previewable, and passing all four gates.** What remains is visual polish, two decisions, and cutover.
+
+| | |
+|---|---|
+| Commits | 33 |
+| Routes | 15 |
+| Gates | schema, structure, links, axe — all passing |
+| Preview | `npm run dev` → http://localhost:4321 |
+| Handoff package | `../../_handoff/` — see below |
+
+### What is genuinely outstanding
+
+1. **`/team` at ≤767px** — the last real fidelity gap and the worst number on the site. Cause narrowed (not wrappers, not column count; likely headshot render height). See `fidelity.md` gap 1. **Not yet diagnosed.**
+2. **`/projects` card list and `/` at narrow widths** — known, specified, unfixed. `fidelity.md` gaps 2–3.
+3. **Contact form endpoint** — the only thing blocking launch. `OPEN.md` item 2, and `../../optional-phase-contact-form.md` for the recommendation.
+4. **Case study metric discrepancies** — under George's review. **Do not adjust.** `OPEN.md` item 7.
+5. **Shared-class consolidation** — about a dozen class names still declared in 2+ scoped blocks. Nothing broken (`node scripts/audit-unstyled.mjs` reports zero), deliberately deferred to the CTO. See the scoped-CSS entry in `DECISIONS.md`.
+
+### The handoff package — `../../_handoff/`
+
+Seven files, ~23MB, built for 1:1 transfer to the CTO (no public hosting, by direction).
+
+- `leviacore-site-repo.tar.gz` — the repo **with full git history**. The commit messages are the review narrative; a flat file copy destroys them.
+- `webflow-source-inputs.tar.gz` — the Webflow export plus the five live case study pages and CMS images captured before cutover.
+- `README.md` + four planning docs.
+
+**To repack after changes:**
+```bash
+cd "New Site Project"
+rm -f _handoff/leviacore-site-repo.tar.gz
+tar --force-local -czf _handoff/leviacore-site-repo.tar.gz \
+  --exclude=node_modules --exclude=dist --exclude=.astro \
+  --exclude='tests/visual/__diffs__' --exclude='tests/visual/__shots__' site
+cp *.md _handoff/            # refresh the four planning docs
+```
+Then update the commit/file counts in `_handoff/README.md`, and **verify by extracting to a clean directory** — that test has already caught 2MB of accidentally-committed screenshots and a wrong file count.
+
+⚠️ **Transfer:** send the `_handoff` folder, not the raw `site/` folder — SharePoint and Slack both mangle `.git`. Share to **specific people, not "anyone with the link."**
+
+### Session log — 2026-08-11
+
+- **11 visual defects fixed** (see `fidelity.md`). Nine shared one root cause: scoped CSS on shared class names.
+- **Verification widths widened** to 375/767/768/1280/1439/1440/1920 after wide-breakpoint rules were found missing on three heroes.
+- **Three audit scripts added** — `audit-unstyled`, `audit-breakpoints`, `audit-combos` — to re-check those defect classes on demand.
+- **Team roster updated:** Lauren Escobedo replaces the "We're Hiring" card as Director of Business Development, placed 6th (after Max Richter, the source's original slot for that role).
+- **Two deliberate departures from live, both by George's direction:** no social badges in the contact block (footer already shows them), and no campaign year on homepage project cards.
+- **New docs:** `docs/CTO-REVIEW.md`, `docs/case-study-template.md`, `docs/adding-a-case-study.md`.
+
+---
+
 ## Re-entry protocol
 
 If you are starting a session cold, or recovering from a context compaction, read in this order:
