@@ -59,10 +59,10 @@ Violating these is how a session dies mid-phase.
 | D1 | Case study system — collection, schema, `/project/[slug]` template | Sonnet 5 | ✅ **Complete** |
 | D2 | Content migration — 5 case studies, alt text, OG image | Sonnet 5 | ✅ **Complete** (CSV blocker removed — captured from live) |
 | D3 | Blog structure, **shipped disabled** | Sonnet 5 | ✅ **Complete** |
-| E | Interactions — 13 live action lists | Opus 5 | 🔄 **In progress** |
-| F | SEO, structured data, redirects, CI gates | Sonnet 5 | ⬜ Not started |
-| G | Visual fidelity convergence | Opus 5 + auditor | ⬜ Not started |
-| H | Handoff — README, docs, final review | Opus 5 | ⬜ Not started |
+| E | Interactions — 13 live action lists | Opus 5 ×2 | ✅ **Complete** |
+| F | SEO, structured data, redirects, CI gates | Opus 5 | ✅ **Complete** |
+| G | Visual fidelity convergence | Opus 5 | ⚠️ **Partial — see fidelity.md** |
+| H | Handoff — README, docs, final review | Opus 5 | ✅ **Complete** |
 
 ## Reading list per phase
 

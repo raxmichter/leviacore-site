@@ -116,7 +116,9 @@ const { title, client, year, timeline, services, website, heroImage, heroImageAl
               <dt class="project-meta-label">Website</dt>
               <dd class="project-meta-value">
                 <a href={website} class="text-meta-link" target="_blank" rel="noopener">
-                  {website.replace(/^https?:\/\//, '')}
+                  {/* Live uses "<PROJECT> WEBSITE" as the link text, not the raw URL —
+                      e.g. "SPIRITFARER WEBSITE". Corrected in Phase G. */}
+                  {`${title} Website`}
                 </a>
               </dd>
             </div>
@@ -263,10 +265,15 @@ const { title, client, year, timeline, services, website, heroImage, heroImageAl
     text-transform: uppercase;
     color: var(--color-ink);
   }
+  /* Live renders the service tags inline on one wrapping row
+     (CAMPAIGNS FINANCE CONSULTING LEGAL), not stacked. Corrected in Phase G —
+     stacking made the metadata column ~120px taller on every case study. */
   .project-services-list {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-tiny);
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: var(--space-sm);
+    row-gap: var(--space-tiny);
     margin: 0;
     padding: 0;
     list-style: none;

@@ -65,6 +65,59 @@ button {
   outline-offset: 2px;
 }
 
+/* ---------- Layout primitives ----------
+   `.page-padding` and `.container-xxlarge` are the site's two structural
+   wrappers, used by SectionShell, SiteHeader AND SiteFooter.
+
+   They live here, globally, deliberately. They were originally declared only
+   inside SectionShell's scoped <style>, which meant Astro compiled them to
+   `.page-padding[data-astro-cid-…]` — so sections were laid out correctly while
+   the header and footer, using the same class names, got NO horizontal padding
+   and NO max-width. The header logo sat 48px too far left on every page and the
+   content column was 100px too wide, which was the single largest source of
+   visual drift found in Phase G.
+
+   Source values: .page-padding padding-inline 3rem (responsive via the token),
+   .container-xxlarge max-width 112.5rem / 1800px, centred. */
+.page-padding {
+  padding-inline: var(--page-padding);
+}
+
+.container-xxlarge {
+  width: 100%;
+  max-width: var(--container-3xl);
+  margin-inline: auto;
+}
+
+/* ---------- Badge (social pills) ----------
+   Source rules at leviathan-core-2023-r1.webflow.css:1948/1965/1976.
+   Global for the same reason as the layout primitives above: SiteHeader writes
+   `.badge.small` markup directly, SiteFooter and ContactCTA go through
+   SocialBadge, and a scoped rule in the component left the header's badges
+   unstyled — they rendered at roughly double size on every page. */
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 40px;
+  block-size: 40px;
+  border: var(--divider-width) solid var(--color-ink);
+  border-radius: var(--radius-circle);
+  line-height: var(--lh-tighter);
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.badge.small {
+  inline-size: 32px;
+  block-size: 32px;
+}
+
+.badge.large {
+  inline-size: 50px;
+  block-size: 50px;
+}
+
 /* ---------- Body ---------- */
 body {
   background: var(--color-bg);

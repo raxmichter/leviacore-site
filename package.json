@@ -19,7 +19,9 @@
     "check:all": "node scripts/verify-pages.mjs && node scripts/check-links.mjs && node scripts/check-a11y.mjs",
     "check:visual": "node scripts/visual-regression.mjs",
     "check:lighthouse": "node scripts/check-lighthouse.mjs",
-    "assets:prune": "node scripts/prune-unused-assets.mjs"
+    "assets:prune": "node scripts/prune-unused-assets.mjs",
+    "compare:shots": "node scripts/compare-shots.mjs",
+    "compare:metrics": "node scripts/compare-metrics.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

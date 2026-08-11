@@ -216,6 +216,22 @@ const year = new Date().getFullYear()
     gap: var(--space-xs);
   }
 
+  /* Source rule (leviathan-core-2023-r1.webflow.css:1877). Phase B rendered these
+     as plain sentence-case body text; the live site sets them in uppercase mono.
+     Restored in Phase G — this was visible on every page of the site. */
+  .footer-nav-item-link {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .footer-nav-item-link:hover {
+    text-decoration: underline;
+  }
+
   .footer-nav-item-link[aria-current='page'] {
     text-decoration: underline;
   }

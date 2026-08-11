@@ -122,21 +122,40 @@ const messageId = `${idPrefix}-message`
     flex-direction: column;
     gap: var(--space-xxs);
   }
+  /*
+   * The source form has NO labels at all — placeholder text stands in for them,
+   * which is an accessibility failure (placeholders vanish on input and are not
+   * reliably announced). Phase B added real <label>s, which fixed that but made
+   * the form visibly different from the live site.
+   *
+   * Phase G resolution: keep the labels, hide them visually. Screen readers and
+   * `label[for]` association work exactly as before; sighted users see the live
+   * site's design. Strictly better than the original, pixel-identical to it.
+   */
   .form-label {
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    line-height: var(--lh-looser);
-    letter-spacing: var(--ls-wide);
-    text-transform: uppercase;
-    color: var(--color-ink);
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
+
+  /* Source rule (leviathan-core-2023-r1.webflow.css:1240): underline only —
+     transparent background, no box, bottom rule, 4rem min-height. Phase B had
+     rendered these as fully bordered boxes. */
   .form-input {
     width: 100%;
     box-sizing: border-box;
-    border: var(--divider-width) solid var(--color-ink);
+    border: 0;
+    border-bottom: var(--divider-width) solid var(--color-ink-pure);
     border-radius: 0;
     background: var(--color-transparent);
-    padding: var(--space-xs) var(--space-sm);
+    min-height: 4rem;
+    padding: var(--space-sm);
     font-family: var(--font-mono);
     font-size: var(--fs-mono-lg);
     line-height: var(--lh-loose);

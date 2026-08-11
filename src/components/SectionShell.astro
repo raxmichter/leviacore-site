@@ -35,22 +35,36 @@ const { sectionClass, padding = 'xlarge', withTopDivider = true, id } = Astro.pr
 </section>
 
 <style>
-  .page-padding {
-    padding-inline: var(--page-padding);
-  }
-  .container-xxlarge {
-    width: 100%;
-    max-width: var(--container-3xl);
-    margin-inline: auto;
-  }
+  /* .page-padding and .container-xxlarge are declared globally in global.css —
+     the header and footer use the same class names, and scoping them here left
+     both unstyled. Do not re-declare them locally. */
   .line {
     border-top: var(--divider-width) solid var(--divider-color);
     width: 100%;
   }
+  /* `.padding-vertical.padding-large` has NO combo override in source, so the
+     plain responsive `.padding-large` applies: 3rem / 2.5rem @≤991 / 1.5rem @≤767,
+     which is exactly --space-lg. Verified against the source. */
   .padding-vertical.padding-large {
     padding-block: var(--space-lg);
   }
+
+  /* ⚠️ `.padding-vertical.padding-xlarge` IS a combo override (source line 1687):
+     a flat 2rem, and — verified — it is NOT restated in ANY media query. So it
+     stays 2rem at every viewport while the standalone `.padding-xlarge` scales
+     4rem → 3rem → 2rem.
+
+     This is the same trap tokens.md documents as BLOCKER-2 for the
+     `.margin-bottom.margin-*` combos. An earlier revision of this file used
+     var(--space-xl) here, which made every xlarge section 2rem too tall at
+     desktop and 1rem too tall at tablet. Port the RESOLVED value, not the
+     nominal scale. */
   .padding-vertical.padding-xlarge {
-    padding-block: var(--space-xl);
+    padding-block: 2rem;
+  }
+
+  /* Same class of override, same reasoning (source line 1682), flat 4rem. */
+  .padding-vertical.padding-xhuge {
+    padding-block: 4rem;
   }
 </style>
