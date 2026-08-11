@@ -5,6 +5,7 @@ year: 2017
 timeline: "2 Months"
 services: ["Campaigns", "Consulting", "Finance", "Legal"]
 website: "https://warframe.com"
+websiteLabel: "warframe.com"
 heroImage: "../../assets/images/projects/warframe-hero.png"
 heroImageAlt: "Warframe logo on a black background"
 metrics:

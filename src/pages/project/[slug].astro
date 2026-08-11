@@ -76,7 +76,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props
 const { Content } = await render(entry)
-const { title, client, year, timeline, services, website, heroImage, heroImageAlt, metrics, gallery, description } =
+const { title, client, year, timeline, services, website, websiteLabel, heroImage, heroImageAlt, metrics, gallery, description } =
   entry.data
 ---
 
@@ -118,7 +118,7 @@ const { title, client, year, timeline, services, website, heroImage, heroImageAl
                 <a href={website} class="text-meta-link" target="_blank" rel="noopener">
                   {/* Live uses "<PROJECT> WEBSITE" as the link text, not the raw URL —
                       e.g. "SPIRITFARER WEBSITE". Corrected in Phase G. */}
-                  {`${title} Website`}
+                  {websiteLabel ?? `${title} Website`}
                 </a>
               </dd>
             </div>

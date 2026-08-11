@@ -5,6 +5,7 @@ year: 2022
 timeline: "16 Weeks"
 services: ["Legal", "Campaigns", "Consulting", "Finance"]
 website: "https://www.newworld.com/en-us/news/articles/return-to-aeternum"
+websiteLabel: "Return to Aeternum Event"
 heroImage: "../../assets/images/projects/return-to-aeternum-hero.png"
 heroImageAlt: "New World: Return to Aeternum key art — two armored warriors flanking a winged emblem beneath the event logo"
 metrics:

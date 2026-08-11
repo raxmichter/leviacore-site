@@ -5,6 +5,7 @@ year: 2019
 timeline: "3 Weeks"
 services: ["Campaigns", "Consulting"]
 website: "https://borderlands.com/en-US/"
+websiteLabel: "Borderlands 3"
 heroImage: "../../assets/images/projects/borderlands3-hero.jpg"
 heroImageAlt: "Borderlands 3 key art featuring Handsome Jack's mask surrounded by weapons and red roses"
 metrics:

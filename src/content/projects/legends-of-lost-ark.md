@@ -5,6 +5,7 @@ year: 2022
 timeline: "12 Weeks"
 services: ["Campaigns", "Consulting", "Finance", "Legal"]
 website: "https://www.playlostark.com/en-gb/community/legends-of-lost-ark"
+websiteLabel: "Event Website"
 heroImage: "../../assets/images/projects/legends-of-lost-ark-hero.png"
 heroImageAlt: "Legends of Lost Ark event key art showing a futuristic underground arena beneath the game's logo"
 metrics:

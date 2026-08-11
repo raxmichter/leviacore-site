@@ -5,6 +5,7 @@ year: 2020
 timeline: "8 Weeks"
 services: ["Campaigns", "Finance", "Consulting", "Legal"]
 website: "https://thunderlotusgames.com/spiritfarer/"
+websiteLabel: "Spiritfarer Website"
 heroImage: "../../assets/images/projects/spiritfarer-hero.png"
 heroImageAlt: "Spiritfarer box art showing a small boat sailing toward the sun above the game's logo"
 metrics:

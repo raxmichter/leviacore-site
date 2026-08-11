@@ -69,6 +69,11 @@ const projects = defineCollection({
       services: z.array(z.string()).min(1),
       /** External project/game site. Optional — not every case study has one. */
       website: z.string().url().optional(),
+      /** Visible text for the website link. This is per-project CMS copy on the
+       *  live site, NOT derived from the title — the five real values are
+       *  "Return to Aeternum Event", "warframe.com", "Event Website",
+       *  "Spiritfarer Website" and "Borderlands 3". Deriving it got 4 of 5 wrong. */
+      websiteLabel: z.string().optional(),
       heroImage: image(),
       /** Required, non-empty: every image on this site must have meaningful alt.
        *  The live site ships alt="" on all of them. */
