@@ -92,7 +92,7 @@ node scripts/visual-regression.mjs /team 1280   # one page, one width
 
 ## Editing content
 
-Full guide: **[docs/editing-content.md](docs/editing-content.md)**. In brief:
+Full guide: **[docs/editing-content.md](docs/editing-content.md)**. Reviewing this migration? Start at **[docs/CTO-REVIEW.md](docs/CTO-REVIEW.md)**.. In brief:
 
 | To change | Edit |
 |---|---|
