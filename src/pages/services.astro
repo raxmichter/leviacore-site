@@ -108,10 +108,10 @@ const serviceBlocks = [
   },
 ]
 
-const contactSocialLinks = [
-  { platform: 'twitter' as const, href: '#', label: 'Tw' },
-  { platform: 'linkedin' as const, href: '#', label: 'IN' },
-]
+// NOTE: the ContactCTA social row is intentionally NOT rendered. The footer already
+// shows the same TW/IN pair immediately below that block, so rendering it there produced
+// two identical badge rows stacked together. Removed 2026-08-11 per George — a deliberate
+// difference from live, which does show both.
 ---
 
 <BaseLayout
@@ -178,7 +178,6 @@ const contactSocialLinks = [
   <ContactCTA
     headingLevel="h2"
     tagline="FOLLOW US on social for the latest."
-    socialLinks={contactSocialLinks}
     formIdPrefix="services-contact"
   />
 </BaseLayout>

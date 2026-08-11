@@ -147,13 +147,10 @@ const featuredProjects = featuredProjectEntries
     href: `/project/${entry.id}`,
   }))
 
-const contactSocialLinks = [
-  // Verbatim from index.html's contact-hero social row: Twitter is real, LinkedIn is the
-  // source's own `href="#"` placeholder (never wired up in this specific block — see
-  // components.md #5). Not a link this phase is asked to fix.
-  { platform: 'twitter' as const, href: 'https://twitter.com/leviacore', label: 'Tw' },
-  { platform: 'linkedin' as const, href: '#', label: 'IN' },
-]
+// NOTE: the ContactCTA social row is intentionally NOT rendered. The footer already
+// shows the same TW/IN pair immediately below that block, so rendering it there produced
+// two identical badge rows stacked together. Removed 2026-08-11 per George — a deliberate
+// difference from live, which does show both.
 ---
 
 <BaseLayout
@@ -321,7 +318,6 @@ const contactSocialLinks = [
     headingText={"IT'S TIME TO FIND\nYOUR FANDOM"}
     headingLevel="h2"
     tagline="We can help. With PLANNING, NEGOTIATIONS, execution – the works."
-    socialLinks={contactSocialLinks}
   />
 </BaseLayout>
 
@@ -481,29 +477,42 @@ const contactSocialLinks = [
   /* The lead project spans the full cards column; the remainder sit two-up.
      Source separates the pair with `.home-project-preview-item`'s left border,
      which `:nth-child(odd)` removes (css:3134). */
+  /* Two-up, with the divider sitting IN THE GAP rather than as padding on the
+     second card.
+
+     Porting the source literally — `border-left` + `padding-left: 3rem` on the
+     even child — made the second card's content box 3rem narrower than the first,
+     so its 16:9 hero rendered visibly smaller. All five hero images are the same
+     aspect ratio; the size difference was entirely this padding.
+
+     A centred pseudo-element in the gap keeps both columns exactly equal, which
+     is how the live pair actually reads. */
   .home-projects-rest {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-md);
+    column-gap: calc(var(--space-lg) * 2);
+    row-gap: var(--space-lg);
   }
 
   .home-projects-rest .home-project-preview-item {
-    border-left: var(--divider-width) solid var(--divider-color);
-    padding-left: var(--space-lg);
+    position: relative;
   }
 
-  .home-projects-rest .home-project-preview-item:nth-child(odd) {
-    border-left: 0;
-    padding-left: 0;
+  .home-projects-rest .home-project-preview-item:nth-child(even)::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--space-lg) * -1);
+    inline-size: var(--divider-width);
+    background: var(--divider-color);
   }
 
   @media screen and (max-width: 767px) {
     .home-projects-rest {
       grid-template-columns: 1fr;
     }
-    .home-projects-rest .home-project-preview-item {
-      border-left: 0;
-      padding-left: 0;
+    .home-projects-rest .home-project-preview-item:nth-child(even)::before {
+      display: none;
     }
   }
   .projects-heading,

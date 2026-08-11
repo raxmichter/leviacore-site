@@ -23,10 +23,10 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Cursor from '../components/Cursor.astro'
 import ContactCTA from '../components/ContactCTA.astro'
 
-const socialLinks = [
-  { platform: 'twitter' as const, href: '#', label: 'Tw' },
-  { platform: 'linkedin' as const, href: '#', label: 'IN' },
-]
+// NOTE: the ContactCTA social row is intentionally NOT rendered. The footer already
+// shows the same TW/IN pair immediately below that block, so rendering it there produced
+// two identical badge rows stacked together. Removed 2026-08-11 per George — a deliberate
+// difference from live, which does show both.
 ---
 
 <BaseLayout
@@ -39,7 +39,6 @@ const socialLinks = [
 
   <ContactCTA
     tagline="We can help. With PLANNING, NEGOTIATIONS, execution – the works."
-    socialLinks={socialLinks}
     withTopDivider={false}
   />
 </BaseLayout>

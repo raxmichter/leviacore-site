@@ -52,7 +52,11 @@ interface Props {
   headingText?: string
   headingLevel?: 'h1' | 'h2'
   tagline: string
-  socialLinks: SocialLink[]
+  /** Optional. Omitted by every page as of 2026-08-11: the footer already renders
+   * the same TW/IN pair directly below this block, so showing them here produced
+   * two identical badge rows stacked on top of each other. George: keep the space
+   * for the form, drop the duplicate. A deliberate difference from live. */
+  socialLinks?: SocialLink[]
   withTopDivider?: boolean
   /** Forwarded to the embedded ContactForm so its ids stay unique. Only needs
    * overriding if a page renders this block AND a standalone ContactForm. */
@@ -78,9 +82,13 @@ const {
       </div>
       <div>
         <Eyebrow class="tagline">{tagline}</Eyebrow>
-        <div class="social-row">
-          {socialLinks.map((social) => <SocialBadge platform={social.platform} href={social.href} label={social.label} />)}
-        </div>
+        {socialLinks && socialLinks.length > 0 && (
+          <div class="social-row">
+            {socialLinks.map((social) => (
+              <SocialBadge platform={social.platform} href={social.href} label={social.label} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
     <div class="contact-hero-grid-right">
