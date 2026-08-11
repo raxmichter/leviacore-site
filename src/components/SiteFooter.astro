@@ -147,8 +147,23 @@ const year = new Date().getFullYear()
     max-width: var(--width-sm);
   }
 
+  /* Source (leviathan-core-2023-r1.webflow.css:2275): `.subnav` gap is 1rem, and
+     `.subnav.small` overrides it to 0.5rem. This declared 0.5rem for BOTH, so the
+     `.subnav.center` copyright row rendered at half the intended spacing while
+     `.subnav.small` was correct only by coincidence.
+
+     Third instance of the two-class combo trap — see tokens.md BLOCKER-2 and
+     `.padding-vertical.padding-xlarge` in SectionShell. When source defines both
+     `.a` and `.a.b`, port BOTH values, not just the one that happens to be in
+     front of you. */
   .subnav {
     display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .subnav.small {
     gap: var(--space-xs);
   }
 
