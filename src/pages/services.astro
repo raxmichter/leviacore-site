@@ -44,6 +44,7 @@
  * using the shared component.
  */
 import BaseLayout from '../layouts/BaseLayout.astro'
+import Cursor from '../components/Cursor.astro'
 import SectionShell from '../components/SectionShell.astro'
 import SectionHeading from '../components/SectionHeading.astro'
 import ContactCTA from '../components/ContactCTA.astro'
@@ -118,6 +119,9 @@ const contactSocialLinks = [
   description="We help brands stand out. The gaming community has never been deeper or more complex. It helps to have a partner who knows their way around. We can help. With negotiations, planning, execution – the works."
   canonicalPath="/services"
 >
+  {/* Phase E — custom cursor (a-8 / a-165 / a-166). Five pages only; see Cursor.astro. */}
+  <Cursor />
+
   <SectionShell sectionClass="section-services-hero" withTopDivider={false}>
     <div class="services-hero-grid">
       <div>

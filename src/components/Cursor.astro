@@ -1,0 +1,89 @@
+---
+/**
+ * Cursor — the custom cursor follower (`a-8` Cursor Move, `a-165`/`a-166` Cursor View
+ * Show/Hide). Phase E.
+ *
+ * ⚠️ This markup did not exist in the rebuild. Phases B and C skipped it because it is
+ * presentational scaffolding with no content and `components.md` #8 filed it as optional.
+ * The structure below is the source's verbatim, from `_webflow-export/index.html`:
+ *
+ *   <div class="cursor-wrapper"><div class="cursor"><div class="cursor-text view">View</div></div></div>
+ *
+ * ── Scope: five pages, and NOT via BaseLayout ─────────────────────────────────────────
+ * interactions.md's Phase E readiness map verified this markup against every exported page
+ * and every captured live page. It is present on `/`, `/services`, `/team`, `/projects` and
+ * `/contact` — and absent from all five `/project/<slug>` pages, all three legal pages, and
+ * `/404` (those carry the `.cursor-wrapper { pointer-events: none }` rule in their inline
+ * `<style>` but no element to apply it to). Putting this in `BaseLayout` would add it to
+ * nine pages that never had it, which is a design change rather than a migration — so it is
+ * imported per page instead.
+ *
+ * `.cursor` starts `display: none`, so on `/services`, `/team` and `/contact` — which have
+ * no `.project-card-image-wrapper` to hover — the element is inert and never paints. That
+ * matches the source, where those pages ship the markup but nothing ever shows it.
+ *
+ * Styles are the source's `.cursor-wrapper` / `.cursor` rules verbatim, expressed through
+ * the existing tokens. There is no `.cursor-text` or `.view` rule in the source CSS — those
+ * divs inherit everything from `.cursor`; their only role is being toggled by `a-165`.
+ * `transform` is deliberately absent from the CSS: `cursor.ts` is the single writer of that
+ * property, because the rAF translate and the scale tween would otherwise clobber each other.
+ */
+---
+
+<div class="cursor-wrapper" aria-hidden="true">
+  <div class="cursor">
+    <div class="cursor-text view">View</div>
+  </div>
+</div>
+
+<style>
+  .cursor-wrapper {
+    z-index: var(--z-overlay);
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Source: the follower is drawn *alongside* the native cursor — the source CSS has no
+       `cursor: none` anywhere — so it must never intercept a click. */
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .cursor {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    /* Hotspot offset — verbatim from source. */
+    margin-top: -1rem;
+    margin-left: -1rem;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--color-ink);
+    color: var(--color-on-ink);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    font-weight: 400;
+    line-height: 120%;
+    letter-spacing: var(--ls-wide);
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  /* Suppression, not shortening — interactions.md §3 lists a-8/a-165/a-166 as "suppress
+     entirely". `cursor.ts` additionally refuses to mount its rAF loop under this preference
+     and re-evaluates on change; this rule is the belt to that braces, and it lives here
+     rather than in global.css so that a scoped `display: flex` can never out-order it. */
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-wrapper {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/cursor'
+</script>

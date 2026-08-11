@@ -22,6 +22,7 @@
  */
 import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
+import Cursor from '../components/Cursor.astro'
 import SectionShell from '../components/SectionShell.astro'
 import SectionHeading from '../components/SectionHeading.astro'
 import ProjectCard from '../components/ProjectCard.astro'
@@ -51,6 +52,9 @@ const projects = entries
   description="Driving results that matter. We've innovated to help brands and titles break through and make waves with the right audiences again and again. These featured stories are just a few of our favorites."
   canonicalPath="/projects"
 >
+  {/* Phase E — custom cursor (a-8 / a-165 / a-166). Five pages only; see Cursor.astro. */}
+  <Cursor />
+
   <SectionShell sectionClass="section-work-hero" withTopDivider={false}>
     <div class="work-hero-grid">
       <SectionHeading as="h1" variant="display-2xl" class="work-hero-heading">

@@ -13,9 +13,8 @@ import SiteFooter from '../components/SiteFooter.astro'
 export interface Props {
   title: string
   description: string
-  /** Absolute URL to a social-preview image. Falls back to the export's
-   * original OG image (still hosted on i.imgur.com — flagged in
-   * build-context/OPEN.md for localization; not fixed here). */
+  /** Absolute URL to a social-preview image. Defaults to the site's own
+   * /og-image.png — localized in Phase D2; see the note below. */
   ogImage?: string
   /** Path used for both the canonical <link> and nav "current page" state,
    * e.g. "/", "/services", "/team". No trailing slash except "/" itself,
@@ -157,6 +156,14 @@ const organizationSchema = {
       <slot />
     </main>
     <SiteFooter currentPath={canonicalPath} />
+
+    {/* Phase E — scroll reveals (a-174/175/176) and image parallax (a-139). Loaded here
+        rather than per page because `.line` / `.line-vertical` are header and footer chrome
+        and the source bound them on all 15 chrome-bearing pages. The custom cursor is NOT
+        loaded here — it shipped on five pages only and is wired per page. */}
+    <script>
+      import '../scripts/interactions'
+    </script>
   </body>
 </html>
 

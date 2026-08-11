@@ -20,6 +20,7 @@
  * ships a clearly-marked placeholder `action`. Not addressed here, per the brief.
  */
 import BaseLayout from '../layouts/BaseLayout.astro'
+import Cursor from '../components/Cursor.astro'
 import ContactCTA from '../components/ContactCTA.astro'
 
 const socialLinks = [
@@ -33,6 +34,9 @@ const socialLinks = [
   description="It's time to find your fandom. We can help. With planning, negotiations, execution – the works."
   canonicalPath="/contact"
 >
+  {/* Phase E — custom cursor (a-8 / a-165 / a-166). Five pages only; see Cursor.astro. */}
+  <Cursor />
+
   <ContactCTA
     tagline="We can help. With PLANNING, NEGOTIATIONS, execution – the works."
     socialLinks={socialLinks}

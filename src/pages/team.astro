@@ -27,6 +27,7 @@
 import { load } from 'js-yaml'
 import type { ImageMetadata } from 'astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
+import Cursor from '../components/Cursor.astro'
 import SectionShell from '../components/SectionShell.astro'
 import SectionHeading from '../components/SectionHeading.astro'
 import Divider from '../components/Divider.astro'
@@ -96,6 +97,9 @@ const valuesItems = [
   description="Meet the team that makes it happen. We’re a talented, passionate group that loves what we do – helping brands build influence with creators and fanbases in the gaming community."
   canonicalPath="/team"
 >
+  {/* Phase E — custom cursor (a-8 / a-165 / a-166). Five pages only; see Cursor.astro. */}
+  <Cursor />
+
   <SectionShell sectionClass="section-studio-hero" withTopDivider={false}>
     <div class="hero-heading-wrap">
       <SectionHeading as="h1" variant="display-lg">Meet the team that makes it happen.</SectionHeading>
