@@ -23,6 +23,7 @@ Thumbs.db
 # regenerable. build-context/fidelity.md holds the durable result summary.
 tests/visual/__screenshots__/
 tests/visual/__diffs__/
+tests/visual/__shots__/
 test-results/
 playwright-report/
 
