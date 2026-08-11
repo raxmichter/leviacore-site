@@ -269,12 +269,20 @@ strong {
     transition: none !important;
   }
 
-  /* a-174 — opacity-only: drop scale(0->1), fade at 200ms linear.
+  /* a-174 Scale In — opacity-only: drop scale(0->1), fade at 200ms linear.
      NOTE for the scroll-reveal implementation: this softens the motion but does
      not reveal the element on its own. The Scale In observer must STILL run and
-     still add its reveal class under reduced motion, or `.image-icon` stays at
-     opacity 0 and the content is invisible. */
-  .image-icon {
+     still add its reveal class under reduced motion, or the element stays at
+     opacity 0 and the content is invisible.
+
+     ⚠️ SELECTOR CORRECTED. This block originally targeted `.image-icon`, the
+     SOURCE class name — which does not exist anywhere in the rebuild, so the
+     rule matched nothing. The real element is `.cta-icon` on the case study
+     pages (traced from the live Spiritfarer markup; see the note in
+     src/scripts/interactions.ts). `.image-icon` is kept alongside it only so
+     the rule still applies if that class is ever reintroduced. */
+  .image-icon,
+  .cta-icon {
     transform: none !important;
     transition: opacity 0.2s linear !important;
   }
