@@ -231,36 +231,76 @@ const contactSocialLinks = [
     </div>
   </SectionShell>
 
+  {/*
+    Featured projects. Source layout (`.home-projects-grid`, css:3151) is a single
+    grid — intro column, a 1px divider column, then the cards column:
+
+      grid-template-columns: .47fr 1px 1fr;  gap: 4rem
+
+    The cards column (`.home-projects-grid-right`) leads with one full-width
+    project and follows with the rest two-up. `.home-project-preview-item` carries
+    a left border that `:nth-child(odd)` removes, which is what separates the pair.
+
+    Earlier this was built as an intro block above a uniform auto-fit card grid.
+
+    ⚠️ NO YEAR. The live cards print the campaign year to the right of each title;
+    George asked for it to be left off. `year` remains in the schema and still
+    drives sort order — it is simply not displayed here.
+  */}
   <SectionShell sectionClass="section-home-projects">
-    <div class="home-projects-intro">
-      <SectionHeading as="h2" variant="h1" uppercase class="projects-heading">Featured projects</SectionHeading>
-      <p class="lead-text lead-text--md">
-        See how our innovative, hands-on approach has helped brands like yours grow fanbases, generate buzz, and
-        break records.
-      </p>
-      <Button href="/projects" variant="primary">See more</Button>
+    <div class="home-projects-grid">
+      <div class="home-projects-grid-left-inner">
+        <SectionHeading as="h2" variant="h1" uppercase class="projects-heading">Featured projects</SectionHeading>
+        <p class="lead-text lead-text--md">
+          See how our innovative, hands-on approach has helped brands like yours grow fanbases, generate buzz, and
+          break records.
+        </p>
+        <Button href="/projects" variant="primary">See more</Button>
+      </div>
+      <div class="line-vertical hide-mobile-landscape" aria-hidden="true"></div>
+      {
+        featuredProjects.length > 0 && (
+          <div class="home-projects-grid-right">
+            <ul class="home-projects-featured">
+              {featuredProjects.slice(0, 1).map((project) => (
+                <li class="home-project-preview-item">
+                  <a href={project.href} class="home-project-preview-image-wrapper">
+                    <Image src={project.image} alt={project.imageAlt} class="image-cover" />
+                  </a>
+                  <div class="home-project-preview-content">
+                    <a href={project.href} class="home-project-preview-title-link">
+                      <SectionHeading as="h3" variant="h4" uppercase>
+                        {project.title}
+                      </SectionHeading>
+                    </a>
+                    <p class="home-project-preview-meta">{project.client}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {featuredProjects.length > 1 && (
+              <ul class="home-projects-rest">
+                {featuredProjects.slice(1).map((project) => (
+                  <li class="home-project-preview-item">
+                    <a href={project.href} class="home-project-preview-image-wrapper">
+                      <Image src={project.image} alt={project.imageAlt} class="image-cover" />
+                    </a>
+                    <div class="home-project-preview-content">
+                      <a href={project.href} class="home-project-preview-title-link">
+                        <SectionHeading as="h3" variant="h4" uppercase>
+                          {project.title}
+                        </SectionHeading>
+                      </a>
+                      <p class="home-project-preview-meta">{project.client}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )
+      }
     </div>
-    {
-      featuredProjects.length > 0 && (
-        <ul class="home-projects-grid">
-          {featuredProjects.map((project) => (
-            <li class="home-project-preview-item">
-              <a href={project.href} class="home-project-preview-image-wrapper">
-                <Image src={project.image} alt={project.imageAlt} class="image-cover" />
-              </a>
-              <div class="home-project-preview-content">
-                <a href={project.href} class="home-project-preview-title-link">
-                  <SectionHeading as="h3" variant="h4" uppercase>
-                    {project.title}
-                  </SectionHeading>
-                </a>
-                <p class="home-project-preview-meta">{project.client}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )
-    }
   </SectionShell>
 
   <SectionShell sectionClass="section-home-how">
@@ -403,24 +443,75 @@ const contactSocialLinks = [
   }
 
   /* ---------- Featured projects teaser ---------- */
-  .home-projects-intro {
+  /* Source `.home-projects-grid` css:3151 — intro | 1px divider | cards.
+     `.home-projects-grid-right` (css:3144) is a flex column, row-gap 2rem. */
+  .home-projects-grid {
+    display: grid;
+    grid-template-columns: 0.47fr var(--divider-width) 1fr;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  @media screen and (max-width: 991px) {
+    .home-projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .home-projects-grid-left-inner {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-sm);
   }
+
+  .home-projects-grid-right {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .home-projects-featured,
+  .home-projects-rest {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The lead project spans the full cards column; the remainder sit two-up.
+     Source separates the pair with `.home-project-preview-item`'s left border,
+     which `:nth-child(odd)` removes (css:3134). */
+  .home-projects-rest {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+
+  .home-projects-rest .home-project-preview-item {
+    border-left: var(--divider-width) solid var(--divider-color);
+    padding-left: var(--space-lg);
+  }
+
+  .home-projects-rest .home-project-preview-item:nth-child(odd) {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  @media screen and (max-width: 767px) {
+    .home-projects-rest {
+      grid-template-columns: 1fr;
+    }
+    .home-projects-rest .home-project-preview-item {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
   .projects-heading,
   .home-projects-intro .lead-text {
     max-width: var(--width-sm);
   }
-  .home-projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-    gap: var(--space-lg);
-    margin: var(--space-xl) 0 0;
-    padding: 0;
-    list-style: none;
-  }
+  /* (The previous uniform auto-fit `.home-projects-grid` rule lived here; it is
+     replaced by the source's intro | divider | cards grid defined above.) */
   .home-project-preview-item {
     display: flex;
     flex-direction: column;
