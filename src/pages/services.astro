@@ -184,10 +184,29 @@ const contactSocialLinks = [
 </BaseLayout>
 
 <style>
+  /* Source `.services-hero-grid` (leviathan-core-2023-r1.webflow.css:3258):
+       base    grid-template-columns: 1.5fr 1fr;  gap: 0
+       ≥1440   grid-template-columns: 2fr 1fr
+       ≥1920   grid-template-columns: 1.5fr 1fr
+       ≤991    grid-template-columns: 1fr
+
+     As with the homepage hero, the base was wrong too, not just the missing wide
+     rules: columns were 1fr 1fr and the gap was --space-xl where source has none.
+     The column ratio widens at 1440 and returns to the base ratio at 1920. */
   .services-hero-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-xl);
+    grid-template-columns: 1.5fr 1fr;
+    gap: 0;
+  }
+  @media screen and (min-width: 1440px) {
+    .services-hero-grid {
+      grid-template-columns: 2fr 1fr;
+    }
+  }
+  @media screen and (min-width: 1920px) {
+    .services-hero-grid {
+      grid-template-columns: 1.5fr 1fr;
+    }
   }
   @media screen and (max-width: 991px) {
     .services-hero-grid {
