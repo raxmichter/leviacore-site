@@ -50,10 +50,23 @@ function check(file, html) {
   const htmlLinks = [...html.matchAll(/href="(?!https?:)([^"]*\.html[^"]*)"/g)].map((m) => m[1])
   if (htmlLinks.length) fail(`internal .html link(s): ${[...new Set(htmlLinks)].join(', ')}`)
 
-  // 3. Every <img> needs a non-empty alt. The live site ships alt="" sitewide.
+  // 3. Every <img> needs a non-empty alt — UNLESS it is explicitly marked decorative.
+  //    The live site ships alt="" on meaningful images (headshots, client logos),
+  //    which is the defect this catches. But alt="" is the CORRECT markup for a
+  //    genuinely decorative image, so an empty alt is only accepted when paired with
+  //    aria-hidden="true" or role="presentation" — an explicit statement of intent,
+  //    rather than something that could equally be an oversight.
   const imgs = [...html.matchAll(/<img\b[^>]*>/g)].map((m) => m[0])
-  const badAlt = imgs.filter((t) => !/\balt="[^"]+"/.test(t))
-  if (badAlt.length) fail(`${badAlt.length}/${imgs.length} <img> with missing or empty alt`)
+  //    Note: Astro serialises an empty alt as the bare attribute `alt`, not `alt=""`,
+  //    so both spellings have to be accepted here.
+  const hasEmptyAlt = (t) => /\balt(=""|(?=[\s>]))/.test(t)
+  const isDecorative = (t) => hasEmptyAlt(t) && /aria-hidden="true"|role="presentation"/.test(t)
+  const badAlt = imgs.filter((t) => !/\balt="[^"]+"/.test(t) && !isDecorative(t))
+  if (badAlt.length)
+    fail(
+      `${badAlt.length}/${imgs.length} <img> with missing or empty alt ` +
+        `(decorative images need alt="" AND aria-hidden="true")`
+    )
 
   // 4. The Webflow empty-collection artifact. Visible on the live Spiritfarer page.
   if (/No items found\./i.test(html)) fail('renders the Webflow "No items found." artifact')

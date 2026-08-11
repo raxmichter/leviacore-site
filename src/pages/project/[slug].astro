@@ -64,6 +64,12 @@ import Eyebrow from '../../components/Eyebrow.astro'
 import Divider from '../../components/Divider.astro'
 import Button from '../../components/Button.astro'
 import icon02 from '../../assets/images/icon-02.svg'
+// Decorative section icons, restored in Phase G. Source binds these at 60px wide:
+// icon-05 above Challenge, icon-06 above Solution, icon-07 above Metrics that Matter.
+// Marked alt="" — they carry no information the adjacent heading doesn't.
+import iconChallenge from '../../assets/images/icon-05.svg'
+import iconSolution from '../../assets/images/icon-06.svg'
+import iconMetrics from '../../assets/images/icon-07.svg'
 
 export async function getStaticPaths() {
   const isProd = import.meta.env.PROD
@@ -126,20 +132,40 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
         }
       </dl>
     </div>
-    <div class="project-hero-image-wrapper">
-      <Image src={heroImage} alt={heroImageAlt} class="image-cover" />
-    </div>
+    {/*
+      No full-width hero banner here. An earlier revision rendered `heroImage` as a
+      band across the page below the hero grid — that was invented, not ported: the
+      export's CMS image field vanished entirely so there was nothing to copy.
+
+      The live layout puts the key art at the TOP OF THE RIGHT COLUMN of the content
+      grid below, alongside the left-stacked Challenge / Solution / Metrics. Because
+      `gallery[0]` IS the hero image in every case study's frontmatter, rendering the
+      gallery in that column reproduces it exactly. `heroImage` remains a required
+      schema field — it is what /projects and the homepage teaser use for cards.
+    */}
   </SectionShell>
 
   <SectionShell sectionClass="section-project-content">
     <div class:list={['project-content-grid', { 'project-content-grid--solo': !gallery || gallery.length === 0 }]}>
       <div class="project-content-left">
-        <div class="text-rich-text">
+        {/*
+          The decorative icons above CHALLENGE and SOLUTION are restored here.
+          D1 dropped them because the schema gives one Markdown body per case study,
+          leaving no per-field seam to hang them on — but they don't need a seam:
+          the two `##` headings are the first and second `h2` in this flow, so the
+          icons attach via ::before with the URLs passed down as custom properties.
+          Source sizes them at 60px wide (icon-05 Challenge, icon-06 Solution).
+        */}
+        <div
+          class="text-rich-text has-section-icons"
+          style={`--icon-challenge: url(${iconChallenge.src}); --icon-solution: url(${iconSolution.src})`}
+        >
           <Content />
         </div>
         {
           metrics && metrics.length > 0 && (
             <div class="project-metrics">
+              <Image src={iconMetrics} alt="" aria-hidden="true" width={60} class="section-icon" />
               <SectionHeading as="h2" variant="h4" uppercase class="metrics-heading">
                 Metrics that Matter
               </SectionHeading>
@@ -302,10 +328,16 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   }
 
   /* ---------- Content ---------- */
+  /* Source (leviathan-core-2023-r1.webflow.css:3578):
+       grid-template-columns: .45fr 1px 1fr;  gap: 4rem;
+     The TEXT column is the narrow one and the IMAGE column is the wide one.
+     An earlier revision had this inverted (`1fr … 22rem`), which made the
+     Challenge/Solution copy run nearly full width and squeezed the key art into
+     a sidebar — the most visible remaining difference on these pages. */
   .project-content-grid {
     display: grid;
-    grid-template-columns: 1fr var(--divider-width) 22rem;
-    gap: var(--space-lg);
+    grid-template-columns: 0.45fr var(--divider-width) 1fr;
+    gap: var(--space-xl);
     align-items: start;
   }
   .project-content-grid--solo {
@@ -365,10 +397,35 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   .project-metrics {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: var(--space-sm);
   }
   .metrics-heading {
     margin: 0;
+  }
+
+  /* Decorative section icons, 60px wide per source.
+     `.section-icon` is the <Image> above "Metrics that Matter"; the two inside
+     the Markdown flow attach to its first and second h2 via ::before, because
+     Markdown gives no element to hang an <img> on. Both are decorative —
+     alt="" on the real image, and a ::before pseudo-element is invisible to
+     assistive tech by construction. */
+  .section-icon {
+    inline-size: 60px;
+    block-size: auto;
+    margin-bottom: var(--space-xs);
+  }
+
+  .has-section-icons :global(h2)::before {
+    content: '';
+    display: block;
+    inline-size: 60px;
+    block-size: 60px;
+    margin-bottom: var(--space-xs);
+    background: var(--icon-challenge) no-repeat center / contain;
+  }
+
+  .has-section-icons :global(h2:nth-of-type(2))::before {
+    background-image: var(--icon-solution);
   }
   .project-metrics-list {
     display: flex;
