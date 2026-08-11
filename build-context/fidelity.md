@@ -1,14 +1,14 @@
 # Phase G — Visual fidelity
 
-Measured against the live Webflow site, 2026-08-10/11. Rerun with `npm run check:visual`.
+Measured against the live Webflow site. **Last full run: 2026-08-11**, 91 comparisons (13 pages × 7 widths). Rerun with `npm run check:visual`.
 
-> ⚠️ **This measurement stops being possible once Webflow is wound down.** The numbers below are the record.
+> ⚠️ **This measurement becomes impossible once Webflow is wound down.** The numbers below are the record.
 
 ---
 
 ## Headline
 
-**The rebuild is structurally correct and measurably better on every objective metric, but it is NOT yet pixel-identical.** Convergence is incomplete and the remaining gaps are enumerated below, largest first.
+**Structurally correct and measurably better on every objective metric. Not pixel-identical.** Convergence is incomplete; the remaining gaps are enumerated below, largest first.
 
 | | Live Webflow | Rebuild |
 |---|---|---|
@@ -19,69 +19,98 @@ Measured against the live Webflow site, 2026-08-10/11. Rerun with `npm run check
 | CLS | 0.009 | **0.000** |
 | Page weight (homepage) | 2,965 KB | **803 KB** |
 | axe violations (WCAG 2.2 AA) | — | **0** |
-| Images without alt text | all of them | **0** |
+| Images without alt text | all | **0** |
+
+## Current mismatch by page
+
+Lowest value across the seven widths, as a rough "best case" per page.
+
+| Page | Best | Worst | Notes |
+|---|---|---|---|
+| `/privacy-policy` | **4.1%** | 11.0% | Best-converged section |
+| `/ccpa` | **3.9%** | 9.5% | |
+| `/notice-at-collection` | **4.0%** | 9.9% | |
+| `/contact` | **5.1%** | 6.7% | Tightest spread on the site |
+| `/project/spiritfarer` | **6.1%** | 12.4% | |
+| `/services` | **7.8%** | 10.0% | |
+| `/project/borderlands3` | **9.3%** | 14.7% | |
+| `/project/legends-of-lost-ark` | **8.5%** | 13.5% | |
+| `/project/return-to-aeternum` | **7.3%** | 14.8% | |
+| `/project/warframe` | **10.8%** | 15.4% | |
+| `/` | **18.5%** | 44.1% | |
+| `/team` | **19.5%** | 46.9% | See gap 1 |
+| `/projects` | **23.9%** | 47.5% | See gap 2 |
+
+**Verification widths: 375 / 767 / 768 / 1280 / 1439 / 1440 / 1920.** The pairs straddle breakpoint boundaries deliberately — 767/768 and 1439/1440 sit either side of layout changes, and that is where defects hide. The original 4-width matrix jumped 1280 → 1920 and missed three of them.
 
 ---
 
-## What was fixed during Phase G
+## Fixed during Phase G
 
-Found by comparing **computed layout values**, not by eye — `scripts/compare-metrics.mjs` exists because a pixel percentage tells you *that* something is wrong, never *what*.
+Found by comparing **computed layout values**, not pixels — `scripts/compare-metrics.mjs` exists because a percentage tells you *that* something is wrong, never *what*.
 
 | # | Defect | Impact |
 |---|---|---|
-| 1 | **`.page-padding` and `.container-xxlarge` were declared only inside SectionShell's *scoped* CSS.** Astro compiled them to `.page-padding[data-astro-cid-…]`, so sections were laid out correctly while the header and footer — which use the same class names — got **no horizontal padding and no max-width at all** | Header logo sat 48px too far left and the content column was ~100px too wide on **every page**. The single largest source of drift |
-| 2 | **`.padding-vertical.padding-xlarge` is a combo override** — a flat `2rem`, verified not restated in any media query — but was implemented as `var(--space-xl)` (4rem→3rem→2rem) | Every `xlarge` section 2rem too tall at desktop. Same trap class as the documented `.margin-bottom.margin-*` issue; the earlier assumption that it didn't apply here was wrong |
-| 3 | Footer nav links rendered as sentence-case body text | Live sets them uppercase Roboto Mono with 1px tracking. Visible on every page |
-| 4 | Form inputs rendered as fully bordered boxes with visible labels | Live is underline-only with no labels. **Resolved by keeping the labels for screen readers and hiding them visually** — pixel-identical to live, strictly more accessible than live |
-| 5 | `.badge` had no global sizing | Social pills rendered ~68px instead of 40px/32px |
-| 6 | Case study service tags stacked vertically | Live renders them inline on one wrapping row |
-| 7 | Case study website link showed the raw URL | Live shows "SPIRITFARER WEBSITE" |
+| 1 | **`.page-padding` / `.container-xxlarge` declared only in SectionShell's *scoped* CSS** | Header and footer got no padding and no max-width. Logo 48px off, content column 100px too wide, **every page** |
+| 2 | **`.line` declared in five separate scoped styles** | Every page-rendered divider was invisible. Element counts matched live exactly — they were simply unstyled |
+| 3 | **`.badge` re-declared in four components, three at wrong sizes** | Scoped rules beat the global one; social pills rendered 44–64px instead of 40/32px |
+| 4 | **`.padding-vertical.padding-xlarge` combo override** | Implemented as the responsive token instead of the source's flat 2rem |
+| 5 | **`.subnav` gap** | Source is 1rem with `.small` at 0.5rem; both were 0.5rem, halving the footer copyright row spacing |
+| 6 | **`.home-hero-grid`** | Wrong columns (`1fr 1fr` vs `1fr .75fr`), wrong gap, and the ≥1440 doubling missing |
+| 7 | **`.services-hero-grid`** | Wrong columns, spurious gap, and both wide overrides missing |
+| 8 | **`.work-hero-grid`** | Built as a single-column stack; source goes two-column at ≥1440 |
+| 9 | **Case study layout** | Full-width hero banner replaced by live's images-right / text-left; grid ratio inverted; section icons restored |
+| 10 | **Homepage featured projects** | Rebuilt as live's intro \| divider \| cards grid with a lead project and a two-up row |
+| 11 | Footer link typography, form input styling, service tag inlining, per-project website labels | Assorted |
+
+**Nine of these trace to one root cause:** a class name styled inside an Astro component's scoped `<style>`, which compiles to `.foo[data-astro-cid-XXX]` and therefore does not apply to the same class used anywhere else. See `DECISIONS.md`.
 
 ---
 
 ## Remaining gaps, largest first
 
-### 1. `/team` at ≤767 — the biggest single gap
-`Δ-4231px` at 375, `Δ-5063px` at 767 (live 7,596px vs ours 3,365px). **Our team page is roughly half the height of live at mobile widths**, while matching within 316px at 1280.
+### 1. `/team` at ≤767 — the largest single gap
+`Δ-4,233px` at 375, `Δ-5,063px` at 767 (live 7,596px vs ours 3,363px). Roughly half the height of live at mobile, while within 357px at 1280.
 
-**Already ruled out** — don't re-check these:
-- Not the page wrappers. `.page-padding`, `.container-xxlarge`, `main` and `section` all match live within 1px at 375.
-- Not the column count. The first team card measures 349px live vs 351px local — both effectively full-width at 375.
+**Already ruled out** — do not re-check:
+- Not the page wrappers. `.page-padding`, `.container-xxlarge`, `main`, `section` all match live within 1px at 375.
+- Not the column count. First team card measures 349px live vs 351px local — both full-width.
 
-**So the difference is inside the card**: almost certainly headshot rendering height. Live loads 11 large images on this page; the rebuild loads a different count at a different size, which at ~400px each across 11 cards accounts for the entire delta. Start by comparing the computed height of one `TeamMemberCard`'s `<img>` between live and local at 375.
+**So the difference is inside the card**, almost certainly headshot render height across 11 cards. Start by comparing the computed height of one `TeamMemberCard` `<img>` between live and local at 375.
 
-**Highest-value next fix** — it is one component, and it is the worst number on the site.
+### 2. `/projects` — 23.9–47.5%
+The hero now matches. The remaining mismatch is the project card list below it, which still differs structurally from live's arrangement. Worst single number on the site at 767.
 
-### 2. `/` and `/projects` — 21–48%
-Both render the case study grid. Height deltas are large at every width. Related to #1: card grids differ responsively. `/projects` at 767 is the worst single number on the site (48%).
+### 3. `/` at ≤768 — 26.5–44.1%
+Desktop is now 18.5%. The narrow widths are where it diverges, and the homepage stacks many sections, so this is likely several small responsive differences compounding rather than one cause.
 
-### 3. Case study detail pages — 14–26%
-Structural, and known: **the live layout puts the hero image in a right-hand column beside the Challenge text with a decorative icon; the rebuild renders a full-width banner below the metadata block.** This came from Phase D1 building against `detail_project.html`, where Webflow had stripped the CMS content so the real layout was not visible. Heights are now close (Δ29–123px at most widths) — the mismatch is placement, not volume.
+### 4. Case studies — 6.1–15.4%
+Substantially improved (were 14–26%). Heights now track live within ~200px at most widths, and Warframe hits Δ9px at 1439. Residual is spacing detail rather than structure.
 
-### 4. Legal pages — 4–11%
-The best-converged section. At 1280/1920 the deltas are **positive** (`+391px`), meaning ours is slightly *taller* — expected, since restored visible link styling and promoted headings add height. Largely intentional.
-
-### 5. A fixed floor of ~4–6% everywhere
-Even the closest pages hold ~4–6%. This is text antialiasing and sub-pixel reflow between two independent renders, not a defect. **Do not chase this to zero** — a threshold near 3–4% is the realistic target for a text-heavy site.
+### 5. A ~4–6% floor everywhere
+Even the closest pages hold this. It is text antialiasing and sub-pixel reflow between two independent renders. **Do not chase it** — 4% is the realistic floor for a text-heavy site.
 
 ---
 
 ## Deliberate differences — do NOT "fix" these
 
-They will show in any future diff. Each is an improvement or a directive.
+Each is an improvement or an explicit instruction. They will show in any future diff.
 
 | Difference | Why |
 |---|---|
-| In-body legal links are visible (coloured/underlined) | The live site's global `a { color: inherit; text-decoration: inherit }` made every in-body legal link invisible, including working `mailto:` contact links |
-| Legal pages have heading structure | Live has none at all — a screen-reader user cannot navigate those documents |
-| Form labels exist (visually hidden) | Live has none; placeholders are not labels |
+| **No social badges in the contact block** | The footer renders the same TW/IN pair directly below it. Live shows both, stacked. Removed 2026-08-11 per George — space kept for the form |
+| In-body legal links are visible | Live's global `a { color: inherit; text-decoration: inherit }` made every in-body legal link invisible, including working `mailto:` links |
+| Legal pages have heading structure | Live has none at all — unnavigable by screen reader |
+| Form labels exist, visually hidden | Live has none; placeholders are not labels |
 | Every image has alt text | Live has `alt=""` everywhere |
-| `services.html` renders one `<h1>` | Live ships two |
+| No campaign year on homepage project cards | Live prints it; omitted per George. `year` still drives sort order |
+| `/services` renders one `<h1>` | Live ships two |
 | No `"No items found."` | Live prints it on all five case studies |
 | No empty `<a>` to webflow.com | Live has one in every footer |
 | Mobile menu panel is 375px at a 375px viewport | Live's `.navbar-dropdown { width: 390px }` overflows |
-| Custom cursor on five pages only | Matches live exactly — it is absent from case studies, legal pages and 404 |
+| Custom cursor on five pages only | Matches live exactly — absent from case studies, legal pages, 404 |
 | Bold text is browser-synthesised | Matches live. Real Satoshi weights would *change* the design |
+| Homepage project cards are equal width | Porting the source's `padding-left: 3rem` on the even card literally made its 16:9 image visibly smaller. Divider now sits in the gap |
 
 ---
 
@@ -90,7 +119,12 @@ They will show in any future diff. Each is an improvement or a directive.
 ```bash
 npm run check:visual                              # all pages, all widths
 node scripts/compare-metrics.mjs /team 375        # WHY it differs — start here
-node scripts/compare-shots.mjs /team 375          # look at both
+node scripts/compare-shots.mjs /team 375          # look at both side by side
+node scripts/audit-breakpoints.mjs                # missing wide-breakpoint rules
+node scripts/audit-combos.mjs                     # two-class override traps
+node scripts/audit-unstyled.mjs                   # elements matching no rule
 ```
 
-**Work in this order:** `/team` at 375 → `/projects` at 767 → case study hero placement. Fix the computed-value difference, not the pixels; #1 and #2 above were each a single CSS rule that moved multiple pages at once.
+**Work in this order:** `/team` at 375 → `/projects` card list → `/` at narrow widths.
+
+**Fix the computed-value difference, not the pixels.** Every defect above was a single CSS rule, and several moved multiple pages at once. Chasing percentages directly finds nothing.

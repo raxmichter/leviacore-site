@@ -6,6 +6,37 @@ Purpose: an agent or developer who encounters something surprising in this repo 
 
 ---
 
+### 2026-08-11 · ⚠️ THE RECURRING BUG — scoped CSS on shared class names
+**Nine of the eleven Phase G visual defects share this one cause. Read this before writing any CSS.**
+
+A class styled inside an Astro component's scoped `<style>` compiles to `.foo[data-astro-cid-XXX]`. The **same class name** used by a different component, or written directly in a page, therefore matches nothing and receives no styling at all. Markup looks right, element counts match live exactly, and the element is simply invisible or unsized — which is why it survived four separate review passes.
+
+Confirmed failures: `.line` (declared in five components — every page-rendered divider invisible), `.badge` (four components, three at wrong sizes; scoped rules beat the global one so pills rendered 44–64px instead of 40/32px), `.page-padding` and `.container-xxlarge` (header and footer had no padding and no max-width on every page).
+
+**Rule: if a class name appears in more than one component, it is a global primitive and belongs in `src/styles/global.css`, not in a scoped block.**
+
+About a dozen names still violate this (`.button`, `.text-meta`, the triplicated `.legal-*` set). Nothing is broken today — `node scripts/audit-unstyled.mjs` reports zero elements matching no rule — and consolidation is deliberately deferred to the CTO, since it touches many files for zero visible change.
+
+### 2026-08-11 · Source CSS is not always safe to port literally
+Three defects came from transcribing a source rule faithfully into a context it did not assume.
+
+- `.padding-vertical.padding-xlarge` and `.margin-bottom.margin-*` are **combo overrides** that silently beat the single-class rule and are frozen across breakpoints. Port the **resolved** value, not the nominal scale.
+- `.home-project-preview-item { border-left; padding-left: 3rem }` on the even card made its content box narrower, so its 16:9 image rendered visibly smaller than its neighbour. The divider now sits in the grid gap instead, keeping both columns equal.
+
+Transcribe the *effect*, verify against the live render, and treat a literal port as a hypothesis rather than an answer.
+
+### 2026-08-11 · Wide-breakpoint rules were systematically missed
+The source overrides layout at `min-width: 1440` and `1920`. The rebuild implemented none of them, and the verification matrix jumped 1280 → 1920, so the boundary was never captured. Three heroes (`home`, `services`, `work`) stacked or mis-proportioned at wide widths.
+
+Verification widths are now **375 / 767 / 768 / 1280 / 1439 / 1440 / 1920** — pairs straddling each boundary, because that is where layout breaks. `scripts/audit-breakpoints.mjs` re-checks this and currently reports zero missing.
+
+### 2026-08-11 · Contact block social badges removed; homepage project year omitted
+Both by George's direction, both deliberate differences from live.
+
+The `ContactCTA` social row duplicated the footer's TW/IN pair sitting immediately below it — live shows two identical rows stacked. `socialLinks` is now optional and omitted by every caller.
+
+Homepage project cards omit the campaign year that live prints beside each title. `year` remains in the schema and still drives sort order.
+
 ### 2026-08-10 · Migrate off Webflow to Astro + Markdown in git
 Content is locked in a proprietary system with per-seat cost, and structural edits are slow enough that they don't get done — the out-of-date privacy policy is the evidence. Static output, no CMS licensing, content portable into any future system.
 

@@ -61,7 +61,7 @@ Violating these is how a session dies mid-phase.
 | D3 | Blog structure, **shipped disabled** | Sonnet 5 | ✅ **Complete** |
 | E | Interactions — 13 live action lists | Opus 5 ×2 | ✅ **Complete** |
 | F | SEO, structured data, redirects, CI gates | Opus 5 | ✅ **Complete** |
-| G | Visual fidelity convergence | Opus 5 | ⚠️ **Partial — see fidelity.md** |
+| G | Visual fidelity convergence | Opus 5 | ⚠️ **Partial — 11 defects fixed, 3 gaps open. See fidelity.md** |
 | H | Handoff — README, docs, final review | Opus 5 | ✅ **Complete** |
 
 ## Reading list per phase

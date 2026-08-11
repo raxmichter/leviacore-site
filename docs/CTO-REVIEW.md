@@ -66,6 +66,22 @@ For a multi-agent review, these are independent and can run in parallel.
 | 7 | **Accessibility** | run `check:a11y`, then audit its thresholds in `scripts/check-a11y.mjs` |
 | 8 | **Visual fidelity** | `build-context/fidelity.md` |
 
+### ⚠️ The one architectural weakness worth your attention
+
+**Nine of the eleven visual defects found in Phase G share a single root cause.** A class name styled inside an Astro component's scoped `<style>` compiles to `.foo[data-astro-cid-XXX]`, so the *same class name* used by another component — or written directly in a page — receives no styling at all. Markup looks correct, element counts match, the element is simply invisible or unsized.
+
+`.line`, `.badge`, `.page-padding` and `.container-xxlarge` all failed exactly this way. They are now global primitives in `src/styles/global.css`.
+
+**About a dozen class names are still declared in two or more scoped blocks** — `.button`, `.text-meta`, the triplicated `.legal-*` rules. Nothing is broken today (`node scripts/audit-unstyled.mjs` reports zero elements matching no rule), but it is the same loaded gun. Consolidating them is deliberately left for you: it touches many files for zero visible change, which is a poor diff to land immediately before review.
+
+Three audit scripts exist to re-check this class of problem at any time:
+
+```bash
+node scripts/audit-unstyled.mjs      # elements matching no CSS rule
+node scripts/audit-breakpoints.mjs   # source wide-breakpoint rules we don't implement
+node scripts/audit-combos.mjs        # two-class override traps
+```
+
 ### Context for reviewers
 
 `build-context/` holds the migration's reasoning, and is the difference between reviewing this repo and guessing at it:
@@ -84,6 +100,8 @@ Each is either a faithful reproduction of the live site or an explicit instructi
 
 | Looks like a bug | Actually |
 |---|---|
+| **The contact block has no social badges, but live does** | The footer renders the same TW/IN pair immediately below it, so live shows two identical rows stacked. Removed by direction; the space belongs to the form |
+| **Homepage project cards show no campaign year, but live does** | Omitted by direction. `year` is still in the schema and still drives sort order — it is simply not rendered |
 | Bold text is browser-synthesised, not a real font weight | The live site ships only Satoshi Regular and always has. Adding real weights **changes the design** |
 | Type scale gets *larger* below 479px | Property of the live design |
 | `.margin-bottom.margin-*` and `.padding-vertical.padding-xlarge` use literal values, not tokens | These are combo overrides in the source that are frozen across all breakpoints. Using the nominal scale is wrong — see `tokens.md` BLOCKER-2 |
