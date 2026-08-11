@@ -48,6 +48,23 @@
   alt: Portrait of Max Richter, Chief Technology Officer at Leviathan Core
   hiring: false
 
+# Role filled 2026-08-11 — replaces the "We're Hiring!" card, which advertised this
+# same position. Placed here, directly after Max Richter, which is where the source
+# layout carried this slot before the hiring card was moved to the end of the roster
+# during the migration. Order in this file is order on the page.
+#
+# Name, role and alt supplied by George. Role uses his title casing rather than the
+# sentence casing the ported entries carry — that inconsistency is transcribed source
+# copy, and there is no reason to reproduce it in new content.
+#
+# ⚠️ Image filename is "Final", not "FINAL". CI runs on Linux, where filenames are
+# case-sensitive; a mismatch would build fine on Windows and fail there.
+- name: Lauren Escobedo
+  role: Director of Business Development
+  image: LaurenEscobedo-Final.png
+  alt: Portrait of Lauren Escobedo, Director of Business Development at Leviathan Core
+  hiring: false
+
 - name: Audrey Lennon
   role: Operations manager
   image: AudreyLennon-FINAL.jpg
@@ -84,19 +101,3 @@
   alt: Portrait of Susan Flynn, Accounts Receivable at Leviathan Core
   hiring: false
 
-# Role filled 2026-08-11 — replaces the "We're Hiring!" card, which advertised this
-# same position. Kept in that card's slot (last) rather than moved to the source's
-# original mid-grid position between Max Richter and Audrey Lennon; moving her is a
-# one-block change if the original order is wanted.
-#
-# Name, role and alt supplied by George. Role uses his title casing rather than the
-# sentence casing the ported entries carry — that inconsistency is transcribed source
-# copy, and there is no reason to reproduce it in new content.
-#
-# ⚠️ Image filename is "Final", not "FINAL". CI runs on Linux, where filenames are
-# case-sensitive; a mismatch would build fine on Windows and fail there.
-- name: Lauren Escobedo
-  role: Director of Business Development
-  image: LaurenEscobedo-Final.png
-  alt: Portrait of Lauren Escobedo, Director of Business Development at Leviathan Core
-  hiring: false
