@@ -4,7 +4,7 @@
  */
 interface Props {
   href?: string
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary' | 'inverse'
   type?: 'button' | 'submit'
   ariaCurrent?: boolean
   class?: string
@@ -12,7 +12,7 @@ interface Props {
 
 const { href, variant = 'primary', type = 'button', ariaCurrent = false, class: className } = Astro.props
 
-const classes = ['button', variant === 'primary' ? 'primary' : 'secondary', className].filter(Boolean).join(' ')
+const classes = ['button', variant, className].filter(Boolean).join(' ')
 ---
 
 {
@@ -68,6 +68,12 @@ const classes = ['button', variant === 'primary' ? 'primary' : 'secondary', clas
     background: var(--color-ink);
     color: var(--color-on-ink);
     border-color: var(--color-ink);
+  }
+
+  .button.inverse {
+    background: var(--color-on-ink);
+    color: var(--color-ink);
+    border-color: var(--color-on-ink);
   }
 
   .button.secondary {
