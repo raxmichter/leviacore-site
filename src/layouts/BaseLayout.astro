@@ -141,13 +141,7 @@ const organizationSchema = {
     <!-- GA4 — verbatim from every page of the live export. Must survive migration. -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EG4F7ZLTZQ"></script>
     <script>
-      window.dataLayer = window.dataLayer || []
-      function gtag() {
-        window.dataLayer.push(arguments)
-      }
-      gtag('set', 'developer_id.dZGVlNj', true)
-      gtag('js', new Date())
-      gtag('config', 'G-EG4F7ZLTZQ')
+      import '../scripts/ga'
     </script>
   </head>
   <body>
