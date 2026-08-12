@@ -71,6 +71,13 @@ const {
     margin-inline: calc(-1 * var(--frame-padding));
     margin-bottom: calc(-1 * var(--space-sm));
     padding: var(--section-pad-y) var(--frame-padding) calc(var(--section-pad-y) + var(--space-sm));
+    min-height: min(72vh, 720px);
+    display: flex;
+    align-items: center;
+  }
+
+  .contact-band > .page-padding {
+    width: 100%;
   }
 
   .contact-hero-grid {
@@ -122,21 +129,22 @@ const {
   .form-shell {
     max-width: none;
     padding: clamp(1.35rem, 3vw, 2rem);
-    border: 1px solid color-mix(in srgb, var(--color-on-ink) 22%, transparent);
-    background: color-mix(in srgb, var(--color-on-ink) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-on-ink) 32%, transparent);
+    background: color-mix(in srgb, var(--color-on-ink) 6%, transparent);
   }
 
   .form-shell :global(.form-label) {
-    color: color-mix(in srgb, var(--color-on-ink) 70%, transparent);
+    color: color-mix(in srgb, var(--color-on-ink) 78%, transparent);
+    opacity: 1;
   }
 
   .form-shell :global(.form-input) {
     color: var(--color-on-ink);
-    border-bottom-color: color-mix(in srgb, var(--color-on-ink) 35%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--color-on-ink) 48%, transparent);
   }
 
   .form-shell :global(.form-input::placeholder) {
-    color: color-mix(in srgb, var(--color-on-ink) 45%, transparent);
+    color: color-mix(in srgb, var(--color-on-ink) 55%, transparent);
   }
 
   .form-shell :global(.form-input:focus-visible) {

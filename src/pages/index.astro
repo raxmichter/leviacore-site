@@ -254,12 +254,13 @@ const featuredProjects = featuredProjectEntries
   /* ---------- Hero: full-bleed media plane + brand-forward copy ---------- */
   .section-home-hero {
     margin-inline: calc(-1 * var(--frame-padding));
-    margin-top: calc(-1 * var(--frame-padding));
+    /* Tuck under sticky masthead so the translucent header sits on the photo */
+    margin-top: calc(-1 * var(--frame-padding) - 4.75rem);
   }
 
   .home-hero-plane {
     position: relative;
-    min-height: min(92vh, 920px);
+    min-height: min(96vh, 960px);
     display: grid;
     align-items: end;
     overflow: hidden;
@@ -297,7 +298,7 @@ const featuredProjects = featuredProjectEntries
     position: relative;
     z-index: 1;
     width: 100%;
-    padding-block: clamp(5.5rem, 14vh, 8rem) clamp(3rem, 8vh, 5rem);
+    padding-block: clamp(7rem, 18vh, 10rem) clamp(3rem, 8vh, 5rem);
   }
 
   .home-hero-copy {
