@@ -125,6 +125,16 @@ const { headingText = 'the values at our core.', items, portraitAlt } = Astro.pr
     height: auto;
     object-fit: cover;
   }
+  @media screen and (max-width: 767px) {
+    .portrait-wrapper {
+      max-block-size: 16rem;
+    }
+    .portrait-wrapper :global(img) {
+      max-block-size: 16rem;
+      object-fit: cover;
+      object-position: center top;
+    }
+  }
   .home-values-grid-right {
     display: flex;
     flex-direction: column;

@@ -165,12 +165,13 @@ const featuredProjects = featuredProjectEntries
     <div class="home-hero-grid">
       <div class="home-hero-grid-left">
         <SectionHeading as="h1" variant="display-xl" class="hero-heading">
-          You can't buy hype,<br />But you can earn it.
+          You can't buy hype,<br />but you can earn it.
         </SectionHeading>
         <p class="lead-text hero-intro">
           Partnering with the right influencers and connecting with the right audiences is how it's done. We help
           brands build hype with both.
         </p>
+        <Button href="/contact" class="hero-cta">Let's make it happen</Button>
       </div>
       <div class="home-hero-image-wrapper">
         <Image src={heroImage} alt="The Leviathan Core team" class="image-cover" />
@@ -252,7 +253,7 @@ const featuredProjects = featuredProjectEntries
           See how our innovative, hands-on approach has helped brands like yours grow fanbases, generate buzz, and
           break records.
         </p>
-        <Button href="/projects" variant="primary">See more</Button>
+        <Button href="/projects" variant="secondary">See more</Button>
       </div>
       <div class="line-vertical hide-mobile-landscape" aria-hidden="true"></div>
       {
@@ -364,6 +365,10 @@ const featuredProjects = featuredProjectEntries
       gap: 3rem;
     }
   }
+  .hero-cta {
+    align-self: flex-start;
+    margin-top: var(--space-xs);
+  }
   .home-hero-grid-left {
     display: flex;
     flex-direction: column;
@@ -447,6 +452,12 @@ const featuredProjects = featuredProjectEntries
     grid-template-columns: 0.47fr var(--divider-width) 1fr;
     gap: var(--space-xl);
     align-items: start;
+  }
+  @media screen and (min-width: 992px) {
+    .home-projects-grid-left-inner {
+      position: sticky;
+      top: var(--space-lg);
+    }
   }
 
   @media screen and (max-width: 991px) {
@@ -532,6 +543,11 @@ const featuredProjects = featuredProjectEntries
     border-radius: var(--radius-card);
     overflow: hidden;
     aspect-ratio: 1 / 1;
+  }
+  @media screen and (max-width: 767px) {
+    .home-project-preview-image-wrapper {
+      aspect-ratio: 16 / 9;
+    }
   }
   .home-project-preview-image-wrapper :global(img) {
     width: 100%;
