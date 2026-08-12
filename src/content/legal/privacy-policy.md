@@ -1,117 +1,108 @@
 ---
 title: "Privacy Policy"
-description: "You can't buy hype, but you can earn it. Partnering with the right influencers and connecting with the right audiences is how it’s done. We help brands build hype with both."
-lastUpdated: 2021-11-09
+description: "Leviathan Core Privacy Policy — what personal information we collect, how we use and share it, and the choices you have."
+lastUpdated: 2026-08-12
 navLabel: "Privacy Policy"
 ---
 
-**Website Privacy Policy:** Last modified: November 9, 2021
+**Effective date: August 12, 2026**
 
-## Introduction
+Leviathan Core, LLC ("Leviathan Core," "we," "us," or "our") is a gaming-industry influencer marketing agency. This Privacy Policy explains what personal information we collect, how we use and share it, and the choices you have. It applies to information we collect through our website at [leviacore.com](https://www.leviacore.com) and through our agency operations — including when we contract with and pay creators and influencers.
 
-Leviathan Core, LLC ( **"Company"** or **"We"** ) respects your privacy and are committed to protecting it through our compliance with this policy. We offer professional services for clients in the gaming industry. The services we offer include influencer marketing, development consulting and event logistics.
-This policy describes the types of information we may collect from you or that you may provide when you visit the website [www.leviacore.com](https://www.leviacore.com) (our "**Website**") and our practices for collecting, using, maintaining, protecting, and disclosing that information.
+If you have any questions, contact us at [development@leviacore.com](mailto:development@leviacore.com).
 
-**This policy applies to information we collect:**
-- On this Website.
-- In email, text, and other electronic messages between you and this Website.
+## Who this policy covers
 
-**It does not apply to information collected by:**
-- Us offline or through any other means, including on any other website operated by Company or any third party; or
-- Any third party, including through any application or content that may link to or be accessible from or on the Website.
+This policy describes our practices for:
 
-Please read this policy carefully to understand our policies and practices regarding your information and how we will treat it. If you do not agree with our policies and practices, your choice is not to use our website. By accessing or using this Website, you agree to this privacy policy. This policy may change from time to time (see [Changes to Our Privacy Policy](#changes-to-our-privacy-policy)). Your continued use of this Website after we make changes is deemed to be acceptance of those changes, so please check the policy periodically for updates.
+- **Website visitors** — people who browse leviacore.com or contact us through it.
+- **Brand and publisher contacts** — representatives of the clients we provide agency services to.
+- **Creators and influencers** — the talent we engage to perform campaign work, and their managers or agents.
 
-## Children Under the Age of 16
+It does not cover our clients' own privacy practices, or the privacy practices of third-party websites or platforms we link to.
 
-Our website is not intended for children under 16 years of age. No one under age 16 may provide any information to or on the Website. We do not knowingly collect personal information from children under 16. If you are under 16, do not use or provide any information on this Website or on or through any of its features. If we learn we have collected or received personal information from a child under 16 without verification of parental consent, we will delete that information. If you believe we might have any information from or about a child under 16, please contact us at: [development@leviacore.com](mailto:development@leviacore.com).
+## Personal information we collect
 
-## Information We Collect About You and How We Collect It
+**From website visitors.** When you visit leviacore.com or reach out to us, we may collect:
 
-We collect several types of information from and about users of our website, including information:
-- By which you may be personally identified, such as name, postal address, e-mail address, telephone number, or any other identifier by which you may be contacted online or offline ("**personal information**");
-- That is about you but individually does not identify you; and/or
-- About your internet connection, the equipment you use to access our website, and usage details.
+- Identifiers and contact details you provide — such as your name, email address, company, and anything you type into a contact or request form.
+- Internet and device activity collected automatically — such as IP address, browser type, pages viewed, and similar analytics data collected through cookies and similar technologies (see [Cookies and analytics](#cookies-and-analytics) below).
 
-We collect this information:
-- Directly from you when you provide it to us.
-- Automatically as you navigate through the site. Information collected automatically may include usage details, IP addresses, and information collected through cookies and web beacons.
-- From third parties, for example, our business partners.
+**From creators and influencers we contract with.** To enter into and perform influencer marketing agreements and to pay for completed work, we collect:
 
-## Information You Provide to Us
+- Social media handles and channel information;
+- Legal name or business entity name;
+- Mailing address and email address;
+- Tax identification information (such as an SSN, ITIN, or EIN) collected and processed through our payment provider, Tipalti — see [How we share information](#how-we-share-information) below.
 
-The information we collect on or through our Website may include:
-- Information that you provide by filling in forms on our Website.
-- Records and copies of your correspondence (including email addresses) if you contact us.
+We collect this information for the limited purpose of contracting with creators and paying them for influencer marketing work. We do not use it for advertising or sell it.
 
-## Information We Collect Through Automatic Data Collection Technologies
+**From brand and publisher clients.** We collect business contact information for the people we work with on campaigns, provided to us by our clients or by the contacts themselves.
 
-As you navigate through and interact with our Website, we may use automatic data collection technologies to collect certain information about your equipment, browsing actions, and patterns, including:
+We do not sell personal information, and we do not collect personal information in order to disclose it to third parties for their own direct marketing.
 
-- Details of your visits to our Website, including traffic data, logs, and other communication data and the resources that you access and use on the Website.
-- Information about your computer and internet connection, including your IP address, operating system, and browser type.
+## How we use personal information
 
-We may use Google Analytics to collect this information through the automatic data collection technologies described below. For more information on how Google collects and processes this information please review Google's Privacy Policy located at: [https://policies.google.com/privacy?hl=en-US](https://policies.google.com/privacy?hl=en-US)
+We use personal information to:
 
-The information we collect automatically may include personal information. It helps us to improve our website and to deliver a better and more personalized service, including by enabling us to:
-- Estimate our audience size and usage patterns.
-- Speed up your searches.
-- Recognize you when you return to our website.
+- operate, maintain, and improve our website;
+- respond to inquiries and provide our agency services;
+- enter into, manage, and perform contracts with creators, influencers, and clients;
+- pay creators and influencers for completed work;
+- understand how our website is used, through analytics;
+- comply with legal, tax, and contractual obligations; and
+- protect our rights and the security of our systems.
 
-**The technologies we use for this automatic data collection may include:**
+## Cookies and analytics
 
-- **Cookies (or browser cookies).** A cookie is a small file placed on the hard drive of your computer. You may refuse to accept browser cookies by activating the appropriate setting on your browser. However, if you select this setting you may be unable to access certain parts of our website. Unless you have adjusted your browser setting so that it will refuse cookies, our system will issue cookies when you direct your browser to our website.
+We use cookies and similar technologies to operate our website and understand how visitors use it. We use Google Analytics only, to measure website traffic and usage; Google processes website-usage data on our behalf as described in Google's own policies. We do not use advertising, social media, remarketing, or session-replay trackers, and we do not use cookies to sell or share your personal information or for cross-context behavioral advertising.
 
-- **Flash Cookies.** Certain features of our website may use local stored objects (or Flash cookies) to collect and store information about your preferences and navigation to, from, and on our website. Flash cookies are not managed by the same browser settings as are used for browser cookies. For information about managing your privacy and security settings for Flash cookies, see [Choices About How We Use and Disclose Your Information](#choices-about-how-we-use-and-disclose-your-information).
+You can set your browser to refuse cookies or to alert you when cookies are being sent; some parts of the site may not function properly if you do. You can also opt out of Google Analytics using [Google's browser add-on](https://tools.google.com/dlpage/gaoptout).
 
-- **Web Beacons.** Pages of our Website may contain small electronic files known as web beacons (also referred to as clear gifs, pixel tags, and single-pixel gifs) that permit the Company, for example, to count users who have visited those pages and for other related website statistics (for example, recording the popularity of certain website content and verifying system and server integrity).
+## How we share information
 
-## How We Use Your Information
+We share personal information only as described here:
 
-We use information that we collect about you or that you provide to us, including any personal information:
-- To present our website and its contents to you.
-- To provide you with information, products, or services that you request from us.
-- To fulfill any other purpose for which you provide it.
-- To carry out our obligations and enforce our rights arising from any contracts entered into between you and us.
-- In any other way we may describe when you provide the information.
-- For any other purpose with your consent.
+- **Service providers.** We share information with vendors who perform services for us under contract — for example, Tipalti, which collects tax information and processes payments to creators and influencers; our website host; and our analytics provider. They are permitted to use the information only to provide services to us.
+- **Clients and campaign partners.** When we run a campaign, we may share a creator's relevant contact and engagement information with the brand or publisher client as needed to perform the campaign.
+- **Affiliates.** We may share information with companies under common ownership with Leviathan Core, for the purposes described in this policy.
+- **Legal and corporate reasons.** We may disclose information to comply with law or legal process, to enforce our agreements, to protect rights and safety, or in connection with a merger, acquisition, financing, or sale of assets.
 
-## Disclosure of Your Information
+We do not sell personal information, and we do not share personal information for cross-context behavioral advertising.
 
-We may disclose aggregated information about our users, and information that does not identify any individual, without restriction. We may disclose personal information that we collect, or you provide, as described in this privacy policy:
-- To our subsidiaries and affiliates.
-- To contractors, service providers, and other third parties we use to support our business.
-- To a buyer or other successor in the event of a merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some or all of the Company's assets, whether as a going concern or as part of bankruptcy, liquidation, or similar proceeding, in which personal information held by the Company about our Website users is among the assets transferred.
-- To fulfill the purpose for which you provide it.
-- For any other purpose disclosed by us when you provide the information.
-- With your consent.
+## How long we keep information
 
-**We may also disclose your personal information:**
-- To comply with any court order, law, or legal process, including to respond to any government or regulatory request.
-- If we believe disclosure is necessary or appropriate to protect the rights, property, or safety of the Company, our clients, or others. This includes exchanging information with other companies and organizations for the purposes of fraud protection and credit risk reduction.
+We keep personal information for as long as needed for the purposes described in this policy — for example, for the length of a campaign or client relationship, and afterward as required to meet tax, accounting, contractual, and legal obligations. When we no longer need it, we delete or de-identify it.
 
-## Choices About How We Use and Disclose Your Information
+## Your choices and rights
 
-We strive to provide you with choices regarding the personal information you provide to us. We have created mechanisms to provide you with the following control over your information:
+You can contact us at [development@leviacore.com](mailto:development@leviacore.com) at any time to ask about the personal information we hold about you, to request a correction, or to ask us to delete it. You can also submit a request through the form on our website. We will respond consistent with applicable law.
 
-**Tracking Technologies and Advertising.** You can set your browser to refuse all or some browser cookies, or to alert you when cookies are being sent. To learn how you can manage your Flash cookie settings, visit the Flash player settings page on Adobe's website. If you disable or refuse cookies, please note that some parts of this site may then be inaccessible or not function properly.
+**California residents.** As a courtesy, Leviathan Core will honor requests from California residents to know what personal information we have collected about them, to correct it, or to delete it, subject to verifying your identity and to legal exceptions (for example, information we must keep for tax or recordkeeping reasons). To make a request, use the website form or email us at the address above. We will not discriminate against you for exercising these choices.
 
-We do not control third parties' collection or use of your information to serve interest-based advertising. However, these third parties may provide you with ways to choose not to have your information collected or used in this way. You can opt out of receiving targeted ads from members of the Network Advertising Initiative (" **NAI**") on the NAI's website.
+**Nevada residents.** Nevada law lets residents tell certain online businesses not to sell their covered personal information. Leviathan Core does not sell personal information. If you would like to submit a request, email us at [development@leviacore.com](mailto:development@leviacore.com).
 
-Nevada residents who wish to exercise their sale opt-out rights under Nevada Revised Statutes Chapter 603A may submit a request to this designated address: [development@leviacore.com](mailto:development@leviacore.com). However, please know we do not currently sell data triggering that statute's opt-out requirements.
+## Children's privacy
 
-## Data Security
+Our website and services are not directed to children, and we do not knowingly collect personal information from anyone under 16. If you believe a child under 16 has provided us personal information, contact us and we will delete it.
 
-We have implemented measures designed to secure your personal information from accidental loss and from unauthorized access, use, alteration, and disclosure. The safety and security of your information also depends on you. Unfortunately, the transmission of information via the internet is not completely secure. Although we do our best to protect your personal information, we cannot guarantee the security of your personal information transmitted to our website. Any transmission of personal information is at your own risk. We are not responsible for circumvention of any privacy settings or security measures contained on the Website.
+## Third-party links
 
-## Changes to Our Privacy Policy
+Our website and campaigns may link to third-party sites and platforms. We are not responsible for their privacy practices; review their policies directly.
 
-It is our policy to post any changes we make to our privacy policy on this page with a notice that the privacy policy has been updated on the Website home page. If we make material changes to how we treat our users' personal information, we will notify you through a notice on the Website home page. The date the privacy policy was last revised is identified at the top of the page. You are responsible for periodically visiting our website and this privacy policy to check for any changes.
+## Security
 
-## Your California Privacy Rights
+We use reasonable administrative, technical, and physical safeguards designed to protect personal information. No method of transmission or storage is completely secure, and we cannot guarantee absolute security.
 
-If you are a California resident, California law may provide you with additional rights regarding our use of your personal information. To learn more about your California privacy rights visit [https://www.leviacore.com/ccpa](https://www.leviacore.com/ccpa).
+## Changes to this policy
 
-## Contact Information
+We may update this policy from time to time. When we do, we will revise the effective date above and, if the changes are material, provide a more prominent notice. We review this policy at least once a year.
 
-To ask questions or comment about this privacy policy and our privacy practices, contact us at: [development@leviacore.com](mailto:development@leviacore.com).
+## Contact us
+
+Leviathan Core, LLC  
+715 Mawman Ave., Lake Bluff, IL 60044  
+
+[development@leviacore.com](mailto:development@leviacore.com)
+
+or the webform located at [leviacore.com](https://www.leviacore.com)

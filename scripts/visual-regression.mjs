@@ -50,8 +50,6 @@ const PAGES = [
   '/team',
   '/contact',
   '/privacy-policy',
-  '/ccpa',
-  '/notice-at-collection',
   '/project/return-to-aeternum',
   '/project/warframe',
   '/project/legends-of-lost-ark',

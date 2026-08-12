@@ -30,7 +30,7 @@ src/
   layouts/         BaseLayout — <head>, header, footer, SEO
   content/         Markdown content, schema-validated
     projects/        5 case studies
-    legal/           privacy policy, CCPA, notice at collection
+    legal/           privacy policy
     blog/            built, SHIPPED DISABLED — see docs/enable-blog.md
   data/team.yaml   team roster
   styles/          tokens.css (design tokens), global.css, fonts.css

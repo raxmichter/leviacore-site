@@ -43,12 +43,14 @@
 
 # ── Extension-stripping ──────────────────────────────────────────────────────
 # The rebuilt site serves extensionless URLs. Anything that hardcoded a .html
-# extension — including two links inside the CCPA document itself, see
-# legal-page-url-reference.md — must still resolve.
+# extension must still resolve. Retired CCPA / Notice at Collection URLs
+# permanently redirect to the updated Privacy Policy (2026-08-12).
 /index.html                /                        301
 /privacy-policy.html       /privacy-policy          301
-/ccpa.html                 /ccpa                    301
-/notice-at-collection.html /notice-at-collection    301
+/ccpa.html                 /privacy-policy          301
+/notice-at-collection.html /privacy-policy          301
+/ccpa                      /privacy-policy          301
+/notice-at-collection      /privacy-policy          301
 /services.html             /services                301
 /projects.html             /projects                301
 /team.html                 /team                    301

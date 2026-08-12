@@ -74,7 +74,7 @@ One file: `src/data/team.yaml`. One block per person.
 
 ## Editing legal pages
 
-`src/content/legal/` — `privacy-policy.md`, `ccpa.md`, `notice-at-collection.md`. Plain Markdown.
+`src/content/legal/` — `privacy-policy.md`. Plain Markdown. (CCPA and Notice at Collection retired 2026-08-12.)
 
 **When you change a policy, update its `lastUpdated` date** in the block at the top. That date is what visitors see. It is deliberately *not* automatic: an automatic date would claim the policy was reviewed every time anyone touched the file, which would be untrue and is exactly the wrong thing to be untrue about.
 

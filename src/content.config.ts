@@ -1,7 +1,7 @@
 // Content collections config — Astro 7 content layer (glob loader + Zod schema).
 //
 // Three collections:
-//   legal    — privacy-policy, ccpa, notice-at-collection (Phase C2a)
+//   legal    — privacy-policy (CCPA + Notice at Collection retired 2026-08-12)
 //   projects — the five case studies (Phase D1 template, D2 content)
 //   blog     — built in Phase D3, SHIPPED DISABLED behind src/config.ts
 //
