@@ -301,3 +301,10 @@ strong {
     transition: opacity 0.2s linear !important;
   }
 }
+
+/* Fail-open for content reveals: if JS never arms observers, content stays visible.
+   Once `.js-reveal` is set, JS owns opacity via inline styles until reveal/failsafe. */
+html:not(.js-reveal) [data-reveal] {
+  opacity: 1;
+  transform: none;
+}

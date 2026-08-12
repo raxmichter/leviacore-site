@@ -1,6 +1,9 @@
 ---
 /**
  * SiteHeader — sticky editorial masthead: logo, primary nav, CTA, socials, mobile menu.
+ *
+ * Backdrop-filter lives on `.header-chrome` only — NOT on the sticky `<header>` —
+ * so it does not create a containing block that clips the fixed MobileMenu.
  */
 import { Image } from 'astro:assets'
 import logo from '../assets/images/LC-SITE-NAV.png'
@@ -25,72 +28,74 @@ const isCurrent = (path: string) => currentPath === path
 ---
 
 <header class="header">
-  <div class="navbar-wrapper">
-    <div class="navbar">
-      <div class="page-padding">
-        <div class="container-xxlarge">
-          <div class="navbar-inner">
-            <div class="navbar-left">
-              <a
-                href="/"
-                class="navbar-logo"
-                aria-current={isCurrent('/') ? 'page' : undefined}
-              >
-                <Image src={logo} alt="Leviathan Core" width={250} class="navbar-logo-image" />
-              </a>
-            </div>
-            <div class="navbar-right">
-              <nav class="navbar-menu" aria-label="Primary">
-                {
-                  navLinks.map((link) => (
-                    <a
-                      href={link.href}
-                      class="navbar-menu-item-link"
-                      aria-current={isCurrent(link.href) ? 'page' : undefined}
-                    >
-                      {link.label}
-                    </a>
-                  ))
-                }
-              </nav>
-              <div class="navbar-right-inner">
-                <div class="navbar-right-button">
-                  <Button href="/contact" ariaCurrent={isCurrent('/contact')}>
-                    Let's make it happen
-                  </Button>
-                </div>
-                <div class="navbar-right-social">
-                  <a
-                    href="https://twitter.com/leviacore"
-                    class="badge small link"
-                    aria-label="Leviathan Core on Twitter"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span class="text-meta-small" aria-hidden="true">Tw</span>
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/company/leviathan-core/"
-                    class="badge small link"
-                    aria-label="Leviathan Core on LinkedIn"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span class="text-meta-small" aria-hidden="true">IN</span>
-                  </a>
-                </div>
-                <button
-                  type="button"
-                  id="mobile-menu-toggle"
-                  class="mobile-menu-toggle"
-                  aria-expanded="false"
-                  aria-controls="mobile-menu"
-                  aria-label="Open menu"
+  <div class="header-chrome">
+    <div class="navbar-wrapper">
+      <div class="navbar">
+        <div class="page-padding">
+          <div class="container-xxlarge">
+            <div class="navbar-inner">
+              <div class="navbar-left">
+                <a
+                  href="/"
+                  class="navbar-logo"
+                  aria-current={isCurrent('/') ? 'page' : undefined}
                 >
-                  <span class="mobile-menu-toggle-line"></span>
-                  <span class="mobile-menu-toggle-line"></span>
-                  <span class="mobile-menu-toggle-line"></span>
-                </button>
+                  <Image src={logo} alt="Leviathan Core" width={250} class="navbar-logo-image" />
+                </a>
+              </div>
+              <div class="navbar-right">
+                <nav class="navbar-menu" aria-label="Primary">
+                  {
+                    navLinks.map((link) => (
+                      <a
+                        href={link.href}
+                        class="navbar-menu-item-link"
+                        aria-current={isCurrent(link.href) ? 'page' : undefined}
+                      >
+                        {link.label}
+                      </a>
+                    ))
+                  }
+                </nav>
+                <div class="navbar-right-inner">
+                  <div class="navbar-right-button">
+                    <Button href="/contact" ariaCurrent={isCurrent('/contact')}>
+                      Let's make it happen
+                    </Button>
+                  </div>
+                  <div class="navbar-right-social">
+                    <a
+                      href="https://twitter.com/leviacore"
+                      class="badge small link"
+                      aria-label="Leviathan Core on Twitter"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span class="text-meta-small" aria-hidden="true">Tw</span>
+                    </a>
+                    <a
+                      href="https://www.linkedin.com/company/leviathan-core/"
+                      class="badge small link"
+                      aria-label="Leviathan Core on LinkedIn"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span class="text-meta-small" aria-hidden="true">IN</span>
+                    </a>
+                  </div>
+                  <button
+                    type="button"
+                    id="mobile-menu-toggle"
+                    class="mobile-menu-toggle"
+                    aria-expanded="false"
+                    aria-controls="mobile-menu"
+                    aria-label="Open menu"
+                  >
+                    <span class="mobile-menu-toggle-line"></span>
+                    <span class="mobile-menu-toggle-line"></span>
+                    <span class="mobile-menu-toggle-line"></span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -99,6 +104,7 @@ const isCurrent = (path: string) => currentPath === path
     </div>
   </div>
 
+  {/* Sibling of filtered chrome — fixed drawer must not sit under backdrop-filter */}
   <MobileMenu currentPath={currentPath} />
 </header>
 
@@ -107,15 +113,23 @@ const isCurrent = (path: string) => currentPath === path
   const menu = document.getElementById('mobile-menu')
 
   if (toggle && menu) {
+    const firstLink = () => menu.querySelector<HTMLElement>('a, button')
+
     const setOpen = (open: boolean) => {
       toggle.setAttribute('aria-expanded', String(open))
       toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu')
       toggle.classList.toggle('is-active', open)
       document.documentElement.classList.toggle('menu-open', open)
+      document.body.classList.toggle('menu-open', open)
       if (open) {
         menu.removeAttribute('hidden')
+        // Focus first nav link after paint so the drawer is in the a11y tree
+        requestAnimationFrame(() => {
+          firstLink()?.focus()
+        })
       } else {
         menu.setAttribute('hidden', '')
+        toggle.focus()
       }
     }
 
@@ -123,11 +137,12 @@ const isCurrent = (path: string) => currentPath === path
       setOpen(menu.hasAttribute('hidden'))
     })
 
-    menu.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        setOpen(false)
-        toggle.focus()
-      }
+    // Document-level Escape — focus often stays on the toggle, not the menu node
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return
+      if (menu.hasAttribute('hidden')) return
+      event.preventDefault()
+      setOpen(false)
     })
 
     menu.querySelectorAll('a').forEach((link) => {
@@ -137,7 +152,8 @@ const isCurrent = (path: string) => currentPath === path
 </script>
 
 <style is:global>
-  html.menu-open {
+  html.menu-open,
+  body.menu-open {
     overflow: hidden;
   }
 </style>
@@ -147,14 +163,21 @@ const isCurrent = (path: string) => currentPath === path
     position: sticky;
     top: 0;
     z-index: var(--z-header);
+    /* No backdrop-filter here — it would clip position:fixed MobileMenu */
+    padding-top: env(safe-area-inset-top, 0);
+  }
+
+  .header-chrome {
+    position: relative;
+    /* Stay above the full-viewport drawer so the hamburger remains clickable */
+    z-index: calc(var(--z-overlay) + 1);
     background: color-mix(in srgb, var(--color-bg) 55%, transparent);
     backdrop-filter: blur(16px) saturate(1.15);
     -webkit-backdrop-filter: blur(16px) saturate(1.15);
     border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 6%, transparent);
   }
 
-  /* When the mobile drawer is open, solidify chrome so links read cleanly */
-  :global(html.menu-open) .header {
+  :global(html.menu-open) .header-chrome {
     background: var(--color-bg);
     border-bottom-color: color-mix(in srgb, var(--color-ink) 12%, transparent);
   }
@@ -175,6 +198,7 @@ const isCurrent = (path: string) => currentPath === path
     align-items: center;
     justify-content: space-between;
     gap: var(--space-md);
+    min-height: var(--header-inner-height);
     padding-block: 0.9rem 0.85rem;
   }
 
@@ -259,6 +283,8 @@ const isCurrent = (path: string) => currentPath === path
 
   .mobile-menu-toggle {
     display: none;
+    position: relative;
+    z-index: 1;
     flex-direction: column;
     justify-content: center;
     align-items: center;

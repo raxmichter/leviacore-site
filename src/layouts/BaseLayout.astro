@@ -170,7 +170,8 @@ const organizationSchema = {
 <style>
   .main-wrapper {
     border-radius: 0;
-    overflow: clip;
+    /* Do NOT set overflow: clip/hidden here — it kills position:sticky descendants
+       (homepage services intro, team intro). Radius alone is enough for the shell. */
   }
 
   @media screen and (max-width: 991px) {

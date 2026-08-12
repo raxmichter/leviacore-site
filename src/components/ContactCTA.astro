@@ -150,13 +150,21 @@ const {
   .form-shell :global(.form-input:focus-visible) {
     border-bottom-color: var(--color-on-ink);
     background: color-mix(in srgb, var(--color-on-ink) 6%, transparent);
-    outline-color: var(--color-on-ink);
+    outline: 2px solid var(--color-on-ink);
+    outline-offset: 2px;
+    box-shadow: none;
   }
 
   .form-shell :global(.submit-button) {
     background: var(--color-on-ink);
     color: var(--color-ink);
     border-color: var(--color-on-ink);
+  }
+
+  /* Paper submit on ink — use ink ring (high contrast on the light control) */
+  .form-shell :global(.submit-button:focus-visible) {
+    outline: 2px solid var(--color-on-ink);
+    outline-offset: 3px;
   }
 
   .form-shell :global(.form-message-success),

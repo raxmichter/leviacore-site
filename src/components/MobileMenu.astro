@@ -73,8 +73,14 @@ const isCurrent = (path: string) => currentPath === path
     position: fixed;
     inset: 0;
     z-index: var(--z-overlay);
+    padding:
+      env(safe-area-inset-top, 0)
+      env(safe-area-inset-right, 0)
+      env(safe-area-inset-bottom, 0)
+      env(safe-area-inset-left, 0);
     background: var(--color-bg);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     opacity: 0;
     transform: translateY(10px);
     transition:
@@ -101,8 +107,8 @@ const isCurrent = (path: string) => currentPath === path
   }
 
   .mobile-menu-wrapper {
-    /* Clear sticky header + give Syne links room to breathe */
-    padding-block: clamp(5.5rem, 16vh, 7.5rem) var(--space-xl);
+    /* Clear sticky header (+ safe area already on panel) */
+    padding-block: calc(var(--header-height) + 1.25rem) var(--space-xl);
   }
 
   .mobile-menu-nav-link:first-child {
