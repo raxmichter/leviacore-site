@@ -225,6 +225,10 @@ const messageId = `${idPrefix}-message`
     line-height: var(--lh-loose);
     color: var(--color-ink);
   }
+  .form-input::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+  }
   .form-input:focus-visible {
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
@@ -232,16 +236,15 @@ const messageId = `${idPrefix}-message`
   }
   .form-input.is-text-area {
     min-height: 8rem;
-    resize: vertical;
+    resize: none;
   }
   .submit-button {
     /*
-     * Source is a bare `<input type="submit">` styled `.button.primary.w-button` — NOT the
-     * link-based `Button` component's DOM shape (no `.button-inner` wrapper, no hover-swap
-     * span; see Button.astro's file header). Visual treatment duplicated here to match.
+     * Critique: promote submit to primary CTA weight (was the smallest control on the page).
+     * Still a bare <button> (not Button.astro) so FormData / disabled wiring stays simple.
      */
     align-self: flex-start;
-    margin-top: var(--space-xs);
+    margin-top: var(--space-sm);
     border: 1px solid var(--color-transparent);
     border-radius: var(--radius-sm);
     background: var(--color-ink);
@@ -251,7 +254,8 @@ const messageId = `${idPrefix}-message`
     line-height: var(--lh-tight);
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
-    padding: var(--space-xs) 0.6rem; /* .6rem is off-scale in source, no token — see Button.astro */
+    padding: var(--space-sm) var(--space-md);
+    min-inline-size: 12rem;
     cursor: pointer;
   }
   .submit-button:focus-visible {

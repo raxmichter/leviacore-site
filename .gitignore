@@ -31,3 +31,4 @@ playwright-report/
 .cache/
 .vercel
 .env*
+node_modules

@@ -40,7 +40,7 @@ const { title, description, tags, image, imageAlt, href, ctaText = 'View Project
   Astro.props
 ---
 
-<article class="project-card">
+<article class="project-card" data-reveal>
   <div class="project-card-content">
     <div class="project-card-text">
       <a href={href} class="project-card-title-link">
@@ -77,11 +77,21 @@ const { title, description, tags, image, imageAlt, href, ctaText = 'View Project
     .project-card {
       grid-template-columns: 1fr;
     }
+    /* Image first on narrow widths — matches live skim pattern, reduces scroll before proof art. */
+    .project-card-image-wrapper {
+      order: -1;
+    }
   }
   .project-card-content {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
+    align-items: flex-start;
+  }
+  @media screen and (max-width: 767px) {
+    .project-card-content :global(.button) {
+      width: 100%;
+    }
   }
   .project-card-title-link {
     color: inherit;
@@ -105,7 +115,9 @@ const { title, description, tags, image, imageAlt, href, ctaText = 'View Project
     font-size: var(--fs-mono-xs);
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
-    color: var(--color-ink);
+    color: var(--color-text-muted);
+    /* Tags are labels, not controls — keep them quiet vs VIEW PROJECT. */
+    pointer-events: none;
   }
   .project-card-image-wrapper {
     display: block;

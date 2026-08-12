@@ -45,7 +45,7 @@ interface Props {
 const { headingText = 'the values at our core.', items, portraitAlt } = Astro.props
 ---
 
-<section class="section-home-values">
+<section class="section-home-values" data-reveal>
   <div class="page-padding">
     <div class="container-xxlarge">
       <Divider />
@@ -125,6 +125,16 @@ const { headingText = 'the values at our core.', items, portraitAlt } = Astro.pr
     height: auto;
     object-fit: cover;
   }
+  @media screen and (max-width: 767px) {
+    .portrait-wrapper {
+      max-block-size: 16rem;
+    }
+    .portrait-wrapper :global(img) {
+      max-block-size: 16rem;
+      object-fit: cover;
+      object-position: center top;
+    }
+  }
   .home-values-grid-right {
     display: flex;
     flex-direction: column;
@@ -142,9 +152,14 @@ const { headingText = 'the values at our core.', items, portraitAlt } = Astro.pr
   /* .badge is fully covered by the global primitive in global.css. */
   .text-meta {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
+    font-size: var(--fs-mono-lg);
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
+  }
+  .badge {
+    /* Global badge is 40px — bump for values drama without leaving the system */
+    block-size: 3rem;
+    inline-size: 3rem;
   }
   .item-title {
     margin-bottom: var(--space-xs);

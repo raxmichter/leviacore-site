@@ -161,18 +161,20 @@ const featuredProjects = featuredProjectEntries
   {/* Phase E — custom cursor (a-8 / a-165 / a-166). Five pages only; see Cursor.astro. */}
   <Cursor />
 
-  <SectionShell sectionClass="section-home-hero" withTopDivider={false}>
+  <SectionShell sectionClass="section-home-hero" withTopDivider={false} reveal={false}>
     <div class="home-hero-grid">
-      <div class="home-hero-grid-left">
-        <SectionHeading as="h1" variant="display-xl" class="hero-heading">
-          You can't buy hype,<br />But you can earn it.
+      <div class="home-hero-grid-left" data-reveal data-reveal-delay="0">
+        <Eyebrow class="hero-eyebrow">Gaming influencer marketing</Eyebrow>
+        <SectionHeading as="h1" variant="display-2xl" class="hero-heading">
+          You can't buy hype,<br />but you can earn it.
         </SectionHeading>
         <p class="lead-text hero-intro">
           Partnering with the right influencers and connecting with the right audiences is how it's done. We help
           brands build hype with both.
         </p>
+        <Button href="/contact" class="hero-cta">Let's make it happen</Button>
       </div>
-      <div class="home-hero-image-wrapper">
+      <div class="home-hero-image-wrapper" data-reveal data-reveal-delay="120">
         <Image src={heroImage} alt="The Leviathan Core team" class="image-cover" />
       </div>
     </div>
@@ -182,10 +184,10 @@ const featuredProjects = featuredProjectEntries
     <ClientLogoStrip logos={clientLogos} />
   </SectionShell>
 
-  <SectionShell sectionClass="section-home-services">
+  <SectionShell sectionClass="section-home-services" reveal={false}>
     <div class="home-services-grid">
-      <div class="home-services-intro">
-        <SectionHeading as="h2" variant="h1" uppercase>Services that stand out</SectionHeading>
+      <div class="home-services-intro" data-reveal>
+        <SectionHeading as="h2" variant="display-lg" uppercase class="services-heading">Services that stand out</SectionHeading>
         <p class="lead-text lead-text--md">
           Hands-on guidance and innovative, end-to-end solutions tailor-made for the gaming industry. It's
           influencer marketing with next-level professionalism.
@@ -195,7 +197,7 @@ const featuredProjects = featuredProjectEntries
            grid, there is no paired `show-mobile-landscape` swap element) — ported as a single
            divider that disappears at <=767 rather than inventing a horizontal replacement. -->
       <Divider orientation="vertical" responsive="hide-mobile-landscape" />
-      <div class="home-services-grid-right">
+      <div class="home-services-grid-right" data-reveal data-reveal-delay="100">
         {
           serviceRows.map((row, rowIndex) => (
             <>
@@ -229,72 +231,48 @@ const featuredProjects = featuredProjectEntries
   </SectionShell>
 
   {/*
-    Featured projects. Source layout (`.home-projects-grid`, css:3151) is a single
-    grid — intro column, a 1px divider column, then the cards column:
-
-      grid-template-columns: .47fr 1px 1fr;  gap: 4rem
-
-    The cards column (`.home-projects-grid-right`) leads with one full-width
-    project and follows with the rest two-up. `.home-project-preview-item` carries
-    a left border that `:nth-child(odd)` removes, which is what separates the pair.
-
-    Earlier this was built as an intro block above a uniform auto-fit card grid.
+    Featured projects. Intro | divider | equal card grid (3-up desktop, 1-up ≤991).
+    Deliberate departure from live Webflow's "hero lead + two-up" — the oversized
+    lead card read as broken next to the smaller pair (critique / Max 2026-08-12).
 
     ⚠️ NO YEAR. The live cards print the campaign year to the right of each title;
     George asked for it to be left off. `year` remains in the schema and still
     drives sort order — it is simply not displayed here.
   */}
-  <SectionShell sectionClass="section-home-projects">
+  <SectionShell sectionClass="section-home-projects" reveal={false}>
     <div class="home-projects-grid">
-      <div class="home-projects-grid-left-inner">
-        <SectionHeading as="h2" variant="h1" uppercase class="projects-heading">Featured projects</SectionHeading>
+      <div class="home-projects-grid-left-inner" data-reveal>
+        <SectionHeading as="h2" variant="display-lg" uppercase class="projects-heading">Featured projects</SectionHeading>
         <p class="lead-text lead-text--md">
           See how our innovative, hands-on approach has helped brands like yours grow fanbases, generate buzz, and
           break records.
         </p>
-        <Button href="/projects" variant="primary">See more</Button>
+        <Button href="/projects" variant="secondary">See more</Button>
       </div>
       <div class="line-vertical hide-mobile-landscape" aria-hidden="true"></div>
       {
         featuredProjects.length > 0 && (
-          <div class="home-projects-grid-right">
-            <ul class="home-projects-featured">
-              {featuredProjects.slice(0, 1).map((project) => (
-                <li class="home-project-preview-item">
-                  <a href={project.href} class="home-project-preview-image-wrapper">
-                    <Image src={project.image} alt={project.imageAlt} class="image-cover" />
+          <ul class="home-projects-grid-right">
+            {featuredProjects.map((project, projectIndex) => (
+              <li
+                class="home-project-preview-item"
+                data-reveal
+                data-reveal-delay={String(projectIndex * 90)}
+              >
+                <a href={project.href} class="home-project-preview-image-wrapper">
+                  <Image src={project.image} alt={project.imageAlt} class="image-cover" />
+                </a>
+                <div class="home-project-preview-content">
+                  <a href={project.href} class="home-project-preview-title-link">
+                    <SectionHeading as="h3" variant="h3" uppercase>
+                      {project.title}
+                    </SectionHeading>
                   </a>
-                  <div class="home-project-preview-content">
-                    <a href={project.href} class="home-project-preview-title-link">
-                      <SectionHeading as="h3" variant="h4" uppercase>
-                        {project.title}
-                      </SectionHeading>
-                    </a>
-                    <p class="home-project-preview-meta">{project.client}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            {featuredProjects.length > 1 && (
-              <ul class="home-projects-rest">
-                {featuredProjects.slice(1).map((project) => (
-                  <li class="home-project-preview-item">
-                    <a href={project.href} class="home-project-preview-image-wrapper">
-                      <Image src={project.image} alt={project.imageAlt} class="image-cover" />
-                    </a>
-                    <div class="home-project-preview-content">
-                      <a href={project.href} class="home-project-preview-title-link">
-                        <SectionHeading as="h3" variant="h4" uppercase>
-                          {project.title}
-                        </SectionHeading>
-                      </a>
-                      <p class="home-project-preview-meta">{project.client}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+                  <p class="home-project-preview-meta">{project.client}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         )
       }
     </div>
@@ -349,7 +327,7 @@ const featuredProjects = featuredProjectEntries
      the token would quietly shrink the gap on tablet. */
   .home-hero-grid {
     display: grid;
-    grid-template-columns: 1fr 0.75fr;
+    grid-template-columns: 1.2fr 0.8fr;
     gap: 3rem;
     align-items: center;
   }
@@ -364,25 +342,39 @@ const featuredProjects = featuredProjectEntries
       gap: 3rem;
     }
   }
+  :global(.hero-eyebrow) {
+    margin-bottom: 0;
+  }
+  :global(a.hero-cta.button) {
+    align-self: flex-start;
+    margin-top: var(--space-sm);
+    padding-inline: var(--space-md);
+    padding-block: 0.85rem;
+  }
   .home-hero-grid-left {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: var(--space-md);
   }
   .hero-heading {
-    max-width: var(--width-2xl);
+    max-width: none;
+    letter-spacing: -0.02em;
   }
   .hero-intro {
     max-width: var(--width-lg);
+    font-size: var(--fs-xl);
   }
   .home-hero-image-wrapper {
     border-radius: var(--radius-card);
     overflow: hidden;
+    outline: 3px solid var(--color-ink);
+    outline-offset: 0;
   }
   .home-hero-image-wrapper :global(img) {
     width: 100%;
     height: auto;
     object-fit: cover;
+    display: block;
   }
 
   /* ---------- Services summary ---------- */
@@ -403,7 +395,10 @@ const featuredProjects = featuredProjectEntries
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
-    max-width: var(--width-sm);
+    max-width: 20rem;
+  }
+  .services-heading {
+    letter-spacing: -0.02em;
   }
   .home-services-grid-right {
     display: flex;
@@ -428,8 +423,8 @@ const featuredProjects = featuredProjectEntries
     gap: var(--space-sm);
   }
   .home-services-item :global(.service-icon) {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 3.25rem;
+    height: 3.25rem;
   }
   .service-item-title {
     margin-bottom: var(--space-xs);
@@ -443,16 +438,14 @@ const featuredProjects = featuredProjectEntries
   /* Source `.home-projects-grid` css:3151 — intro | 1px divider | cards.
      `.home-projects-grid-right` (css:3144) is a flex column, row-gap 2rem. */
   .home-projects-grid {
-    display: grid;
-    grid-template-columns: 0.47fr var(--divider-width) 1fr;
-    gap: var(--space-xl);
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    align-items: stretch;
   }
 
-  @media screen and (max-width: 991px) {
-    .home-projects-grid {
-      grid-template-columns: 1fr;
-    }
+  .home-projects-grid > .line-vertical {
+    display: none;
   }
 
   .home-projects-grid-left-inner {
@@ -463,60 +456,24 @@ const featuredProjects = featuredProjectEntries
   }
 
   .home-projects-grid-right {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: var(--space-md);
-  }
-
-  .home-projects-featured,
-  .home-projects-rest {
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  /* The lead project spans the full cards column; the remainder sit two-up.
-     Source separates the pair with `.home-project-preview-item`'s left border,
-     which `:nth-child(odd)` removes (css:3134). */
-  /* Two-up, with the divider sitting IN THE GAP rather than as padding on the
-     second card.
-
-     Porting the source literally — `border-left` + `padding-left: 3rem` on the
-     even child — made the second card's content box 3rem narrower than the first,
-     so its 16:9 hero rendered visibly smaller. All five hero images are the same
-     aspect ratio; the size difference was entirely this padding.
-
-     A centred pseudo-element in the gap keeps both columns exactly equal, which
-     is how the live pair actually reads. */
-  .home-projects-rest {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: calc(var(--space-lg) * 2);
-    row-gap: var(--space-lg);
-  }
-
-  .home-projects-rest .home-project-preview-item {
-    position: relative;
-  }
-
-  .home-projects-rest .home-project-preview-item:nth-child(even)::before {
-    content: '';
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: calc(var(--space-lg) * -1);
-    inline-size: var(--divider-width);
-    background: var(--divider-color);
-  }
-
-  @media screen and (max-width: 767px) {
-    .home-projects-rest {
-      grid-template-columns: 1fr;
-    }
-    .home-projects-rest .home-project-preview-item:nth-child(even)::before {
-      display: none;
+  @media screen and (min-width: 768px) {
+    .home-projects-grid-right {
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--space-lg);
     }
   }
-  .projects-heading,
+  .projects-heading {
+    max-width: 18rem;
+    letter-spacing: -0.02em;
+  }
   .home-projects-intro .lead-text {
     max-width: var(--width-sm);
   }
@@ -531,12 +488,18 @@ const featuredProjects = featuredProjectEntries
     margin-bottom: var(--space-sm);
     border-radius: var(--radius-card);
     overflow: hidden;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 16 / 9;
   }
   .home-project-preview-image-wrapper :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  @media (hover: hover) and (min-width: 992px) {
+    .home-project-preview-item:hover .home-project-preview-image-wrapper :global(img) {
+      transform: scale(1.04);
+    }
   }
   .home-project-preview-content {
     display: flex;
@@ -557,10 +520,10 @@ const featuredProjects = featuredProjectEntries
   }
 
   /* ---------- How we work ---------- */
-  .how-eyebrow {
+  :global(.how-eyebrow) {
     margin-bottom: var(--space-xs);
   }
-  .how-heading {
+  :global(.how-heading) {
     max-width: var(--width-2xl);
     margin-bottom: var(--space-md);
   }

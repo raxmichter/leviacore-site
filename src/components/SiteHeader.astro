@@ -335,6 +335,16 @@ const isCurrent = (path: string) => currentPath === path
     .mobile-menu-toggle {
       display: flex;
     }
+    /* Critique: mobile header was overloaded — CTA wraps, social + hamburger compete.
+       Keep logo + menu trigger; CTA and social live in the drawer. */
+    .navbar-right-button,
+    .navbar-right-social {
+      display: none;
+    }
+    .navbar-logo-image {
+      width: min(180px, 48vw);
+      height: auto;
+    }
   }
 
   /* .line / .line-vertical are global primitives in global.css — they appear in
