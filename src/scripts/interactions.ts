@@ -313,9 +313,10 @@ function mountFadeUp(): Teardown {
       element.style.opacity = "0"
       element.style.transition = `opacity .2s linear ${delay}ms`
     } else {
+      // Calmer editorial travel — shorter lift, slightly longer ease
       element.style.opacity = "0"
-      element.style.transform = "translateY(1.25rem)"
-      element.style.transition = `opacity .7s ${FADE_UP_EASE} ${delay}ms, transform .7s ${FADE_UP_EASE} ${delay}ms`
+      element.style.transform = "translateY(0.65rem)"
+      element.style.transition = `opacity .85s ${FADE_UP_EASE} ${delay}ms, transform .85s ${FADE_UP_EASE} ${delay}ms`
     }
     touched.push(element)
 

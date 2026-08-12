@@ -154,7 +154,7 @@ const serviceBlocks = [
   </SectionShell>
 
   {
-    serviceBlocks.map((block) => (
+    serviceBlocks.map((block, index) => (
       <ServiceDetailBlock
         id={block.id}
         icon={block.icon}
@@ -165,6 +165,7 @@ const serviceBlocks = [
         ctaHref="/contact"
         headline={block.headline}
         body={block.body}
+        withTopDivider={index > 0}
       />
     ))
   }
@@ -183,69 +184,63 @@ const serviceBlocks = [
 </BaseLayout>
 
 <style>
-  /* Source `.services-hero-grid` (leviathan-core-2023-r1.webflow.css:3258):
-       base    grid-template-columns: 1.5fr 1fr;  gap: 0
-       ≥1440   grid-template-columns: 2fr 1fr
-       ≥1920   grid-template-columns: 1.5fr 1fr
-       ≤991    grid-template-columns: 1fr
-
-     As with the homepage hero, the base was wrong too, not just the missing wide
-     rules: columns were 1fr 1fr and the gap was --space-xl where source has none.
-     The column ratio widens at 1440 and returns to the base ratio at 1920. */
   .services-hero-grid {
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap: 0;
-  }
-  @media screen and (min-width: 1440px) {
-    .services-hero-grid {
-      grid-template-columns: 2fr 1fr;
-    }
-  }
-  @media screen and (min-width: 1920px) {
-    .services-hero-grid {
-      grid-template-columns: 1.5fr 1fr;
-    }
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.85fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: end;
   }
   @media screen and (max-width: 991px) {
     .services-hero-grid {
       grid-template-columns: 1fr;
+      gap: 2rem;
+      align-items: start;
     }
   }
   .hero-heading-wrap {
-    margin-bottom: 1rem; /* frozen margin-bottom.margin-xxhuge combo, matches ContactCTA */
+    margin-bottom: 1.5rem;
   }
   .hero-heading-inner {
-    margin-bottom: var(--space-sm); /* margin-bottom.margin-small */
+    margin-bottom: 1rem;
   }
   .service-jump-nav {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-xs);
+    gap: 0.5rem 1.25rem;
   }
   .text-size-xlarge {
     font-family: var(--font-body);
     font-size: var(--fs-xl);
     line-height: var(--lh-loose);
+    max-width: 28ch;
+    color: var(--color-text-muted);
   }
 
-  /* .service-jump-link — page-local stand-in for the un-built "Label" component.
-     Same token family as Button.astro (font-mono, --radius-sm, ls-wide, uppercase) since
-     components.md documents --radius-sm as shared between .label and .button. */
+  /* Quiet text anchors — demoted from competing pill chips */
   .service-jump-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--color-ink);
-    border-radius: var(--radius-sm);
-    background: var(--color-transparent);
-    color: var(--color-ink-button);
+    border: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 25%, transparent);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-ink);
     text-decoration: none;
-    padding: var(--space-xs) var(--space-sm);
+    padding: 0.2rem 0;
+    opacity: 0.7;
+    transition:
+      opacity var(--duration-fast) var(--ease-editorial),
+      border-color var(--duration-fast) var(--ease-editorial);
+  }
+  .service-jump-link:hover,
+  .service-jump-link:focus-visible {
+    opacity: 1;
+    border-bottom-color: var(--color-ink);
   }
   .service-jump-link:focus-visible {
     outline: 2px solid var(--color-ink);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
   .service-jump-link-inner {
     position: relative;
@@ -259,13 +254,6 @@ const serviceBlocks = [
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
   }
-  /* Phase E — a-77 / a-78 "Label Hover [In]/[Out]" (interactions.md §1.6–1.7).
-     Same mechanism and the same 500ms outQuint as the button roll; the source
-     classes were .label / .label-text / .label-text-hover, renamed here per the
-     Phase E readiness map. The third a-78 item (translateY 103%) has an empty
-     target in the IX2 data and never ran — deliberately not ported.
-     Hover copy parked one line-height below the visible copy; static appearance
-     is unchanged because .service-jump-link-inner clips it. */
   .service-jump-link-text-hover {
     position: absolute;
     inset: 100% 0 auto;
@@ -274,46 +262,16 @@ const serviceBlocks = [
   .service-jump-link-text,
   .service-jump-link-text-hover {
     transform: translateY(0);
-    /* outQuint — cubic-bezier approximation per interactions.md §0.2 (approximate). */
-    transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+    transition: transform 500ms var(--ease-editorial);
   }
-  /* Source gated on mediaQueries: ["main"] (>=992px). */
   @media (hover: hover) and (min-width: 992px) {
     .service-jump-link:hover .service-jump-link-text,
     .service-jump-link:hover .service-jump-link-text-hover {
       transform: translateY(-100%);
     }
   }
-  /* Keyboard parity — ungated, as with Button.astro. */
   .service-jump-link:focus-visible .service-jump-link-text,
   .service-jump-link:focus-visible .service-jump-link-text-hover {
     transform: translateY(-100%);
-  }
-
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-xl);
-  }
-  @media screen and (max-width: 991px) {
-    .contact-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-  .heading-group {
-    margin-bottom: 1rem; /* frozen margin-bottom.margin-xxhuge combo */
-  }
-  .eyebrow-spacing {
-    margin-bottom: var(--space-sm);
-  }
-  .tagline {
-    margin-bottom: var(--space-sm);
-  }
-  .social-row {
-    display: flex;
-    gap: var(--space-xs);
-  }
-  .form-shell {
-    max-width: var(--width-lg);
   }
 </style>

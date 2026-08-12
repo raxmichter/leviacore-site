@@ -1,42 +1,7 @@
 ---
 /**
- * ContactCTA — the "Contact" hero-style block (`section-home-contact`).
- *
- * Source: components.md #17. NOT the full contact.html page — this is the recurring block
- * that appears as index.html's final section, services.html's final section, AND as
- * contact.html's only section. Two columns: eyebrow + h1 + tagline + social row on the left,
- * `ContactForm` on the right.
- *
- * components.md §7 documents real divergence across the three instances that this component
- * must NOT silently unify:
- *   - contact.html omits the `.line` divider the other two have before the padded content
- *     (`withTopDivider={false}`).
- *   - Tagline copy differs (index/contact: "We can help. With PLANNING, NEGOTIATIONS,
- *     execution – the works." · services: "FOLLOW US on social for the latest.") — exposed as
- *     the `tagline` prop, not hardcoded.
- *   - Social hrefs differ per instance (index has a real Twitter link + placeholder `#`
- *     LinkedIn; services/contact use `#` for both, even though header/footer socials on the
- *     same pages are correctly linked) — exposed as the `socialLinks` prop so each page
- *     supplies its own source-accurate values rather than this component inventing one.
- *
- * The outer wrapper's `margin-bottom.margin-xxhuge` (around the eyebrow+heading group) hits
- * the tokens.md BLOCKER-2 trap: resolved to 1rem, frozen at every viewport, not the nominal
- * `--space-5xl` (12rem, responsive). Ported as literal `1rem`.
- *
- * C1a addition (index.astro): index.html's instance of this block uses a genuinely different
- * headline — "IT'S TIME TO FIND<br>YOUR FANDOM" (all-caps, source `<br>`-split) — vs. the
- * services/contact instances' "It's time to find your fandom." (sentence case, no break).
- * `headingText` already carried the copy difference; the line break needed a way in without
- * accepting raw markup through a string prop, so a literal `\n` in `headingText` now renders
- * as a line break (`white-space: pre-line` added below) — inert for every existing caller,
- * since none of them pass a newline.
- *
- * C1a addition: `headingLevel` (optional, defaults to `'h1'` — unchanged behavior for every
- * existing caller). index.astro's page `<h1>` is its hero headline, so this component's own
- * heading must render as `<h2>` there to keep exactly one `<h1>` per page; contact.html (where
- * this block is the page's only content) still wants it as the real `<h1>`.
+ * ContactCTA — closing contact chapter used on home, services, and /contact.
  */
-import SectionShell from './SectionShell.astro'
 import SectionHeading from './SectionHeading.astro'
 import Eyebrow from './Eyebrow.astro'
 import SocialBadge from './SocialBadge.astro'
@@ -52,14 +17,8 @@ interface Props {
   headingText?: string
   headingLevel?: 'h1' | 'h2'
   tagline: string
-  /** Optional. Omitted by every page as of 2026-08-11: the footer already renders
-   * the same TW/IN pair directly below this block, so showing them here produced
-   * two identical badge rows stacked on top of each other. George: keep the space
-   * for the form, drop the duplicate. A deliberate difference from live. */
   socialLinks?: SocialLink[]
   withTopDivider?: boolean
-  /** Forwarded to the embedded ContactForm so its ids stay unique. Only needs
-   * overriding if a page renders this block AND a standalone ContactForm. */
   formIdPrefix?: string
 }
 
@@ -68,71 +27,137 @@ const {
   headingLevel = 'h1',
   tagline,
   socialLinks,
-  withTopDivider = true,
+  withTopDivider: _withTopDivider = false,
   formIdPrefix = 'cta-contact',
 } = Astro.props
 ---
 
-<SectionShell sectionClass="section-home-contact" withTopDivider={withTopDivider}>
-  <div class="contact-hero-grid">
-    <div class="contact-hero-grid-left">
-      <div class="heading-group">
-        <Eyebrow class="eyebrow-spacing">Contact</Eyebrow>
-        <SectionHeading as={headingLevel} variant="display-xl" class="cta-heading">{headingText}</SectionHeading>
-      </div>
-      <div>
-        <Eyebrow class="tagline">{tagline}</Eyebrow>
-        {socialLinks && socialLinks.length > 0 && (
-          <div class="social-row">
-            {socialLinks.map((social) => (
-              <SocialBadge platform={social.platform} href={social.href} label={social.label} />
-            ))}
+<section class="section-home-contact">
+  <div class="contact-band">
+    <div class="page-padding">
+      <div class="container-xxlarge">
+        <div class="contact-hero-grid">
+          <div class="contact-hero-grid-left" data-reveal>
+            <div class="heading-group">
+              <Eyebrow class="eyebrow-spacing">Contact</Eyebrow>
+              <SectionHeading as={headingLevel} variant="display-xl" class="cta-heading">{headingText}</SectionHeading>
+            </div>
+            <p class="tagline">{tagline}</p>
+            {
+              socialLinks && socialLinks.length > 0 && (
+                <div class="social-row">
+                  {socialLinks.map((social) => (
+                    <SocialBadge platform={social.platform} href={social.href} label={social.label} />
+                  ))}
+                </div>
+              )
+            }
           </div>
-        )}
-      </div>
-    </div>
-    <div class="contact-hero-grid-right">
-      <div class="form-shell">
-        <ContactForm idPrefix={formIdPrefix} />
+          <div class="contact-hero-grid-right" data-reveal data-reveal-delay="100">
+            <div class="form-shell">
+              <ContactForm idPrefix={formIdPrefix} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</SectionShell>
+</section>
 
 <style>
-  :global(.section-home-contact) {
-    /* Extra air before the footer hairline so form + footer don't read as one block. */
-    padding-bottom: var(--space-xl);
+  .contact-band {
+    background: var(--color-ink-band);
+    color: var(--color-on-ink);
+    margin-inline: calc(-1 * var(--frame-padding));
+    margin-bottom: calc(-1 * var(--space-sm));
+    padding: var(--section-pad-y) var(--frame-padding) calc(var(--section-pad-y) + var(--space-sm));
   }
+
   .contact-hero-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-xl);
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: end;
   }
+
   @media screen and (max-width: 991px) {
     .contact-hero-grid {
       grid-template-columns: 1fr;
+      align-items: stretch;
+      gap: 2.5rem;
     }
   }
+
   .heading-group {
-    margin-bottom: 1rem; /* frozen combo value — see file header */
+    margin-bottom: 1.25rem;
   }
+
   .cta-heading {
-    /* Allows a literal `\n` in `headingText` to render as a line break — see file header. */
     white-space: pre-line;
-    letter-spacing: -0.03em;
+    letter-spacing: var(--ls-display);
+    max-width: 12ch;
   }
+
   .eyebrow-spacing {
-    margin-bottom: var(--space-sm);
+    margin-bottom: 0.85rem;
+    opacity: 0.65;
+    color: var(--color-on-ink);
   }
+
   .tagline {
-    margin-bottom: var(--space-sm);
+    margin: 0;
+    max-width: 36ch;
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    line-height: 1.55;
+    color: color-mix(in srgb, var(--color-on-ink) 78%, transparent);
   }
+
   .social-row {
     display: flex;
     gap: var(--space-xs);
+    margin-top: 1.25rem;
   }
+
   .form-shell {
-    max-width: var(--width-lg);
+    max-width: none;
+    padding: clamp(1.35rem, 3vw, 2rem);
+    border: 1px solid color-mix(in srgb, var(--color-on-ink) 22%, transparent);
+    background: color-mix(in srgb, var(--color-on-ink) 4%, transparent);
+  }
+
+  .form-shell :global(.form-label) {
+    color: color-mix(in srgb, var(--color-on-ink) 70%, transparent);
+  }
+
+  .form-shell :global(.form-input) {
+    color: var(--color-on-ink);
+    border-bottom-color: color-mix(in srgb, var(--color-on-ink) 35%, transparent);
+  }
+
+  .form-shell :global(.form-input::placeholder) {
+    color: color-mix(in srgb, var(--color-on-ink) 45%, transparent);
+  }
+
+  .form-shell :global(.form-input:focus-visible) {
+    border-bottom-color: var(--color-on-ink);
+    background: color-mix(in srgb, var(--color-on-ink) 6%, transparent);
+    outline-color: var(--color-on-ink);
+  }
+
+  .form-shell :global(.submit-button) {
+    background: var(--color-on-ink);
+    color: var(--color-ink);
+    border-color: var(--color-on-ink);
+  }
+
+  .form-shell :global(.form-message-success),
+  .form-shell :global(.form-message-error) {
+    color: var(--color-on-ink);
+    border-color: color-mix(in srgb, var(--color-on-ink) 40%, transparent);
+  }
+
+  .form-shell :global(.form-message-error) {
+    background: color-mix(in srgb, #ffdede 20%, transparent);
   }
 </style>

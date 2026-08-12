@@ -49,7 +49,6 @@ import { Image } from 'astro:assets'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import SectionHeading from '../../components/SectionHeading.astro'
 import Button from '../../components/Button.astro'
-import Divider from '../../components/Divider.astro'
 import { features } from '../../config'
 
 export async function getStaticPaths() {
@@ -101,25 +100,20 @@ const heroImage: ImageMetadata | undefined = post.data.heroImage
                 {post.data.title}
               </SectionHeading>
               <p class="post-lead">{post.data.description}</p>
-            </div>
-            <Divider orientation="vertical" responsive="hide-mobile-landscape" class="post-hero-divider" />
-            <Divider responsive="show-mobile-landscape" class="post-hero-divider-mobile" />
-            <div class="post-hero-meta">
-              <div class="post-meta-block">
-                <p class="post-meta-label">Date</p>
-                <p class="post-meta-value">{publishDateDisplay}</p>
-              </div>
-              {
-                post.data.tags.length > 0 && (
-                  <div class="post-meta-block">
-                    <p class="post-meta-label">Tags</p>
-                    <p class="post-meta-value">{post.data.tags.join(', ')}</p>
-                  </div>
-                )
-              }
-              <div class="post-meta-block">
-                <p class="post-meta-label">Reading Time</p>
-                <p class="post-meta-value">{readingMinutes} min read</p>
+              <div class="post-hero-meta">
+                <p class="post-meta-inline">
+                  <span>{publishDateDisplay}</span>
+                  <span aria-hidden="true">·</span>
+                  <span>{readingMinutes} min read</span>
+                  {
+                    post.data.tags.length > 0 && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span>{post.data.tags.join(', ')}</span>
+                      </>
+                    )
+                  }
+                </p>
               </div>
             </div>
           </div>
@@ -135,12 +129,9 @@ const heroImage: ImageMetadata | undefined = post.data.heroImage
 
         <div class="padding-vertical padding-xlarge">
           <div class="post-content-grid">
-            <div class="post-content-spacer" aria-hidden="true"></div>
             <div class="text-rich-text">
               <Content />
             </div>
-            <Divider orientation="vertical" responsive="hide-mobile-landscape" class="post-content-divider" />
-            <Divider responsive="show-mobile-landscape" class="post-content-divider-mobile" />
             <div class="post-content-sidebar">
               <p class="post-meta-label">Author</p>
               <SectionHeading as="h3" variant="h4">{post.data.author}</SectionHeading>
@@ -153,94 +144,67 @@ const heroImage: ImageMetadata | undefined = post.data.heroImage
 </BaseLayout>
 
 <style>
-  .page-padding {
-    padding-inline: var(--page-padding);
-  }
-  .container-xxlarge {
-    width: 100%;
-    max-width: var(--container-3xl);
-    margin-inline: auto;
-  }
   .padding-vertical.padding-xlarge {
-    padding-block: var(--space-xl);
+    padding-block: var(--section-pad-y);
   }
 
-  /* ---------- Hero + content grids ----------
-     Source ratio verbatim from tokens.md: `.33fr 1fr 1px .33fr`. At <=991px the site-wide
-     idiom flips the 1px divider from a grid column to its own full-width row — here that's
-     handled by swapping which Divider instance is visible (see the two <Divider> pairs
-     above), so the grid itself only needs to collapse to a single column. */
-  .post-hero-grid,
-  .post-content-grid {
+  .post-hero-grid {
     display: grid;
-    grid-template-columns: 0.33fr 1fr 1px 0.33fr;
+    grid-template-columns: auto minmax(0, 1fr);
     align-items: start;
-    gap: var(--space-md);
+    gap: clamp(1.5rem, 4vw, 3rem);
   }
   @media screen and (max-width: 991px) {
-    .post-hero-grid,
-    .post-content-grid {
+    .post-hero-grid {
       grid-template-columns: 1fr;
-      gap: var(--space-lg);
+      gap: 1.5rem;
     }
   }
 
   .post-hero-heading-col {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: 1rem;
+    max-width: 42rem;
   }
   .post-title {
     margin-bottom: 0;
   }
   .post-lead {
     margin: 0;
-    max-width: var(--width-lg);
+    max-width: var(--measure-lead);
     font-family: var(--font-body);
     font-size: var(--fs-xl);
     line-height: var(--lh-loose);
+    color: var(--color-text-muted);
   }
 
-  .post-hero-meta {
+  .post-meta-inline {
+    margin: 0;
     display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-  .post-meta-block {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xxs);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
   }
   .post-meta-label {
     margin: 0;
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    letter-spacing: var(--ls-wide);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-meta);
     text-transform: uppercase;
     color: var(--color-text-muted);
   }
-  .post-meta-value {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    letter-spacing: var(--ls-wide);
-    text-transform: uppercase;
-    color: var(--color-ink);
-  }
 
-  /* ---------- Hero image ----------
-     tokens.md §5c confirms `.post-image-wrapper` shares the sitewide 1rem card radius
-     (--radius-card), but its height/aspect ratio isn't among the documented viewport-
-     relative primitives — no source value to port. This mirrors the closest documented
-     sibling (`.work-projects-item-image-wrapper`: viewport-relative height with a px cap)
-     rather than inventing an unrelated fixed aspect ratio. Flagged as an assumption, not a
-     ported value — same disclosure pattern ProjectCard.astro uses for its own grid ratio. */
   .post-image-wrapper {
-    margin-top: var(--space-lg);
-    border-radius: var(--radius-card);
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    margin-inline: calc(-1 * var(--page-padding));
     overflow: hidden;
-    height: 36vw;
-    max-height: 600px;
+    height: min(48vw, 640px);
+    background: var(--color-paper-deep);
   }
   @media screen and (max-width: 767px) {
     .post-image-wrapper {
@@ -253,10 +217,25 @@ const heroImage: ImageMetadata | undefined = post.data.heroImage
     object-fit: cover;
   }
 
+  .post-content-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(10rem, 0.35fr);
+    align-items: start;
+    gap: clamp(2rem, 5vw, 4rem);
+    max-width: 56rem;
+  }
+  @media screen and (max-width: 991px) {
+    .post-content-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+
   .post-content-sidebar {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: 0.5rem;
+    padding-top: 0.25rem;
   }
 
   /* ---------- Rich-text prose ----------

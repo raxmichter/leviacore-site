@@ -64,6 +64,8 @@ const classes = ['heading', `heading--${resolvedVariant}`, uppercase ? 'text-upp
     margin: 0;
     font-family: var(--font-display);
     font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-display);
+    text-wrap: balance;
   }
   .text-uppercase {
     text-transform: uppercase;
@@ -71,7 +73,7 @@ const classes = ['heading', `heading--${resolvedVariant}`, uppercase ? 'text-upp
 
   /* ---------- display-2xl (.heading-large) ---------- */
   .heading--display-2xl {
-    font-size: var(--fs-display-2xl); /* 6rem base, 8rem @>=1440 via tokens.css */
+    font-size: var(--fs-display-2xl); /* 6.5rem base, 8.5rem @>=1440 via tokens.css */
     line-height: var(--lh-tighter);
   }
   @media screen and (max-width: 991px) {
@@ -128,7 +130,7 @@ const classes = ['heading', `heading--${resolvedVariant}`, uppercase ? 'text-upp
   }
   @media screen and (max-width: 479px) {
     .heading--display-lg {
-      font-size: 3.25rem; /* ⚠ larger than the ≤767 value — deliberate reproduction, see tokens.md HIGH-1 */
+      font-size: 2.75rem; /* editorial redesign: keep descending scale (was inverted Webflow quirk) */
     }
   }
 

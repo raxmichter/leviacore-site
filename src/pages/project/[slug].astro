@@ -61,7 +61,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import SectionShell from '../../components/SectionShell.astro'
 import SectionHeading from '../../components/SectionHeading.astro'
 import Eyebrow from '../../components/Eyebrow.astro'
-import Divider from '../../components/Divider.astro'
 import Button from '../../components/Button.astro'
 import icon02 from '../../assets/images/icon-02.svg'
 // Decorative section icons, restored in Phase G. Source binds these at 60px wide:
@@ -90,11 +89,9 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   <SectionShell sectionClass="section-project-hero" withTopDivider={false}>
     <div class="project-hero-grid">
       <div class="project-hero-intro">
-        <SectionHeading as="h1" variant="h1" uppercase class="project-title">{title}</SectionHeading>
+        <SectionHeading as="h1" variant="display-lg" uppercase class="project-title">{title}</SectionHeading>
         <p class="project-subtitle">{description}</p>
       </div>
-      <Divider orientation="vertical" responsive="hide-mobile-landscape" />
-      <Divider orientation="horizontal" responsive="show-mobile-landscape" class="hero-divider-horizontal" />
       <dl class="project-meta">
         <div class="project-meta-item">
           <dt class="project-meta-label">Client</dt>
@@ -122,8 +119,6 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
               <dt class="project-meta-label">Website</dt>
               <dd class="project-meta-value">
                 <a href={website} class="text-meta-link" target="_blank" rel="noopener">
-                  {/* Live uses "<PROJECT> WEBSITE" as the link text, not the raw URL —
-                      e.g. "SPIRITFARER WEBSITE". Corrected in Phase G. */}
                   {websiteLabel ?? `${title} Website`}
                 </a>
               </dd>
@@ -183,103 +178,94 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
       </div>
       {
         gallery && gallery.length > 0 && (
-          <>
-            <Divider orientation="vertical" responsive="hide-mobile-landscape" />
-            <div class="project-gallery">
-              {gallery.map((item) => (
-                <div class="project-gallery-item">
-                  <Image src={item.src} alt={item.alt} class="image-cover" />
-                </div>
-              ))}
-            </div>
-          </>
+          <div class="project-gallery">
+            {gallery.map((item, index) => (
+              <div class:list={['project-gallery-item', { featured: index === 0 }]}>
+                <Image src={item.src} alt={item.alt} class="image-cover" />
+              </div>
+            ))}
+          </div>
         )
       }
     </div>
   </SectionShell>
 
-  <SectionShell sectionClass="section-cta-contact">
-    <div class="cta-contact-grid">
-      <div class="cta-contact-grid-left">
-        <div class="cta-heading-group">
-          <Eyebrow class="cta-eyebrow">Contact</Eyebrow>
-          <SectionHeading as="h2" variant="display-xl" uppercase class="cta-heading">
-            It's time to find your fandom
-          </SectionHeading>
+  <section class="section-cta-contact surface-ink">
+    <div class="page-padding">
+      <div class="container-xxlarge">
+        <div class="cta-contact-grid">
+          <div class="cta-contact-grid-left">
+            <div class="cta-heading-group">
+              <Eyebrow class="cta-eyebrow">Contact</Eyebrow>
+              <SectionHeading as="h2" variant="display-xl" uppercase class="cta-heading">
+                It's time to find your fandom
+              </SectionHeading>
+            </div>
+            <Image src={icon02} alt="Campaigns icon" class="cta-icon" />
+          </div>
+          <div class="cta-contact-grid-right">
+            <p class="cta-tagline">
+              The gaming industry has never been deeper or more complex. We can help. With negotiations, planning,
+              execution – the works.
+            </p>
+            <Button href="/contact" variant="primary" class="cta-button">Let's make it happen</Button>
+          </div>
         </div>
-        <Image src={icon02} alt="Campaigns icon" class="cta-icon" />
-      </div>
-      <Divider orientation="vertical" responsive="hide-tablet" />
-      <Divider orientation="horizontal" responsive="show-tablet" />
-      <div class="cta-contact-grid-right">
-        <p class="cta-tagline">
-          The gaming industry has never been deeper or more complex. We can help. With negotiations, planning,
-          execution – the works.
-        </p>
-        <Button href="/contact" variant="primary">Let's make it happen</Button>
       </div>
     </div>
-  </SectionShell>
+  </section>
 </BaseLayout>
 
 <style>
-  /* ---------- Hero ---------- */
   .project-hero-grid {
     display: grid;
-    grid-template-columns: 1fr var(--divider-width) auto;
-    gap: var(--space-lg);
-    align-items: start;
+    grid-template-columns: minmax(0, 1.35fr) minmax(14rem, 0.7fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: end;
   }
   @media screen and (max-width: 767px) {
     .project-hero-grid {
       grid-template-columns: 1fr;
-      grid-template-rows: auto var(--divider-width) auto;
-    }
-  }
-  .hero-divider-horizontal {
-    display: none;
-  }
-  @media screen and (max-width: 767px) {
-    .hero-divider-horizontal {
-      display: block;
+      gap: 2rem;
+      align-items: start;
     }
   }
 
   .project-hero-intro {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: 1rem;
   }
   .project-title {
-    /* Source: `margin-bottom margin-small` — tokens.md BLOCKER-2 resolves this combo to a
-       frozen 1rem, which happens to equal --space-sm's own non-responsive base value, so the
-       intro's flex `gap` above reproduces it exactly without a literal override. */
+    max-width: 14ch;
   }
   .project-subtitle {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--fs-xl);
     line-height: var(--lh-loose);
-    max-width: var(--width-lg);
+    max-width: var(--measure-lead);
+    color: var(--color-text-muted);
   }
 
   .project-meta {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: 1.1rem;
     margin: 0;
-    min-width: 16rem;
+    padding: 1.25rem 0 0;
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
   }
   .project-meta-item {
     display: flex;
     flex-direction: column;
-    gap: var(--space-tiny);
+    gap: 0.2rem;
   }
   .project-meta-label {
     margin: 0;
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    letter-spacing: var(--ls-wide);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-meta);
     text-transform: uppercase;
     color: var(--color-text-muted);
   }
@@ -291,9 +277,6 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
     text-transform: uppercase;
     color: var(--color-ink);
   }
-  /* Live renders the service tags inline on one wrapping row
-     (CAMPAIGNS FINANCE CONSULTING LEGAL), not stacked. Corrected in Phase G —
-     stacking made the metadata column ~120px taller on every case study. */
   .project-services-list {
     display: flex;
     flex-direction: row;
@@ -313,31 +296,13 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   }
   a.text-meta-link {
     text-decoration: underline;
+    text-underline-offset: 0.15em;
   }
 
-  .project-hero-image-wrapper {
-    margin-top: var(--space-xl);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-  }
-  .project-hero-image-wrapper :global(img) {
-    width: 100%;
-    height: auto;
-    max-height: 40rem;
-    object-fit: cover;
-  }
-
-  /* ---------- Content ---------- */
-  /* Source (leviathan-core-2023-r1.webflow.css:3578):
-       grid-template-columns: .45fr 1px 1fr;  gap: 4rem;
-     The TEXT column is the narrow one and the IMAGE column is the wide one.
-     An earlier revision had this inverted (`1fr … 22rem`), which made the
-     Challenge/Solution copy run nearly full width and squeezed the key art into
-     a sidebar — the most visible remaining difference on these pages. */
   .project-content-grid {
     display: grid;
-    grid-template-columns: 0.45fr var(--divider-width) 1fr;
-    gap: var(--space-xl);
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
     align-items: start;
   }
   .project-content-grid--solo {
@@ -356,7 +321,7 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   }
 
   .text-rich-text {
-    max-width: var(--width-2xl);
+    max-width: 40rem;
   }
   .text-rich-text :global(h2) {
     margin-top: var(--space-lg);
@@ -372,6 +337,8 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   .text-rich-text :global(p) {
     margin-top: var(--space-sm);
     font-family: var(--font-body);
+    color: var(--color-text-muted);
+    line-height: 1.6;
   }
   .text-rich-text :global(> p:first-child) {
     margin-top: 0;
@@ -398,19 +365,15 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
+    padding-top: 1.5rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
   }
   .metrics-heading {
     margin: 0;
   }
 
-  /* Decorative section icons, 60px wide per source.
-     `.section-icon` is the <Image> above "Metrics that Matter"; the two inside
-     the Markdown flow attach to its first and second h2 via ::before, because
-     Markdown gives no element to hang an <img> on. Both are decorative —
-     alt="" on the real image, and a ::before pseudo-element is invisible to
-     assistive tech by construction. */
   .section-icon {
-    inline-size: 60px;
+    inline-size: 48px;
     block-size: auto;
     margin-bottom: var(--space-xs);
   }
@@ -418,8 +381,8 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   .has-section-icons :global(h2)::before {
     content: '';
     display: block;
-    inline-size: 60px;
-    block-size: 60px;
+    inline-size: 48px;
+    block-size: 48px;
     margin-bottom: var(--space-xs);
     background: var(--icon-challenge) no-repeat center / contain;
   }
@@ -430,7 +393,7 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   .project-metrics-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: 1.35rem;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -438,17 +401,18 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   .project-metric {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xxs);
+    gap: 0.25rem;
   }
   .project-metric-value {
     font-family: var(--font-display);
-    font-size: var(--fs-h2);
-    line-height: var(--lh-tight);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    line-height: var(--lh-tighter);
+    letter-spacing: var(--ls-display);
   }
   .project-metric-label {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    letter-spacing: var(--ls-wide);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-meta);
     text-transform: uppercase;
     color: var(--color-text-muted);
   }
@@ -456,64 +420,85 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   .project-gallery {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: 1rem;
   }
   .project-gallery-item {
-    border-radius: var(--radius-card);
     overflow: hidden;
+    background: var(--color-paper-deep);
+  }
+  .project-gallery-item.featured {
+    aspect-ratio: 4 / 5;
+  }
+  .project-gallery-item:not(.featured) {
+    aspect-ratio: 16 / 10;
   }
   .project-gallery-item :global(img) {
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
   }
 
-  /* ---------- Closing CTA ---------- */
+  .section-cta-contact {
+    margin-inline: calc(-1 * var(--frame-padding));
+    margin-bottom: calc(-1 * var(--space-sm));
+    padding: var(--section-pad-y) var(--frame-padding) calc(var(--section-pad-y) + var(--space-sm));
+  }
   .cta-contact-grid {
     display: grid;
-    grid-template-columns: 1fr var(--divider-width) 1fr;
-    gap: var(--space-lg);
-    align-items: center;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: end;
   }
   @media screen and (max-width: 991px) {
     .cta-contact-grid {
       grid-template-columns: 1fr;
-      grid-template-rows: auto var(--divider-width) auto;
+      gap: 2rem;
     }
   }
   .cta-contact-grid-left {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-md);
+    gap: 1.5rem;
   }
   .cta-heading-group {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: 0.75rem;
   }
   .cta-eyebrow {
     margin: 0;
+    color: var(--color-on-ink);
+    opacity: 0.65;
   }
   .cta-heading {
     margin: 0;
-    max-width: var(--width-2xl);
+    max-width: 12ch;
+    color: var(--color-on-ink);
   }
   .cta-contact-grid-left :global(.cta-icon) {
-    width: 6.25rem;
+    width: 5rem;
     height: auto;
+    opacity: 0.85;
+    filter: invert(1);
   }
   .cta-contact-grid-right {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-lg);
+    gap: 1.5rem;
   }
   .cta-tagline {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--fs-xl);
     line-height: var(--lh-loose);
-    max-width: var(--width-lg);
+    max-width: 28ch;
+    color: color-mix(in srgb, var(--color-on-ink) 78%, transparent);
+  }
+  :global(a.cta-button.button) {
+    background: var(--color-on-ink);
+    color: var(--color-ink);
+    border-color: var(--color-on-ink);
   }
 </style>

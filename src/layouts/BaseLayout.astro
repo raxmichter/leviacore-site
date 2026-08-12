@@ -168,14 +168,9 @@ const organizationSchema = {
 </html>
 
 <style>
-  /* .main-wrapper radius (tokens.md §5a): no radius at base, stepping in at
-     <=991px via --radius-shell. tokens.css declares --radius-shell: 4rem
-     unconditionally at :root (its own comment says "none at base" but the
-     value isn't actually gated) — since tokens.css is off-limits to edit
-     here, the base case is zeroed explicitly and the token is only applied
-     inside the media query where tokens.css legitimately overrides it. */
   .main-wrapper {
     border-radius: 0;
+    overflow: clip;
   }
 
   @media screen and (max-width: 991px) {

@@ -1,8 +1,6 @@
 /* =========================================================================
    leviacore.com — global base styles
-   Minimal reset + element defaults derived from src/styles/tokens.css.
-   Motion, hover transitions, and interaction states beyond simple static
-   affordances belong to Phase E — this file sets static appearance only.
+   Editorial agency system. Layout primitives + type defaults + reduced motion.
    ========================================================================= */
 @import './tokens.css';
 @import './fonts.css';
@@ -15,10 +13,6 @@
 }
 
 * {
-  /* Verbatim from the Webflow export's <head> embed ("Please keep this css
-     code to improve the font quality"). This is what makes Satoshi's
-     browser-synthesised 300/500/600/700 faux weights render identically to
-     the live site — see build-context/tokens.md §2b. */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -41,7 +35,6 @@ ol {
   list-style: none;
 }
 
-/* Verbatim from the export's global-styles embed (_webflow-export/index.html). */
 a {
   color: inherit;
   text-decoration: inherit;
@@ -57,28 +50,12 @@ button {
   cursor: pointer;
 }
 
-/* The source removes the checkbox focus ring without replacing it
-   (tokens.md §5b, LOW-5) — an axe failure we fix rather than reproduce.
-   Ink outline matches the site's only depth cue: 1px hairlines. */
 :focus-visible {
   outline: 2px solid var(--color-ink);
   outline-offset: 2px;
 }
 
-/* ---------- Layout primitives ----------
-   `.page-padding` and `.container-xxlarge` are the site's two structural
-   wrappers, used by SectionShell, SiteHeader AND SiteFooter.
-
-   They live here, globally, deliberately. They were originally declared only
-   inside SectionShell's scoped <style>, which meant Astro compiled them to
-   `.page-padding[data-astro-cid-…]` — so sections were laid out correctly while
-   the header and footer, using the same class names, got NO horizontal padding
-   and NO max-width. The header logo sat 48px too far left on every page and the
-   content column was 100px too wide, which was the single largest source of
-   visual drift found in Phase G.
-
-   Source values: .page-padding padding-inline 3rem (responsive via the token),
-   .container-xxlarge max-width 112.5rem / 1800px, centred. */
+/* ---------- Layout primitives ---------- */
 .page-padding {
   padding-inline: var(--page-padding);
 }
@@ -89,22 +66,7 @@ button {
   margin-inline: auto;
 }
 
-/* ---------- Dividers ----------
-   Source rules at leviathan-core-2023-r1.webflow.css:1729 and :3002.
-
-   ⚠️ These MUST be global. `.line` was previously declared inside FIVE separate
-   scoped component styles (Divider, SectionShell, SiteHeader, SiteFooter,
-   MobileMenu), each compiling to `.line[data-astro-cid-…]`. Any `.line` rendered
-   by a PAGE rather than by one of those components therefore got no styling at
-   all and was invisible — the missing rule under the /projects hero, among others.
-
-   This is the FOURTH time the same mistake produced a visual bug (see also
-   .page-padding, .container-xxlarge and .badge). Rule of thumb: if a class name
-   appears in more than one component, it is a global primitive and belongs here,
-   not in a scoped block.
-
-   `transform-origin` is load-bearing — the Line / Line Vertical scroll reveals
-   scale from the centre outward (interactions.md a-175/a-176). */
+/* ---------- Dividers — soft by default ---------- */
 .line {
   inline-size: 100%;
   block-size: var(--divider-width);
@@ -114,8 +76,6 @@ button {
   perspective-origin: 50%;
 }
 
-/* Fills its grid cell; the 1px comes from the grid track it sits in, which is
-   why the content grids declare a `var(--divider-width)` column. */
 .line-vertical {
   inline-size: 100%;
   block-size: 100%;
@@ -124,47 +84,60 @@ button {
   perspective-origin: 50%;
 }
 
-/* ---------- Badge (social pills) ----------
-   Source rules at leviathan-core-2023-r1.webflow.css:1948/1965/1976.
-   Global for the same reason as the layout primitives above: SiteHeader writes
-   `.badge.small` markup directly, SiteFooter and ContactCTA go through
-   SocialBadge, and a scoped rule in the component left the header's badges
-   unstyled — they rendered at roughly double size on every page. */
+.line--strong {
+  background-color: var(--divider-strong);
+}
+
+/* ---------- Badge (social) ---------- */
 .badge {
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: 40px;
-  block-size: 40px;
-  border: var(--divider-width) solid var(--color-ink);
-  border-radius: var(--radius-circle);
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  border: var(--divider-width) solid color-mix(in srgb, var(--color-ink) 40%, transparent);
+  border-radius: var(--radius-sm);
   line-height: var(--lh-tighter);
   text-align: center;
   flex: 0 0 auto;
+  transition:
+    background-color var(--duration-fast) var(--ease-editorial),
+    border-color var(--duration-fast) var(--ease-editorial),
+    color var(--duration-fast) var(--ease-editorial);
 }
 
 .badge.small {
-  inline-size: 32px;
-  block-size: 32px;
+  inline-size: 2rem;
+  block-size: 2rem;
 }
 
 .badge.large {
-  inline-size: 50px;
-  block-size: 50px;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+}
+
+@media (hover: hover) {
+  .badge.link:hover {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-on-ink);
+  }
 }
 
 /* ---------- Body ---------- */
 body {
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  /* Subtle paper atmosphere — warm wash, not flat white */
+  background-image:
+    radial-gradient(ellipse 120% 80% at 10% -10%, color-mix(in srgb, #e8dcc4 35%, transparent), transparent 55%),
+    radial-gradient(ellipse 90% 60% at 100% 0%, color-mix(in srgb, #e2ebe0 28%, transparent), transparent 50%),
+    linear-gradient(180deg, var(--color-bg), var(--color-bg));
+  background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-body);
   font-size: var(--fs-body);
   line-height: var(--lh-body);
   font-weight: var(--fw-regular);
-  /* Outer page frame. Source keeps the bottom edge at a constant 1rem while
-     top/left/right compress to 12px at <=479px (tokens.md §5e). --space-sm
-     is never overridden across breakpoints, so reusing it here reproduces
-     that asymmetry without a hardcoded value. */
   padding: var(--frame-padding);
   padding-bottom: var(--space-sm);
 }
@@ -179,6 +152,8 @@ h6 {
   font-family: var(--font-display);
   font-weight: var(--fw-regular);
   margin: 0;
+  letter-spacing: var(--ls-display);
+  text-wrap: balance;
 }
 
 h1 {
@@ -211,23 +186,21 @@ h6 {
   line-height: var(--lh-normal);
 }
 
-/* Responsive step-downs from tokens.md §2d. Only h1–h3 have overrides at
-   these breakpoints; h4–h6 are unchanged at every width in source. */
 @media screen and (max-width: 991px) {
   h1 {
-    font-size: 3.5rem; /* no --fs- token for this step; see build summary */
+    font-size: 3.25rem;
   }
 }
 
 @media screen and (max-width: 767px) {
   h1 {
-    font-size: 3rem; /* no --fs- token for this step; see build summary */
+    font-size: 2.75rem;
   }
   h2 {
-    font-size: 2.5rem; /* no --fs- token for this step; see build summary */
+    font-size: 2.25rem;
   }
   h3 {
-    font-size: 1.75rem; /* no --fs- token for this step; see build summary */
+    font-size: 1.65rem;
   }
 }
 
@@ -237,48 +210,26 @@ p {
 }
 
 strong {
-  /* Inherits Satoshi from body and asks for 700, which the export does not
-     ship — browser-synthesised faux bold, same as the live site (§2b). */
   font-weight: var(--fw-bold);
 }
 
-/* The link reset above (color/text-decoration: inherit) is correct for nav,
-   button, and footer links, which are styled per-class. But the export has
-   no ".text-rich-text a" rule either, so every in-body prose link — legal
-   page cross-references, mailto: links — renders with zero affordance,
-   indistinguishable from surrounding text (OPEN.md, "every in-body link in
-   the legal pages is invisible"; flagged for global.css in PROGRESS.md's
-   Phase B follow-ups). Restore visible styling inside rich-text content
-   only. This is a deliberate visual change from the live site — flag it in
-   fidelity.md during Phase G so it doesn't read as a regression. */
 .text-rich-text a {
   color: var(--color-ink);
   text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
-/* =========================================================================
-   Reduced motion — the single site-wide override
-   Implements build-context/interactions.md §3 ("Reduced-motion plan") verbatim,
-   per-interaction. It is deliberately NOT a blanket
-   `*{animation:none;transition:none}` sweep: that plan distinguishes three
-   tiers, and collapsing them would remove affordances users still want.
+/* Ink-band utility for editorial chapters */
+.surface-ink {
+  background: var(--color-ink-band);
+  color: var(--color-on-ink);
+}
 
-     suppress  a-8 / a-165 / a-166 custom cursor, a-139 image parallax
-     soften    a-174 scale-in (opacity only), a-175 / a-176 rules (instant),
-               a-172 / a-173 mobile menu (fade only, no slide, no icon tween)
-     keep      a-74 / a-75 / a-77 / a-78 hover rolls — small, local,
-               user-initiated micro-interactions, shortened 500ms -> 150ms
+.surface-paper-deep {
+  background: var(--color-paper-deep);
+}
 
-   ⚠️ `!important` is used ONLY inside this block, and only because every rule
-   it overrides lives in an Astro *scoped* <style>, which compiles to
-   `.foo[data-astro-cid-…]` — higher specificity than anything this global
-   sheet can write. Without it the block would silently lose the cascade, which
-   is the worst possible failure mode for an accessibility guarantee. This is
-   the sole intentional exception to the codebase's zero-!important property.
-   ========================================================================= */
-/* ---------- Responsive show/hide (tokens §4b / §5f) ----------
-   Used on Divider and on page-local .line-vertical markup. Must be global —
-   scoping these inside Divider.astro left page-rendered siblings always visible. */
+/* ---------- Responsive show/hide ---------- */
 @media screen and (max-width: 767px) {
   .hide-mobile-landscape {
     display: none;
@@ -301,23 +252,16 @@ strong {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* a-8 / a-165 / a-166 — suppress entirely and restore the native cursor.
-     The rAF loop is additionally gated in JS so it never mounts. */
   .cursor-wrapper {
     display: none !important;
   }
 
-  /* a-139 — drop the ±7% scroll travel, keep the static scale(1.1) end state
-     so overflow-clipped wrappers do not reveal edge gaps. */
   .image-cover,
   .post-preview-image {
     animation: none !important;
-    transform: scale(1.1) !important;
+    transform: scale(1.05) !important;
   }
 
-  /* a-175 / a-176 — render the rules at their final state, instantly.
-     Forcing the end value (not just `transition: none`) also guarantees they
-     are visible even if the IntersectionObserver is gated off in JS. */
   .line {
     transform: scaleX(1) !important;
     transition: none !important;
@@ -328,27 +272,12 @@ strong {
     transition: none !important;
   }
 
-  /* a-174 Scale In — opacity-only: drop scale(0->1), fade at 200ms linear.
-     NOTE for the scroll-reveal implementation: this softens the motion but does
-     not reveal the element on its own. The Scale In observer must STILL run and
-     still add its reveal class under reduced motion, or the element stays at
-     opacity 0 and the content is invisible.
-
-     ⚠️ SELECTOR CORRECTED. This block originally targeted `.image-icon`, the
-     SOURCE class name — which does not exist anywhere in the rebuild, so the
-     rule matched nothing. The real element is `.cta-icon` on the case study
-     pages (traced from the live Spiritfarer markup; see the note in
-     src/scripts/interactions.ts). `.image-icon` is kept alongside it only so
-     the rule still applies if that class is ever reintroduced. */
   .image-icon,
   .cta-icon {
     transform: none !important;
     transition: opacity 0.2s linear !important;
   }
 
-  /* a-172 / a-173 — the menu must still open; only the movement goes. Keeps the
-     fade at 150ms and keeps `display` in the transition list so the discrete
-     close still waits for the fade out instead of snapping. */
   .mobile-menu {
     transform: none !important;
     transition:
@@ -356,14 +285,10 @@ strong {
       display 0.15s allow-discrete !important;
   }
 
-  /* Snap the hamburger straight to its X state — no rotate/collapse tween. */
   .mobile-menu-toggle-line {
     transition: none !important;
   }
 
-  /* a-74 / a-75 / a-77 / a-78 — kept, shortened. A 100%-of-own-height slide on a
-     small text node, triggered by the user's own pointer, is not what
-     reduced-motion protects against; removing it would cost the affordance. */
   .button-inner-text,
   .button-inner-text-hover,
   .service-jump-link-text,
@@ -371,9 +296,6 @@ strong {
     transition-duration: 0.15s !important;
   }
 
-
-  /* Content fade-up (data-reveal) — softened: drop translate, keep short opacity fade.
-     JS still drives the reveal under reduced motion; this is a cascade safety net. */
   [data-reveal] {
     transform: none !important;
     transition: opacity 0.2s linear !important;

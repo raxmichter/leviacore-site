@@ -1,19 +1,6 @@
 ---
 /**
- * SiteFooter — two-column Pages/Legal footer (components.md #3).
- *
- * Deliberate deviations from the export:
- *  - Copyright year is computed at build time (new Date().getFullYear())
- *    instead of the export's hardcoded "2025", which is already stale
- *    (OPEN.md flags this explicitly).
- *  - The empty `<a href="https://www.webflow.com" class="text-style-link">`
- *    "made in Webflow" credit link is dropped entirely — no link text, an
- *    axe failure, and pointless post-migration (OPEN.md, components.md §3).
- *
- * Phase D3 adds one more conditional entry: "Blog" in the Pages column, gate 2 of
- * the six-gate checklist in docs/enable-blog.md. Purely additive — when
- * features.blog is false (the committed default) the spread below is a no-op and
- * the rendered footer is byte-identical to before this line existed.
+ * SiteFooter — editorial colophon: brand + explore / legal columns.
  */
 import { Image } from 'astro:assets'
 import logo from '../assets/images/LC-SITE-NAV.png'
@@ -45,73 +32,67 @@ const year = new Date().getFullYear()
 <footer class="footer">
   <div class="page-padding">
     <div class="container-xxlarge">
-      <div class="line" aria-hidden="true"></div>
-      <div class="padding-vertical padding-xlarge">
-        <div class="footer-grid">
-          <div class="footer-grid-left">
-            <div>
-              <Image src={logo} alt="Leviathan Core" width={333} class="footer-logo-image" />
-              <p class="max-width-small footer-tagline">
-                Proudly connecting brands and audiences with influencer marketing expertise in the
-                gaming space since 2017.
-              </p>
-            </div>
-            <div class="subnav small">
-              <a
-                href="https://twitter.com/leviacore"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="badge small link"
-                aria-label="Leviathan Core on Twitter"
-              >
-                <span class="text-meta-small" aria-hidden="true">TW</span>
-              </a>
-              <a
-                href="https://www.linkedin.com/company/leviathan-core/"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="badge small link"
-                aria-label="Leviathan Core on LinkedIn"
-              >
-                <span class="text-meta-small" aria-hidden="true">IN</span>
-              </a>
-            </div>
+      <div class="footer-grid">
+        <div class="footer-grid-left">
+          <div>
+            <Image src={logo} alt="Leviathan Core" width={280} class="footer-logo-image" />
+            <p class="footer-tagline">
+              Proudly connecting brands and audiences with influencer marketing expertise in the
+              gaming space since 2017.
+            </p>
           </div>
-          <div class="line-vertical hide-tablet" aria-hidden="true"></div>
-          <div class="line show-tablet" aria-hidden="true"></div>
-          <div class="footer-grid-right">
-            <div class="footer-column">
-              <h3 class="heading-h4">Pages</h3>
-              <nav class="footer-nav" aria-label="Footer">
-                {
-                  pageLinks.map((link) => (
-                    <a
-                      href={link.href}
-                      class="footer-nav-item-link"
-                      aria-current={isCurrent(link.href) ? 'page' : undefined}
-                    >
-                      {link.label}
-                    </a>
-                  ))
-                }
-              </nav>
-            </div>
-            <div class="footer-column">
-              <h3 class="heading-h4">Legal</h3>
-              <nav class="footer-nav" aria-label="Legal">
-                {
-                  legalLinks.map((link) => (
-                    <a href={link.href} class="footer-nav-item-link">
-                      {link.label}
-                    </a>
-                  ))
-                }
-              </nav>
-            </div>
+          <div class="subnav small">
+            <a
+              href="https://twitter.com/leviacore"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="badge small link"
+              aria-label="Leviathan Core on Twitter"
+            >
+              <span class="text-meta-small" aria-hidden="true">TW</span>
+            </a>
+            <a
+              href="https://www.linkedin.com/company/leviathan-core/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="badge small link"
+              aria-label="Leviathan Core on LinkedIn"
+            >
+              <span class="text-meta-small" aria-hidden="true">IN</span>
+            </a>
+          </div>
+        </div>
+        <div class="footer-grid-right">
+          <div class="footer-column">
+            <h3 class="footer-column-label">Pages</h3>
+            <nav class="footer-nav" aria-label="Footer">
+              {
+                pageLinks.map((link) => (
+                  <a
+                    href={link.href}
+                    class="footer-nav-item-link"
+                    aria-current={isCurrent(link.href) ? 'page' : undefined}
+                  >
+                    {link.label}
+                  </a>
+                ))
+              }
+            </nav>
+          </div>
+          <div class="footer-column">
+            <h3 class="footer-column-label">Legal</h3>
+            <nav class="footer-nav" aria-label="Legal">
+              {
+                legalLinks.map((link) => (
+                  <a href={link.href} class="footer-nav-item-link">
+                    {link.label}
+                  </a>
+                ))
+              }
+            </nav>
           </div>
         </div>
       </div>
-      <div class="line" aria-hidden="true"></div>
       <div class="footer-bottom">
         <div class="subnav center">
           <p class="text-meta">© Leviathan Core, LLC {year}</p>
@@ -123,37 +104,45 @@ const year = new Date().getFullYear()
 </footer>
 
 <style>
+  .footer {
+    margin-top: clamp(2rem, 6vw, 4rem);
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+  }
+
   .footer-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xl);
+    display: grid;
+    grid-template-columns: minmax(14rem, 1.15fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    padding-block: clamp(2.75rem, 7vw, 5rem) clamp(2rem, 5vw, 3.5rem);
+  }
+
+  @media screen and (max-width: 991px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
   }
 
   .footer-grid-left {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
-    flex: 0.46 1 0%;
   }
 
   .footer-logo-image {
     height: auto;
+    width: clamp(160px, 18vw, 240px);
     margin-bottom: var(--space-sm);
   }
 
   .footer-tagline {
-    max-width: var(--width-sm);
+    max-width: 28ch;
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
   }
 
-  /* Source (leviathan-core-2023-r1.webflow.css:2275): `.subnav` gap is 1rem, and
-     `.subnav.small` overrides it to 0.5rem. This declared 0.5rem for BOTH, so the
-     `.subnav.center` copyright row rendered at half the intended spacing while
-     `.subnav.small` was correct only by coincidence.
-
-     Third instance of the two-class combo trap — see tokens.md BLOCKER-2 and
-     `.padding-vertical.padding-xlarge` in SectionShell. When source defines both
-     `.a` and `.a.b`, port BOTH values, not just the one that happens to be in
-     front of you. */
   .subnav {
     display: flex;
     flex-wrap: wrap;
@@ -169,59 +158,34 @@ const year = new Date().getFullYear()
     justify-content: center;
   }
 
-  /* .badge is a global primitive in global.css (40px, .small 32px). This file
-     previously re-declared it at --space-xl (64px); being scoped, it won and the
-     footer pills rendered oversized. Do not re-declare it locally. */
-
-  .line-vertical {
-    width: var(--divider-width);
-    align-self: stretch;
-    background: var(--divider-color);
-  }
-
-  .line-vertical.hide-tablet,
-  .line.show-tablet {
-    display: none;
-  }
-
-  @media screen and (min-width: 992px) {
-    .line-vertical.hide-tablet {
-      display: block;
-    }
-  }
-
-  @media screen and (max-width: 991px) {
-    .line.show-tablet {
-      display: block;
-    }
-  }
-
   .footer-grid-right {
-    display: flex;
-    flex: 1 1 0%;
-    gap: var(--space-xl);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
   }
 
   .footer-column {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
-    flex: 1 1 0%;
+    gap: 1rem;
   }
 
-  .footer-column h3 {
-    margin-bottom: var(--space-sm);
+  .footer-column-label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    opacity: 0.55;
   }
 
   .footer-nav {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: 0.55rem;
   }
 
-  /* Source rule (leviathan-core-2023-r1.webflow.css:1877). Phase B rendered these
-     as plain sentence-case body text; the live site sets them in uppercase mono.
-     Restored in Phase G — this was visible on every page of the site. */
   .footer-nav-item-link {
     font-family: var(--font-mono);
     font-size: var(--fs-mono-md);
@@ -229,29 +193,28 @@ const year = new Date().getFullYear()
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
     text-decoration: none;
+    opacity: 0.78;
+    transition: opacity var(--duration-fast) var(--ease-editorial);
   }
 
-  .footer-nav-item-link:hover {
-    text-decoration: underline;
-  }
-
+  .footer-nav-item-link:hover,
   .footer-nav-item-link[aria-current='page'] {
+    opacity: 1;
     text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
-
-  /* .line / .line-vertical are global primitives in global.css — they appear in
-     five components plus page-local markup, and scoping them here left every
-     page-rendered divider invisible. Do not re-declare the base rule locally. */
 
   .footer-bottom {
-    padding-block: var(--space-md);
+    padding-block: 1.25rem 1.5rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
   }
 
   .footer-bottom .text-meta {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
+    font-size: var(--fs-mono-xs);
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
     display: inline;
+    opacity: 0.55;
   }
 </style>

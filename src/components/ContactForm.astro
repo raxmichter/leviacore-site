@@ -1,40 +1,9 @@
 ---
 /**
- * ContactForm — the site's one contact form, reused on index.html, services.html (inside
- * ContactCTA), and contact.html.
- *
- * Source: components.md §4. Three fixes applied relative to the source markup, per the B2
- * brief:
- *
- * 1. ENDPOINT: FormSubmit AJAX → development@leviacore.com. Site stays static. First
- *    production submission requires confirming the activation email FormSubmit sends to
- *    that inbox. `method="post"` (not source `get`) so message text is not logged in URLs.
- *
- * 2. FIELD NAME CASING NORMALIZED. The source is internally inconsistent: index.html and
- *    services.html use `name`/`email`/`Message`; contact.html uses `Name`/`Email`/`Message`
- *    (and a different `id` on top, `Message-2`). Per the B2 brief this is normalized to
- *    lowercase everywhere — `name`, `email`, `message` — so a single endpoint sees one
- *    consistent payload shape regardless of which page the submission came from.
- *
- * 3. ACCESSIBILITY: the source has no `<label>` elements on any field (placeholder text
- *    stands in for a label on all three inputs) and no `required`/`aria-required` anywhere.
- *    Real, visible `<label>`s are added here, all three fields are marked required (a
- *    contact form with an empty message is not an actionable lead — a considered decision,
- *    not a ported one, since the source enforces no validation at all), and the
- *    success/error message blocks are wired as an `aria-live` region so assistive tech
- *    announces the outcome. Both regions exist in the static markup already (the source
- *    toggles their visibility via Webflow/JS); showing/hiding them on submit is an
- *    interaction and is explicitly out of scope for this phase (Phase E), so both start
- *    `hidden` here and are otherwise inert static markup.
- *
- * 4. `idPrefix` exists because ContactCTA embeds this component, so a page rendering both
- *    ContactCTA and a standalone ContactForm would emit duplicate `id`s. That is not
- *    cosmetic: `<label for>` binds by id, so the second form's labels would silently
- *    point at the first form's inputs — a real accessibility break. Pass a distinct
- *    prefix wherever a second instance can appear on one page.
+ * ContactForm — FormSubmit AJAX → development@leviacore.com.
+ * Keep endpoint, honeypot, and success/error regions intact.
  */
 export interface Props {
-  /** Namespace for every id in this form. Must be unique per instance on a page. */
   idPrefix?: string
 }
 
@@ -47,11 +16,6 @@ const messageId = `${idPrefix}-message`
 ---
 
 <div class="form-wrapper" data-contact-form>
-  <!--
-    Endpoint: FormSubmit → development@leviacore.com (site contact address).
-    Stays fully static; first production submit triggers FormSubmit's one-time
-    email confirmation for that inbox. AJAX keeps success/error regions on-page.
-  -->
   <form
     id={formId}
     name={formId}
@@ -62,7 +26,6 @@ const messageId = `${idPrefix}-message`
     <input type="hidden" name="_subject" value="Leviathan Core — website contact" />
     <input type="hidden" name="_template" value="table" />
     <input type="hidden" name="_captcha" value="false" />
-    <!-- Honeypot: leave empty; bots that fill it are rejected client-side -->
     <input
       type="text"
       name="_gotcha"
@@ -174,78 +137,68 @@ const messageId = `${idPrefix}-message`
   .form-wrapper {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: 1.25rem;
   }
+
   .form {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: 1.15rem;
   }
+
   .form-field-wrapper {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xxs);
-  }
-  /*
-   * The source form has NO labels at all — placeholder text stands in for them,
-   * which is an accessibility failure (placeholders vanish on input and are not
-   * reliably announced). Phase B added real <label>s, which fixed that but made
-   * the form visibly different from the live site.
-   *
-   * Phase G resolution: keep the labels, hide them visually. Screen readers and
-   * `label[for]` association work exactly as before; sighted users see the live
-   * site's design. Strictly better than the original, pixel-identical to it.
-   */
-  .form-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
+    gap: 0.35rem;
   }
 
-  /* Source rule (leviathan-core-2023-r1.webflow.css:1240): underline only —
-     transparent background, no box, bottom rule, 4rem min-height. Phase B had
-     rendered these as fully bordered boxes. */
+  .form-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+
   .form-input {
     width: 100%;
     box-sizing: border-box;
     border: 0;
-    border-bottom: var(--divider-width) solid var(--color-ink-pure);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 35%, transparent);
     border-radius: 0;
-    background: var(--color-transparent);
-    min-height: 4rem;
-    padding: var(--space-sm);
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-lg);
+    background: transparent;
+    min-height: 3.25rem;
+    padding: 0.65rem 0;
+    font-family: var(--font-body);
+    font-size: 1.05rem;
     line-height: var(--lh-loose);
     color: var(--color-ink);
+    transition:
+      border-color var(--duration-fast) var(--ease-editorial),
+      background-color var(--duration-fast) var(--ease-editorial);
   }
+
   .form-input::placeholder {
     color: var(--color-text-muted);
     opacity: 1;
   }
+
   .form-input:focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 2px;
-    background: var(--color-field-focus-bg);
+    outline: none;
+    border-bottom-color: var(--color-ink);
+    background: transparent;
+    box-shadow: inset 0 -1px 0 var(--color-ink);
   }
+
   .form-input.is-text-area {
-    min-height: 8rem;
-    resize: none;
+    min-height: 9rem;
+    resize: vertical;
   }
+
   .submit-button {
-    /*
-     * Critique: promote submit to primary CTA weight (was the smallest control on the page).
-     * Still a bare <button> (not Button.astro) so FormData / disabled wiring stays simple.
-     */
     align-self: flex-start;
-    margin-top: var(--space-sm);
-    border: 1px solid var(--color-transparent);
+    margin-top: 0.35rem;
+    border: 1px solid var(--color-ink);
     border-radius: var(--radius-sm);
     background: var(--color-ink);
     color: var(--color-on-ink);
@@ -254,31 +207,33 @@ const messageId = `${idPrefix}-message`
     line-height: var(--lh-tight);
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
-    padding: var(--space-sm) var(--space-md);
-    min-inline-size: 12rem;
+    padding: 0.9rem 1.5rem;
+    min-inline-size: 14rem;
     cursor: pointer;
   }
+
   .submit-button:focus-visible {
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
   }
+
   .form-message-success,
   .form-message-error {
-    border-radius: var(--radius-sm);
-    padding: var(--space-sm);
+    padding: 0.25rem 0 0.25rem 1rem;
     font-family: var(--font-body);
+    border-left: 2px solid var(--color-ink);
   }
-  .form-message-success {
-    border: var(--divider-width) solid var(--color-ink);
-  }
+
   .form-message-error {
-    border: var(--divider-width) solid var(--color-ink);
-    background: var(--wf-error-bg);
+    background: transparent;
+    border-left-color: #a33;
   }
+
   .form-message-success p,
   .form-message-error p {
     margin: 0;
   }
+
   .form-honeypot {
     position: absolute;
     left: -10000px;
@@ -286,6 +241,7 @@ const messageId = `${idPrefix}-message`
     height: 1px;
     overflow: hidden;
   }
+
   .submit-button:disabled {
     opacity: 0.6;
     cursor: wait;

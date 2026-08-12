@@ -111,26 +111,28 @@ const lastUpdatedDisplay = entry.data.lastUpdated
   }
 
   .legal-heading-wrap {
-    text-align: center;
-    margin-bottom: var(--space-xl);
+    text-align: left;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+    max-width: var(--container-sm);
   }
   .legal-updated {
-    margin-top: var(--space-sm);
+    margin-top: 0.85rem;
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
     line-height: var(--lh-relaxed);
-    color: var(--color-ink);
+    color: var(--color-text-muted);
   }
 
   .legal-container-small {
     width: 100%;
     max-width: var(--container-sm);
-    margin-inline: auto;
+    margin-inline: 0;
   }
 
   .legal-divider {
-    margin-top: var(--space-lg);
-    border-top: var(--divider-width) solid var(--divider-color);
+    display: none;
   }
 
   /* ---------- Prose rhythm for the converted rich-text body ---------- */
