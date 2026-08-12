@@ -1,9 +1,11 @@
 ---
 /**
- * SiteHeader — sticky editorial masthead: logo, primary nav, CTA, socials, mobile menu.
+ * SiteHeader — sticky editorial masthead + mobile drawer.
  *
- * Backdrop-filter lives on `.header-chrome` only — NOT on the sticky `<header>` —
- * so it does not create a containing block that clips the fixed MobileMenu.
+ * MobileMenu is a SIBLING of the sticky <header> (not a child) so
+ * position:fixed is viewport-relative and never clipped by sticky/filter.
+ * When open, the header chrome is raised above the drawer so the hamburger
+ * stays clickable.
  */
 import { Image } from 'astro:assets'
 import logo from '../assets/images/LC-SITE-NAV.png'
@@ -103,10 +105,10 @@ const isCurrent = (path: string) => currentPath === path
       </div>
     </div>
   </div>
-
-  {/* Sibling of filtered chrome — fixed drawer must not sit under backdrop-filter */}
-  <MobileMenu currentPath={currentPath} />
 </header>
+
+{/* Outside sticky header — fixed drawer must be a viewport-level sibling */}
+<MobileMenu currentPath={currentPath} />
 
 <script>
   const toggle = document.getElementById('mobile-menu-toggle')
@@ -123,7 +125,6 @@ const isCurrent = (path: string) => currentPath === path
       document.body.classList.toggle('menu-open', open)
       if (open) {
         menu.removeAttribute('hidden')
-        // Focus first nav link after paint so the drawer is in the a11y tree
         requestAnimationFrame(() => {
           firstLink()?.focus()
         })
@@ -133,11 +134,11 @@ const isCurrent = (path: string) => currentPath === path
       }
     }
 
-    toggle.addEventListener('click', () => {
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation()
       setOpen(menu.hasAttribute('hidden'))
     })
 
-    // Document-level Escape — focus often stays on the toggle, not the menu node
     document.addEventListener('keydown', (event) => {
       if (event.key !== 'Escape') return
       if (menu.hasAttribute('hidden')) return
@@ -163,14 +164,15 @@ const isCurrent = (path: string) => currentPath === path
     position: sticky;
     top: 0;
     z-index: var(--z-header);
-    /* No backdrop-filter here — it would clip position:fixed MobileMenu */
     padding-top: env(safe-area-inset-top, 0);
   }
 
-  .header-chrome {
-    position: relative;
-    /* Stay above the full-viewport drawer so the hamburger remains clickable */
+  /* Raise entire masthead above the drawer while open so the toggle receives clicks */
+  :global(html.menu-open) .header {
     z-index: calc(var(--z-overlay) + 1);
+  }
+
+  .header-chrome {
     background: color-mix(in srgb, var(--color-bg) 55%, transparent);
     backdrop-filter: blur(16px) saturate(1.15);
     -webkit-backdrop-filter: blur(16px) saturate(1.15);
