@@ -180,6 +180,12 @@ const valuesItems = [
       grid-template-rows: auto var(--divider-width) auto;
     }
   }
+  @media screen and (max-width: 767px) {
+    .studio-team-grid {
+      /* Divider hide-mobile-landscape removes the middle item; drop the 1px track. */
+      grid-template-rows: none;
+    }
+  }
   .studio-team-intro {
     display: flex;
     flex-direction: column;

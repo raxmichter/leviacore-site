@@ -276,6 +276,30 @@ strong {
    is the worst possible failure mode for an accessibility guarantee. This is
    the sole intentional exception to the codebase's zero-!important property.
    ========================================================================= */
+/* ---------- Responsive show/hide (tokens §4b / §5f) ----------
+   Used on Divider and on page-local .line-vertical markup. Must be global —
+   scoping these inside Divider.astro left page-rendered siblings always visible. */
+@media screen and (max-width: 767px) {
+  .hide-mobile-landscape {
+    display: none;
+  }
+}
+@media screen and (max-width: 991px) {
+  .hide-tablet {
+    display: none;
+  }
+}
+@media screen and (min-width: 768px) {
+  .show-mobile-landscape {
+    display: none;
+  }
+}
+@media screen and (min-width: 992px) {
+  .show-tablet {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* a-8 / a-165 / a-166 — suppress entirely and restore the native cursor.
      The rAF loop is additionally gated in JS so it never mounts. */

@@ -395,7 +395,8 @@ const featuredProjects = featuredProjectEntries
   @media screen and (max-width: 767px) {
     .home-services-grid {
       grid-template-columns: 1fr;
-      grid-template-rows: auto var(--divider-width) auto;
+      /* Vertical divider is display:none with no horizontal swap — do not reserve
+         a 1px middle track or the services column collapses and overlaps below. */
     }
   }
   .home-services-intro {
