@@ -199,12 +199,16 @@ const valuesItems = [
   }
   .team-row {
     display: grid;
-    /* Cards stay 2-up at every width — TeamMemberCard's own responsive image height
-       (18vw → 25vw @<=991 → 50vw @<=767) only makes sense against a 2-column row, so this
-       grid does not collapse to 1 column at any documented breakpoint. Only the vertical
-       divider between the pair hides at <=991 (Divider's own hide-tablet rule). */
+    /* Desktop/tablet: 2-up with vertical hairline. */
     grid-template-columns: 1fr var(--divider-width) 1fr;
     gap: var(--space-md);
     align-items: start;
+  }
+  @media screen and (max-width: 767px) {
+    .team-row {
+      /* Live stacks to a single full-width card column on small phones. */
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+    }
   }
 </style>

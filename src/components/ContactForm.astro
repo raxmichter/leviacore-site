@@ -6,16 +6,9 @@
  * Source: components.md §4. Three fixes applied relative to the source markup, per the B2
  * brief:
  *
- * 1. ⚠️ NO WORKING ENDPOINT. The source form has no `action` attribute at all — Webflow's own
- *    backend intercepted submissions via `webflow.js` (excluded from this migration), so
- *    there is no working submit path anywhere in the exported markup. `action` below is a
- *    clearly-marked placeholder. **This is an open item, not a decision** — tracked in
- *    build-context/OPEN.md. Whoever closes it needs to supply a real endpoint (an Astro API
- *    route, a form service such as Formspree/Basin, or a serverless function) and update
- *    `action` (and possibly `method`) accordingly. `method="post"` is used here rather than
- *    the source's `method="get"` — GET would put a visitor's message text in the URL/server
- *    logs, which is inappropriate for a contact form; this is a corrected default, not a
- *    preserved one.
+ * 1. ENDPOINT: FormSubmit AJAX → development@leviacore.com. Site stays static. First
+ *    production submission requires confirming the activation email FormSubmit sends to
+ *    that inbox. `method="post"` (not source `get`) so message text is not logged in URLs.
  *
  * 2. FIELD NAME CASING NORMALIZED. The source is internally inconsistent: index.html and
  *    services.html use `name`/`email`/`Message`; contact.html uses `Name`/`Email`/`Message`
@@ -53,12 +46,31 @@ const emailId = `${idPrefix}-email`
 const messageId = `${idPrefix}-message`
 ---
 
-<div class="form-wrapper">
+<div class="form-wrapper" data-contact-form>
   <!--
-    OPEN ITEM: no submit endpoint exists in the source export (see file header, point 1).
-    Replace `action` below when a real endpoint is chosen — do not ship this placeholder.
+    Endpoint: FormSubmit → development@leviacore.com (site contact address).
+    Stays fully static; first production submit triggers FormSubmit's one-time
+    email confirmation for that inbox. AJAX keeps success/error regions on-page.
   -->
-  <form id={formId} name={formId} class="form" action="#contact-form-endpoint-todo" method="post">
+  <form
+    id={formId}
+    name={formId}
+    class="form"
+    action="https://formsubmit.co/ajax/development@leviacore.com"
+    method="post"
+  >
+    <input type="hidden" name="_subject" value="Leviathan Core — website contact" />
+    <input type="hidden" name="_template" value="table" />
+    <input type="hidden" name="_captcha" value="false" />
+    <!-- Honeypot: leave empty; bots that fill it are rejected client-side -->
+    <input
+      type="text"
+      name="_gotcha"
+      tabindex="-1"
+      autocomplete="off"
+      aria-hidden="true"
+      class="form-honeypot"
+    />
     <div class="form-field-wrapper">
       <label for={nameId} class="form-label">Name</label>
       <input
@@ -105,6 +117,58 @@ const messageId = `${idPrefix}-message`
     <p>Oops! Something went wrong while submitting the form.</p>
   </div>
 </div>
+
+<script>
+  function wireContactForms() {
+    document.querySelectorAll('[data-contact-form]').forEach((wrapper) => {
+      const form = wrapper.querySelector('form')
+      const success = wrapper.querySelector('.form-message-success')
+      const error = wrapper.querySelector('.form-message-error')
+      const submit = wrapper.querySelector('.submit-button')
+      if (!(form instanceof HTMLFormElement) || !success || !error || !submit) return
+      if (form.dataset.wired === '1') return
+      form.dataset.wired = '1'
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault()
+        success.hidden = true
+        error.hidden = true
+
+        const honey = form.querySelector('input[name="_gotcha"]')
+        if (honey instanceof HTMLInputElement && honey.value.trim() !== '') {
+          success.hidden = false
+          form.hidden = true
+          return
+        }
+
+        const previousLabel = submit.textContent
+        submit.setAttribute('disabled', 'true')
+        submit.textContent = 'Sending…'
+
+        try {
+          const body = new FormData(form)
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body,
+            headers: { Accept: 'application/json' },
+          })
+          if (!response.ok) throw new Error(`HTTP ${response.status}`)
+          const payload = await response.json().catch(() => ({}))
+          if (payload.success === 'false' || payload.error) throw new Error(payload.message || 'submit failed')
+          form.hidden = true
+          success.hidden = false
+        } catch {
+          error.hidden = false
+          submit.removeAttribute('disabled')
+          submit.textContent = previousLabel || 'Submit'
+        }
+      })
+    })
+  }
+
+  wireContactForms()
+  document.addEventListener('astro:page-load', wireContactForms)
+</script>
 
 <style>
   .form-wrapper {
@@ -210,5 +274,16 @@ const messageId = `${idPrefix}-message`
   .form-message-success p,
   .form-message-error p {
     margin: 0;
+  }
+  .form-honeypot {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .submit-button:disabled {
+    opacity: 0.6;
+    cursor: wait;
   }
 </style>

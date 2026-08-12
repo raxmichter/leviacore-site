@@ -29,3 +29,5 @@ playwright-report/
 
 # Playwright browsers are installed globally, not vendored
 .cache/
+.vercel
+.env*

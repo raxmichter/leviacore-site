@@ -60,13 +60,18 @@ const { name, role, image, alt, hiring = false, headingLevel = 'h3' } = Astro.pr
   }
   @media screen and (max-width: 767px) {
     .studio-team-image-wrapper {
-      height: 50vw;
+      /* 50vw was ~187px at 375; live full-width photos are ~520px (430/290). */
+      height: auto;
+      max-height: none;
+      aspect-ratio: 430 / 290;
+      width: 100%;
     }
   }
   .studio-team-image-wrapper :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
   }
   .name {
     margin-bottom: var(--space-xxs);

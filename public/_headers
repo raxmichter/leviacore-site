@@ -27,10 +27,8 @@
   #     reintroduces Google Fonts, this will block it — that is intended.
   #   - 'unsafe-inline' for styles is required by Astro's scoped-style output.
   #     Scripts do NOT get 'unsafe-inline'.
-  #   - form-action is 'self' today. WHEN A REAL CONTACT FORM ENDPOINT IS CHOSEN
-  #     (OPEN.md item 2), ITS ORIGIN MUST BE ADDED HERE OR SUBMISSIONS WILL BE
-  #     SILENTLY BLOCKED BY THE BROWSER.
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; img-src 'self' data: https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; font-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+  #   - form-action allowlists FormSubmit (contact form). connect-src includes it for AJAX.
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://formsubmit.co; img-src 'self' data: https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; font-src 'self'; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
 
 # Astro emits content-hashed filenames for these, so they are safe to cache
 # permanently — a change produces a new filename.
