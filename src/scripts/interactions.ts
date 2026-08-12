@@ -282,6 +282,69 @@ function mountParallax(): Teardown {
   }
 }
 
+
+/* ────────────────────────────── Content fade-up ────────────────────────────── */
+
+/**
+ * Tasteful content reveals for editorial polish (2026-08-12).
+ * Opt-in via `data-reveal` on any element. Optional `data-reveal-delay` (ms)
+ * for stagger. Fire-once, opacity + slight translateY, outQuint ease.
+ * Under reduced motion: opacity-only, short linear fade.
+ */
+const FADE_UP_EASE = "cubic-bezier(0.23, 1, 0.32, 1)" // outQuint (matches button hover)
+const FADE_UP_SELECTOR = "[data-reveal]"
+
+function mountFadeUp(): Teardown {
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  const elements = Array.from(document.querySelectorAll<HTMLElement>(FADE_UP_SELECTOR)).filter(
+    (element) => element.getClientRects().length > 0,
+  )
+  if (elements.length === 0) return () => {}
+
+  const observers: IntersectionObserver[] = []
+  const touched: HTMLElement[] = []
+
+  for (const element of elements) {
+    const delayRaw = element.dataset.revealDelay
+    const delayMs = delayRaw ? Number.parseInt(delayRaw, 10) : 0
+    const delay = Number.isFinite(delayMs) && delayMs > 0 ? delayMs : 0
+
+    if (reduce) {
+      element.style.opacity = "0"
+      element.style.transition = `opacity .2s linear ${delay}ms`
+    } else {
+      element.style.opacity = "0"
+      element.style.transform = "translateY(1.25rem)"
+      element.style.transition = `opacity .7s ${FADE_UP_EASE} ${delay}ms, transform .7s ${FADE_UP_EASE} ${delay}ms`
+    }
+    touched.push(element)
+
+    const observer = new IntersectionObserver(
+      (entries, self) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          const el = entry.target as HTMLElement
+          el.style.opacity = "1"
+          if (!reduce) el.style.transform = "translateY(0)"
+          self.unobserve(el)
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
+    )
+    observers.push(observer)
+    observer.observe(element)
+  }
+
+  return () => {
+    for (const observer of observers) observer.disconnect()
+    for (const element of touched) {
+      element.style.opacity = ""
+      element.style.transform = ""
+      element.style.transition = ""
+    }
+  }
+}
+
 /* ────────────────────────────────── Wiring ────────────────────────────────── */
 
 /**
@@ -293,6 +356,8 @@ function mountParallax(): Teardown {
  * and continuous, do watch for changes.
  */
 onPage('reveals', mountReveals)
+
+onPage('fade-up', mountFadeUp)
 
 /**
  * Parallax is SUPPRESSED under reduced motion, not shortened — scroll-coupled translation is

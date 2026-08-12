@@ -370,4 +370,12 @@ strong {
   .service-jump-link-text-hover {
     transition-duration: 0.15s !important;
   }
+
+
+  /* Content fade-up (data-reveal) — softened: drop translate, keep short opacity fade.
+     JS still drives the reveal under reduced motion; this is a cascade safety net. */
+  [data-reveal] {
+    transform: none !important;
+    transition: opacity 0.2s linear !important;
+  }
 }

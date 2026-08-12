@@ -152,9 +152,14 @@ const { headingText = 'the values at our core.', items, portraitAlt } = Astro.pr
   /* .badge is fully covered by the global primitive in global.css. */
   .text-meta {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
+    font-size: var(--fs-mono-lg);
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
+  }
+  .badge {
+    /* Global badge is 40px — bump for values drama without leaving the system */
+    block-size: 3rem;
+    inline-size: 3rem;
   }
   .item-title {
     margin-bottom: var(--space-xs);
