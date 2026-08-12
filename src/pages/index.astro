@@ -161,7 +161,7 @@ const featuredProjects = featuredProjectEntries
   {/* Phase E — custom cursor (a-8 / a-165 / a-166). Five pages only; see Cursor.astro. */}
   <Cursor />
 
-  <SectionShell sectionClass="section-home-hero" withTopDivider={false}>
+  <SectionShell sectionClass="section-home-hero" withTopDivider={false} reveal={false}>
     <div class="home-hero-grid">
       <div class="home-hero-grid-left" data-reveal data-reveal-delay="0">
         <Eyebrow class="hero-eyebrow">Gaming influencer marketing</Eyebrow>
@@ -181,12 +181,10 @@ const featuredProjects = featuredProjectEntries
   </SectionShell>
 
   <SectionShell sectionClass="section-home-clients">
-    <div data-reveal>
-      <ClientLogoStrip logos={clientLogos} />
-    </div>
+    <ClientLogoStrip logos={clientLogos} />
   </SectionShell>
 
-  <SectionShell sectionClass="section-home-services">
+  <SectionShell sectionClass="section-home-services" reveal={false}>
     <div class="home-services-grid">
       <div class="home-services-intro" data-reveal>
         <SectionHeading as="h2" variant="display-lg" uppercase class="services-heading">Services that stand out</SectionHeading>
@@ -241,7 +239,7 @@ const featuredProjects = featuredProjectEntries
     George asked for it to be left off. `year` remains in the schema and still
     drives sort order — it is simply not displayed here.
   */}
-  <SectionShell sectionClass="section-home-projects">
+  <SectionShell sectionClass="section-home-projects" reveal={false}>
     <div class="home-projects-grid">
       <div class="home-projects-grid-left-inner" data-reveal>
         <SectionHeading as="h2" variant="display-lg" uppercase class="projects-heading">Featured projects</SectionHeading>
@@ -281,30 +279,24 @@ const featuredProjects = featuredProjectEntries
   </SectionShell>
 
   <SectionShell sectionClass="section-home-how">
-    <div data-reveal>
-      <Eyebrow class="how-eyebrow">How we work</Eyebrow>
-      <SectionHeading as="h2" variant="display-2xl" class="how-heading">
-        PEOPLE SHARE WHAT THEY LOVE.<br />GAMERS AREN'T ANY DIFFERENT.
-      </SectionHeading>
-      <p class="lead-text how-copy">
-        Gamers aren't dumb. They know when they're being played, and when their favorite streamers are being paid to
-        fake fandom. It shows. We use our deep community roots to connect brands with influencers who will actually
-        appreciate them – and share those brands with their friends.
-      </p>
-    </div>
+    <Eyebrow class="how-eyebrow">How we work</Eyebrow>
+    <SectionHeading as="h2" variant="display-xl" class="how-heading">
+      PEOPLE SHARE WHAT THEY LOVE. GAMERS AREN'T ANY DIFFERENT.
+    </SectionHeading>
+    <p class="lead-text how-copy">
+      Gamers aren't dumb. They know when they're being played, and when their favorite streamers are being paid to
+      fake fandom. It shows. We use our deep community roots to connect brands with influencers who will actually
+      appreciate them – and share those brands with their friends.
+    </p>
   </SectionShell>
 
-  <div data-reveal>
-    <ValuesList items={valuesItems} portraitAlt="Portrait photo representing the Leviathan Core team" />
-  </div>
+  <ValuesList items={valuesItems} portraitAlt="Portrait photo representing the Leviathan Core team" />
 
-  <div data-reveal>
-    <ContactCTA
-      headingText={"IT'S TIME TO FIND\nYOUR FANDOM"}
-      headingLevel="h2"
-      tagline="We can help. With PLANNING, NEGOTIATIONS, execution – the works."
-    />
-  </div>
+  <ContactCTA
+    headingText={"IT'S TIME TO FIND\nYOUR FANDOM"}
+    headingLevel="h2"
+    tagline="We can help. With PLANNING, NEGOTIATIONS, execution – the works."
+  />
 </BaseLayout>
 
 <style>
@@ -527,33 +519,15 @@ const featuredProjects = featuredProjectEntries
     color: var(--color-ink);
   }
 
-  /* ---------- How we work (ink band — bold editorial moment) ---------- */
-  :global(.section-home-how) {
-    background: var(--color-ink);
-    color: var(--color-bg);
-    /* Bleed to the body frame edges for a confident full-width band */
-    margin-inline: calc(-1 * var(--frame-padding));
-    padding-inline: var(--frame-padding);
+  /* ---------- How we work ---------- */
+  :global(.how-eyebrow) {
+    margin-bottom: var(--space-xs);
   }
-  :global(.section-home-how .line) {
-    background-color: var(--color-bg);
-  }
-  :global(.section-home-how .page-padding) {
-    /* keep inner rhythm; band already padded */
-  }
-  :global(.section-home-how .how-eyebrow) {
-    margin-bottom: var(--space-sm);
-    color: var(--color-bg);
-  }
-  :global(.section-home-how .how-heading) {
-    max-width: 18ch;
+  :global(.how-heading) {
+    max-width: var(--width-2xl);
     margin-bottom: var(--space-md);
-    letter-spacing: -0.03em;
-    color: var(--color-bg);
   }
   .how-copy {
-    max-width: 40rem;
-    color: var(--color-bg);
-    opacity: 0.92;
+    max-width: none;
   }
 </style>

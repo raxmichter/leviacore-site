@@ -32,7 +32,7 @@ interface Props {
 const { name, role, image, alt, hiring = false, headingLevel = 'h3' } = Astro.props
 ---
 
-<article class:list={['team-member-card', { 'is-hiring': hiring }]}>
+<article class:list={['team-member-card', { 'is-hiring': hiring }]} data-reveal>
   <div class="studio-team-image-wrapper">
     <Image src={image} alt={alt} class="image-cover" />
   </div>

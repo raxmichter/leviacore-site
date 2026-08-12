@@ -18,16 +18,18 @@ interface Props {
   padding?: 'large' | 'xlarge'
   withTopDivider?: boolean
   id?: string
+  /** Tasteful scroll fade-up for section content. Default on for sitewide polish. */
+  reveal?: boolean
 }
 
-const { sectionClass, padding = 'xlarge', withTopDivider = true, id } = Astro.props
+const { sectionClass, padding = 'xlarge', withTopDivider = true, id, reveal = true } = Astro.props
 ---
 
 <section class={sectionClass} id={id}>
   <div class="page-padding">
     <div class="container-xxlarge">
       {withTopDivider && <div class="line" aria-hidden="true"></div>}
-      <div class={`padding-vertical padding-${padding}`}>
+      <div class={`padding-vertical padding-${padding}`} data-reveal={reveal || undefined}>
         <slot />
       </div>
     </div>
