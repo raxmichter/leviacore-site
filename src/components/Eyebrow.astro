@@ -1,15 +1,9 @@
 ---
 /**
- * Eyebrow — small uppercase label text (source class `text-meta`).
- *
- * Source: components.md #9. Used standalone as section labels ("brands we've helped",
- * "Contact", "How we work"). Not a distinct component structurally in the source (just a
- * styled div/h2) — built here as a shared typographic primitive so it isn't hand-typed
- * everywhere. `as="h2"` is needed where the eyebrow is the section's actual heading-level
- * element for document outline purposes (e.g. "How we work"); default is a plain `div`.
+ * Eyebrow — quiet mono uppercase label.
  */
 interface Props {
-  as?: 'div' | 'h2' | 'h3'
+  as?: 'div' | 'h2' | 'h3' | 'p'
   class?: string
 }
 
@@ -24,11 +18,12 @@ const { as: Tag = 'div', class: className } = Astro.props
   .eyebrow {
     margin: 0;
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
+    font-size: var(--fs-mono-xs);
     line-height: var(--lh-relaxed);
-    letter-spacing: var(--ls-wide);
+    letter-spacing: var(--ls-meta);
     text-transform: uppercase;
     font-weight: var(--fw-regular);
     color: inherit;
+    opacity: 0.55;
   }
 </style>

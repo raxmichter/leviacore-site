@@ -1,27 +1,23 @@
 ---
 /**
- * SocialBadge — small square/circular icon-badge link for Twitter/LinkedIn.
+ * SocialBadge — small square/circular icon-badge link for X/LinkedIn.
  *
  * Source: components.md #5. Markup: `a.badge.small.link.w-inline-block > div.text-meta-small`.
- * Source capitalization of the label text differs by placement ("Tw"/"IN" in header and
- * contact-hero rows, "TW"/"IN" in the footer) — cosmetic per the artifact, so it's exposed as
- * a `label` prop rather than hardcoded, letting each call site match the source exactly.
+ * Visible labels are short ("X"/"IN") — cosmetic per placement, exposed as a `label` prop.
  *
- * Accessible name: the visible label alone ("Tw", "IN") is not meaningful to a screen reader.
- * `platform` drives a proper `aria-label` (e.g. "Twitter") so the link announces sensibly
- * while the visual text-meta-small label is preserved as-is — this fixes an accessibility gap
- * in the source rather than reproducing it (the source has no accessible name beyond the
- * two-letter visual label).
+ * Accessible name: the visible label alone ("X", "IN") is not meaningful to a screen reader.
+ * `platform` drives a proper `aria-label` (e.g. "Leviathan Core on X") so the link announces
+ * sensibly while the visual text-meta-small label is preserved as-is.
  */
 interface Props {
-  platform: 'twitter' | 'linkedin'
+  platform: 'x' | 'linkedin'
   href: string
   label: string
   target?: '_blank'
 }
 
 const { platform, href, label, target } = Astro.props
-const accessibleName = platform === 'twitter' ? 'Twitter' : 'LinkedIn'
+const accessibleName = platform === 'x' ? 'Leviathan Core on X' : 'Leviathan Core on LinkedIn'
 const rel = target === '_blank' ? 'noopener noreferrer' : undefined
 ---
 

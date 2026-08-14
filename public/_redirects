@@ -34,6 +34,10 @@
 # than 404s.
 /gcx                       /    301
 
+# ── Legacy / alternate paths ─────────────────────────────────────────────────
+/work                      /projects   301
+/about                     /team       301
+
 # ── E-commerce scaffolding ───────────────────────────────────────────────────
 # No such functionality has ever existed on this site; these are unremoved
 # artifacts of the purchased template.

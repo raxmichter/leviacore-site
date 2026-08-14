@@ -20,7 +20,17 @@ export default defineConfig({
   build: {
     format: 'directory',
     // Inline only genuinely tiny stylesheets; anything larger stays a cacheable file.
+    // (style-src allows 'unsafe-inline'; script-src does not — see vite.assetsInlineLimit.)
     inlineStylesheets: 'auto',
+  },
+
+  vite: {
+    build: {
+      // Astro auto-inlines client scripts under this limit as <script type="module">...</script>.
+      // Vercel CSP is script-src 'self' (no 'unsafe-inline'), so even tiny modules must stay
+      // external /_astro/*.js files. Zero disables that inlining for scripts and assets.
+      assetsInlineLimit: 0,
+    },
   },
 
   image: {

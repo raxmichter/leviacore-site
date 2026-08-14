@@ -73,7 +73,7 @@ const organizationSchema = {
     "Influencer marketing for the gaming industry. Partnering with the right influencers and connecting with the right audiences.",
   foundingDate: '2017',
   sameAs: [
-    'https://twitter.com/leviacore',
+    'https://x.com/leviacore',
     'https://www.linkedin.com/company/leviathan-core/',
   ],
   contactPoint: {
@@ -125,29 +125,23 @@ const organizationSchema = {
 
     <link
       rel="preload"
-      href="/fonts/syne-latin-wght-normal.woff2"
+      href="/fonts/playfair-display-latin-400-normal.woff2"
       as="font"
       type="font/woff2"
       crossorigin
     />
     <link
       rel="preload"
-      href="/fonts/Satoshi-Regular.woff"
+      href="/fonts/jost-latin-wght-normal.woff2"
       as="font"
-      type="font/woff"
+      type="font/woff2"
       crossorigin
     />
 
     <!-- GA4 — verbatim from every page of the live export. Must survive migration. -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EG4F7ZLTZQ"></script>
     <script>
-      window.dataLayer = window.dataLayer || []
-      function gtag() {
-        window.dataLayer.push(arguments)
-      }
-      gtag('set', 'developer_id.dZGVlNj', true)
-      gtag('js', new Date())
-      gtag('config', 'G-EG4F7ZLTZQ')
+      import '../scripts/ga'
     </script>
   </head>
   <body>
@@ -168,14 +162,10 @@ const organizationSchema = {
 </html>
 
 <style>
-  /* .main-wrapper radius (tokens.md §5a): no radius at base, stepping in at
-     <=991px via --radius-shell. tokens.css declares --radius-shell: 4rem
-     unconditionally at :root (its own comment says "none at base" but the
-     value isn't actually gated) — since tokens.css is off-limits to edit
-     here, the base case is zeroed explicitly and the token is only applied
-     inside the media query where tokens.css legitimately overrides it. */
   .main-wrapper {
     border-radius: 0;
+    /* Do NOT set overflow: clip/hidden here — it kills position:sticky descendants
+       (homepage services intro, team intro). Radius alone is enough for the shell. */
   }
 
   @media screen and (max-width: 991px) {

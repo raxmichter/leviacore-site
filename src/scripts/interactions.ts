@@ -293,13 +293,26 @@ function mountParallax(): Teardown {
  */
 const FADE_UP_EASE = "cubic-bezier(0.23, 1, 0.32, 1)" // outQuint (matches button hover)
 const FADE_UP_SELECTOR = "[data-reveal]"
+/** If an observer never fires (layout/IO edge cases), force content visible. */
+const FADE_UP_FAILSAFE_MS = 1500
+
+function revealElement(el: HTMLElement, reduce: boolean) {
+  el.style.opacity = "1"
+  if (!reduce) el.style.transform = "translateY(0)"
+  el.dataset.revealed = "1"
+}
 
 function mountFadeUp(): Teardown {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   const elements = Array.from(document.querySelectorAll<HTMLElement>(FADE_UP_SELECTOR)).filter(
     (element) => element.getClientRects().length > 0,
   )
-  if (elements.length === 0) return () => {}
+  if (elements.length === 0) {
+    document.documentElement.classList.add("js-reveal")
+    return () => {
+      document.documentElement.classList.remove("js-reveal")
+    }
+  }
 
   const observers: IntersectionObserver[] = []
   const touched: HTMLElement[] = []
@@ -313,9 +326,10 @@ function mountFadeUp(): Teardown {
       element.style.opacity = "0"
       element.style.transition = `opacity .2s linear ${delay}ms`
     } else {
+      // Calmer editorial travel — shorter lift, slightly longer ease
       element.style.opacity = "0"
-      element.style.transform = "translateY(1.25rem)"
-      element.style.transition = `opacity .7s ${FADE_UP_EASE} ${delay}ms, transform .7s ${FADE_UP_EASE} ${delay}ms`
+      element.style.transform = "translateY(0.65rem)"
+      element.style.transition = `opacity .85s ${FADE_UP_EASE} ${delay}ms, transform .85s ${FADE_UP_EASE} ${delay}ms`
     }
     touched.push(element)
 
@@ -324,24 +338,36 @@ function mountFadeUp(): Teardown {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue
           const el = entry.target as HTMLElement
-          el.style.opacity = "1"
-          if (!reduce) el.style.transform = "translateY(0)"
+          revealElement(el, reduce)
           self.unobserve(el)
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0.08, rootMargin: "0px 0px -4% 0px" },
     )
     observers.push(observer)
     observer.observe(element)
   }
 
+  // Mark that JS armed observers — CSS can key off this if needed
+  document.documentElement.classList.add("js-reveal")
+
+  const failsafe = window.setTimeout(() => {
+    for (const element of touched) {
+      if (element.dataset.revealed === "1") continue
+      revealElement(element, reduce)
+    }
+  }, FADE_UP_FAILSAFE_MS)
+
   return () => {
+    window.clearTimeout(failsafe)
     for (const observer of observers) observer.disconnect()
     for (const element of touched) {
       element.style.opacity = ""
       element.style.transform = ""
       element.style.transition = ""
+      delete element.dataset.revealed
     }
+    document.documentElement.classList.remove("js-reveal")
   }
 }
 

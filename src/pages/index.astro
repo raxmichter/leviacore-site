@@ -1,19 +1,7 @@
 ---
 /**
- * Homepage (`/`) — Phase C1a.
- *
- * Port of _webflow-export/index.html. Section order per build-context/components.md §2:
- * hero → client logos → services summary → featured projects teaser → how we work → values
- * → contact. SiteHeader/SiteFooter come from BaseLayout.
- *
- * Copy is ported verbatim except the <title>, which the build brief explicitly calls out as
- * a defect: the export ships only "Leviathan Core" (weakest SEO on the highest-value page)
- * while interior pages correctly use "X | Leviathan Core". Fixed here, nowhere else.
- *
- * Heading hierarchy: this page's one <h1> is the hero headline below. ContactCTA normally
- * renders its own heading as <h1> (it's the sole heading on contact.html), so here it's
- * called with `headingLevel="h2"` — an additive prop added to ContactCTA.astro this phase,
- * see that file's header for the full note.
+ * Homepage (`/`) — editorial agency redesign.
+ * Copy reused from the existing site; composition and chrome rebuilt.
  */
 import { Image } from 'astro:assets'
 import { getCollection } from 'astro:content'
@@ -21,8 +9,8 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Cursor from '../components/Cursor.astro'
 import SectionShell from '../components/SectionShell.astro'
 import SectionHeading from '../components/SectionHeading.astro'
+import DisplayFigures from '../components/DisplayFigures.astro'
 import Eyebrow from '../components/Eyebrow.astro'
-import Divider from '../components/Divider.astro'
 import Button from '../components/Button.astro'
 import ClientLogoStrip from '../components/ClientLogoStrip.astro'
 import ValuesList from '../components/ValuesList.astro'
@@ -53,10 +41,6 @@ const clientLogos = [
   { src: privateDivision, alt: 'Private Division' },
 ]
 
-// Copy/casing/order ported verbatim from index.html's `.home-services-item` blocks. The
-// mixed casing ("Consulting" vs "campaigns"/"legal"/"finance") is the source's own
-// inconsistency, preserved per the "don't improve copy" rule — CSS uppercases all four
-// visually regardless.
 const services = [
   {
     icon: icon01,
@@ -86,7 +70,6 @@ const services = [
       'Coordinating finances and payments to influencers, protecting brand reputations in the process.',
   },
 ]
-const serviceRows = [services.slice(0, 2), services.slice(2, 4)]
 
 const valuesItems = [
   {
@@ -115,20 +98,6 @@ const valuesItems = [
   },
 ]
 
-/**
- * Featured projects teaser — Phase D1. Source: components.md §6 "index.html —
- * FeaturedProjectsTeaser". The export shows two side-by-side CMS-bound lists (likely one
- * featured item + a grid of the rest), but both are empty and components.md explicitly flags
- * that the count-per-list split can't be confirmed without Webflow dashboard access — deferred
- * to the CSV, which hasn't arrived.
- *
- * Rather than invent a split that can't be verified, this renders ONE simple list from the
- * same `projects` collection `/projects` itself uses (order asc, year desc), capped at 3 —
- * a plain, defensible "teaser" size for a homepage section whose own copy already says "just a
- * few of our favorites," and small enough that it reads as a teaser rather than a duplicate of
- * the full `/projects` grid. No placeholder cards are rendered for an empty collection (same
- * rule as `/projects`); today this is empty in production since only the draft fixture exists.
- */
 const isProd = import.meta.env.PROD
 const featuredProjectEntries = await getCollection('projects', (entry) => !isProd || !entry.data.draft)
 const featuredProjects = featuredProjectEntries
@@ -146,11 +115,6 @@ const featuredProjects = featuredProjectEntries
     imageAlt: entry.data.heroImageAlt,
     href: `/project/${entry.id}`,
   }))
-
-// NOTE: the ContactCTA social row is intentionally NOT rendered. The footer already
-// shows the same TW/IN pair immediately below that block, so rendering it there produced
-// two identical badge rows stacked together. Removed 2026-08-11 per George — a deliberate
-// difference from live, which does show both.
 ---
 
 <BaseLayout
@@ -158,27 +122,37 @@ const featuredProjects = featuredProjectEntries
   description="You can't buy hype, but you can earn it. Partnering with the right influencers and connecting with the right audiences is how it's done. We help brands build hype with both."
   canonicalPath="/"
 >
-  {/* Phase E — custom cursor (a-8 / a-165 / a-166). Five pages only; see Cursor.astro. */}
   <Cursor />
 
-  <SectionShell sectionClass="section-home-hero" withTopDivider={false} reveal={false}>
-    <div class="home-hero-grid">
-      <div class="home-hero-grid-left" data-reveal data-reveal-delay="0">
-        <Eyebrow class="hero-eyebrow">Gaming influencer marketing</Eyebrow>
-        <SectionHeading as="h1" variant="display-2xl" class="hero-heading">
-          You can't buy hype,<br />but you can earn it.
-        </SectionHeading>
-        <p class="lead-text hero-intro">
-          Partnering with the right influencers and connecting with the right audiences is how it's done. We help
-          brands build hype with both.
-        </p>
-        <Button href="/contact" class="hero-cta">Let's make it happen</Button>
+  <section class="section-home-hero">
+    <div class="home-hero-plane">
+      <div class="home-hero-media" data-reveal data-reveal-delay="80">
+        <Image
+          src={heroImage}
+          alt="The Leviathan Core team"
+          class="image-cover"
+          loading="eager"
+          fetchpriority="high"
+        />
       </div>
-      <div class="home-hero-image-wrapper" data-reveal data-reveal-delay="120">
-        <Image src={heroImage} alt="The Leviathan Core team" class="image-cover" />
+      <div class="page-padding home-hero-copy-wrap">
+        <div class="container-xxlarge">
+          <div class="home-hero-copy" data-reveal>
+            <p class="brand-mark">Leviathan Core</p>
+            <Eyebrow class="hero-eyebrow">Gaming influencer marketing</Eyebrow>
+            <SectionHeading as="h1" variant="display-2xl" class="hero-heading">
+              You can't buy hype,<br />but you can earn it.
+            </SectionHeading>
+            <p class="lead-text hero-intro">
+              Partnering with the right influencers and connecting with the right audiences is how it's done. We help
+              brands build hype with both.
+            </p>
+            <Button href="/contact" variant="inverse" class="hero-cta">Let's make it happen</Button>
+          </div>
+        </div>
       </div>
     </div>
-  </SectionShell>
+  </section>
 
   <SectionShell sectionClass="section-home-clients">
     <ClientLogoStrip logos={clientLogos} />
@@ -193,102 +167,75 @@ const featuredProjects = featuredProjectEntries
           influencer marketing with next-level professionalism.
         </p>
       </div>
-      <!-- Source only marks the divider `hide-mobile-landscape` here (unlike ClientLogoStrip's
-           grid, there is no paired `show-mobile-landscape` swap element) — ported as a single
-           divider that disappears at <=767 rather than inventing a horizontal replacement. -->
-      <Divider orientation="vertical" responsive="hide-mobile-landscape" />
-      <div class="home-services-grid-right" data-reveal data-reveal-delay="100">
+      <div class="home-services-list" data-reveal data-reveal-delay="100">
         {
-          serviceRows.map((row, rowIndex) => (
-            <>
-              {rowIndex > 0 && <Divider />}
-              <div class="home-services-grid-right-row">
-                {row.map((item, itemIndex) => (
-                  <>
-                    {itemIndex > 0 && (
-                      <>
-                        <Divider orientation="vertical" responsive="hide-tablet" />
-                        <Divider orientation="horizontal" responsive="show-tablet" />
-                      </>
-                    )}
-                    <div class="home-services-item">
-                      <Image src={item.icon} alt={item.alt} class="service-icon" />
-                      <div>
-                        <SectionHeading as="h3" uppercase class="service-item-title">
-                          {item.title}
-                        </SectionHeading>
-                        <p class="service-item-description">{item.description}</p>
-                      </div>
-                    </div>
-                  </>
-                ))}
+          services.map((item) => (
+            <div class="home-services-item">
+              <Image src={item.icon} alt={item.alt} class="service-icon" />
+              <div>
+                <SectionHeading as="h3" uppercase class="service-item-title">
+                  {item.title}
+                </SectionHeading>
+                <p class="service-item-description">{item.description}</p>
               </div>
-            </>
+            </div>
           ))
         }
       </div>
     </div>
   </SectionShell>
 
-  {/*
-    Featured projects. Intro | divider | equal card grid (3-up desktop, 1-up ≤991).
-    Deliberate departure from live Webflow's "hero lead + two-up" — the oversized
-    lead card read as broken next to the smaller pair (critique / Max 2026-08-12).
-
-    ⚠️ NO YEAR. The live cards print the campaign year to the right of each title;
-    George asked for it to be left off. `year` remains in the schema and still
-    drives sort order — it is simply not displayed here.
-  */}
   <SectionShell sectionClass="section-home-projects" reveal={false}>
-    <div class="home-projects-grid">
-      <div class="home-projects-grid-left-inner" data-reveal>
-        <SectionHeading as="h2" variant="display-lg" uppercase class="projects-heading">Featured projects</SectionHeading>
-        <p class="lead-text lead-text--md">
-          See how our innovative, hands-on approach has helped brands like yours grow fanbases, generate buzz, and
-          break records.
-        </p>
-        <Button href="/projects" variant="secondary">See more</Button>
-      </div>
-      <div class="line-vertical hide-mobile-landscape" aria-hidden="true"></div>
-      {
-        featuredProjects.length > 0 && (
-          <ul class="home-projects-grid-right">
-            {featuredProjects.map((project, projectIndex) => (
-              <li
-                class="home-project-preview-item"
-                data-reveal
-                data-reveal-delay={String(projectIndex * 90)}
-              >
-                <a href={project.href} class="home-project-preview-image-wrapper">
-                  <Image src={project.image} alt={project.imageAlt} class="image-cover" />
-                </a>
-                <div class="home-project-preview-content">
-                  <a href={project.href} class="home-project-preview-title-link">
-                    <SectionHeading as="h3" variant="h3" uppercase>
-                      {project.title}
-                    </SectionHeading>
-                  </a>
-                  <p class="home-project-preview-meta">{project.client}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )
-      }
+    <div class="home-projects-intro" data-reveal>
+      <SectionHeading as="h2" variant="display-lg" uppercase class="projects-heading">Featured projects</SectionHeading>
+      <p class="lead-text lead-text--md">
+        See how our innovative, hands-on approach has helped brands like yours grow fanbases, generate buzz, and
+        break records.
+      </p>
+      <Button href="/projects" variant="secondary">See more</Button>
     </div>
+    {
+      featuredProjects.length > 0 && (
+        <ul class="home-projects-grid">
+          {featuredProjects.map((project, projectIndex) => (
+            <li
+              class:list={['home-project-preview-item', { featured: projectIndex === 0 }]}
+              data-reveal
+              data-reveal-delay={String(projectIndex * 90)}
+            >
+              <a href={project.href} class="home-project-preview-image-wrapper">
+                <Image src={project.image} alt={project.imageAlt} class="image-cover" />
+              </a>
+              <div class="home-project-preview-content">
+                <a href={project.href} class="home-project-preview-title-link">
+                  <SectionHeading as="h3" variant={projectIndex === 0 ? 'h2' : 'h3'} uppercase>
+                    <DisplayFigures text={project.title} />
+                  </SectionHeading>
+                </a>
+                <p class="home-project-preview-meta">{project.client}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )
+    }
   </SectionShell>
 
-  <SectionShell sectionClass="section-home-how">
-    <Eyebrow class="how-eyebrow">How we work</Eyebrow>
-    <SectionHeading as="h2" variant="display-xl" class="how-heading">
-      PEOPLE SHARE WHAT THEY LOVE. GAMERS AREN'T ANY DIFFERENT.
-    </SectionHeading>
-    <p class="lead-text how-copy">
-      Gamers aren't dumb. They know when they're being played, and when their favorite streamers are being paid to
-      fake fandom. It shows. We use our deep community roots to connect brands with influencers who will actually
-      appreciate them – and share those brands with their friends.
-    </p>
-  </SectionShell>
+  <section class="section-home-how surface-ink">
+    <div class="page-padding">
+      <div class="container-xxlarge how-inner" data-reveal>
+        <Eyebrow class="how-eyebrow">How we work</Eyebrow>
+        <SectionHeading as="h2" variant="display-xl" class="how-heading">
+          PEOPLE SHARE WHAT THEY LOVE. GAMERS AREN'T ANY DIFFERENT.
+        </SectionHeading>
+        <p class="lead-text how-copy">
+          Gamers aren't dumb. They know when they're being played, and when their favorite streamers are being paid to
+          fake fandom. It shows. We use our deep community roots to connect brands with influencers who will actually
+          appreciate them – and share those brands with their friends.
+        </p>
+      </div>
+    </div>
+  </section>
 
   <ValuesList items={valuesItems} portraitAlt="Portrait photo representing the Leviathan Core team" />
 
@@ -311,223 +258,286 @@ const featuredProjects = featuredProjectEntries
     line-height: var(--lh-looser);
   }
 
-  /* ---------- Hero ---------- */
-  /* Source `.home-hero-grid` (leviathan-core-2023-r1.webflow.css:3027):
-       base    grid-template-columns: 1fr .75fr;  gap: 3rem
-       ≥1440   gap: 6rem
-       ≤991    grid-template-columns: 1fr;        gap: 3rem
+  /* ---------- Hero: full-bleed media plane + brand-forward copy ---------- */
+  .section-home-hero {
+    margin-inline: calc(-1 * var(--frame-padding));
+    /* Tuck under sticky masthead so the translucent header sits on the photo */
+    margin-top: calc(-1 * var(--frame-padding) - var(--header-height));
+  }
 
-     Three corrections here, only one of which the breakpoint audit flagged:
-       - columns were 1fr 1fr, so the hero image column was too wide
-       - gap was --space-xl (4rem), source is 3rem
-       - the ≥1440 doubling to 6rem was missing entirely
-
-     Gap is a literal 3rem rather than --space-lg because source restates 3rem
-     inside the ≤991 block, whereas --space-lg steps down to 2.5rem there. Using
-     the token would quietly shrink the gap on tablet. */
-  .home-hero-grid {
+  .home-hero-plane {
+    position: relative;
+    min-height: min(96vh, 960px);
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 3rem;
-    align-items: center;
-  }
-  @media screen and (min-width: 1440px) {
-    .home-hero-grid {
-      gap: 6rem;
-    }
-  }
-  @media screen and (max-width: 991px) {
-    .home-hero-grid {
-      grid-template-columns: 1fr;
-      gap: 3rem;
-    }
-  }
-  :global(.hero-eyebrow) {
-    margin-bottom: 0;
-  }
-  :global(a.hero-cta.button) {
-    align-self: flex-start;
-    margin-top: var(--space-sm);
-    padding-inline: var(--space-md);
-    padding-block: 0.85rem;
-  }
-  .home-hero-grid-left {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-  .hero-heading {
-    max-width: none;
-    letter-spacing: -0.02em;
-  }
-  .hero-intro {
-    max-width: var(--width-lg);
-    font-size: var(--fs-xl);
-  }
-  .home-hero-image-wrapper {
-    border-radius: var(--radius-card);
+    align-items: end;
     overflow: hidden;
-    outline: 3px solid var(--color-ink);
-    outline-offset: 0;
+    background: var(--color-ink-band);
   }
-  .home-hero-image-wrapper :global(img) {
+
+  .home-hero-media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .home-hero-media :global(img) {
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
-    display: block;
+    object-position: center 30%;
   }
 
-  /* ---------- Services summary ---------- */
-  .home-services-grid {
-    display: grid;
-    grid-template-columns: auto var(--divider-width) 1fr;
-    gap: var(--space-lg);
-    align-items: center;
-  }
-  @media screen and (max-width: 767px) {
-    .home-services-grid {
-      grid-template-columns: 1fr;
-      /* Vertical divider is display:none with no horizontal swap — do not reserve
-         a 1px middle track or the services column collapses and overlaps below. */
-    }
-  }
-  .home-services-intro {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-    max-width: 20rem;
-  }
-  .services-heading {
-    letter-spacing: -0.02em;
-  }
-  .home-services-grid-right {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-  .home-services-grid-right-row {
-    display: grid;
-    grid-template-columns: 1fr var(--divider-width) 1fr;
-    gap: var(--space-md);
-    align-items: start;
-  }
-  @media screen and (max-width: 767px) {
-    .home-services-grid-right-row {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto var(--divider-width) auto;
-    }
-  }
-  .home-services-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-  .home-services-item :global(.service-icon) {
-    width: 3.25rem;
-    height: 3.25rem;
-  }
-  .service-item-title {
-    margin-bottom: var(--space-xs);
-  }
-  .service-item-description {
-    margin: 0;
-    font-family: var(--font-body);
+  .home-hero-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        105deg,
+        color-mix(in srgb, var(--color-ink-band) 88%, transparent) 0%,
+        color-mix(in srgb, var(--color-ink-band) 55%, transparent) 42%,
+        color-mix(in srgb, var(--color-ink-band) 18%, transparent) 72%,
+        transparent 100%
+      ),
+      linear-gradient(0deg, color-mix(in srgb, var(--color-ink-band) 55%, transparent), transparent 45%);
   }
 
-  /* ---------- Featured projects teaser ---------- */
-  /* Source `.home-projects-grid` css:3151 — intro | 1px divider | cards.
-     `.home-projects-grid-right` (css:3144) is a flex column, row-gap 2rem. */
-  .home-projects-grid {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-    align-items: stretch;
+  .home-hero-copy-wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding-block: clamp(7rem, 18vh, 10rem) clamp(3rem, 8vh, 5rem);
   }
 
-  .home-projects-grid > .line-vertical {
-    display: none;
-  }
-
-  .home-projects-grid-left-inner {
+  .home-hero-copy {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-sm);
+    gap: 1.1rem;
+    max-width: 38rem;
+    color: var(--color-on-ink);
   }
 
-  .home-projects-grid-right {
+  .brand-mark {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+    letter-spacing: var(--ls-display);
+    line-height: 1;
+  }
+
+  :global(.hero-eyebrow) {
+    margin: 0;
+    opacity: 0.7;
+    color: var(--color-on-ink);
+  }
+
+  .hero-heading {
+    max-width: 11ch;
+    color: var(--color-on-ink);
+  }
+
+  .hero-intro {
+    max-width: var(--measure-lead);
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    color: color-mix(in srgb, var(--color-on-ink) 82%, transparent);
+  }
+
+  :global(a.hero-cta.button) {
+    margin-top: 0.5rem;
+  }
+
+  @media screen and (max-width: 767px) {
+    .home-hero-plane {
+      min-height: min(88vh, 780px);
+    }
+    .hero-heading {
+      max-width: none;
+    }
+  }
+
+  /* ---------- Services ---------- */
+  .home-services-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
+    grid-template-columns: minmax(14rem, 0.9fr) minmax(0, 1.4fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  @media screen and (max-width: 991px) {
+    .home-services-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  .home-services-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.15rem;
+    position: sticky;
+    top: 6rem;
+  }
+
+  .services-heading {
+    max-width: 10ch;
+  }
+
+  .home-services-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  @media screen and (max-width: 767px) {
+    .home-services-list {
+      grid-template-columns: 1fr;
+    }
+    .home-services-intro {
+      position: static;
+    }
+  }
+
+  .home-services-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem 1.35rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+  }
+
+  @media screen and (min-width: 768px) {
+    .home-services-item:nth-child(odd) {
+      padding-left: 0;
+      border-right: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+    }
+    .home-services-item:nth-child(-n + 2) {
+      border-top: 0;
+      padding-top: 0;
+    }
+  }
+
+  .home-services-item :global(.service-icon) {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .service-item-title {
+    margin-bottom: 0.4rem;
+  }
+
+  .service-item-description {
+    margin: 0;
+    max-width: 32ch;
+    font-family: var(--font-body);
+    color: var(--color-text-muted);
+    line-height: 1.55;
+  }
+
+  /* ---------- Featured projects ---------- */
+  .home-projects-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+    max-width: 36rem;
+  }
+
+  .projects-heading {
+    max-width: 12ch;
+  }
+
+  .home-projects-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr 1fr;
+    gap: clamp(1.25rem, 3vw, 2rem);
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  @media screen and (min-width: 768px) {
-    .home-projects-grid-right {
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: var(--space-lg);
+  @media screen and (max-width: 991px) {
+    .home-projects-grid {
+      grid-template-columns: 1fr;
     }
   }
-  .projects-heading {
-    max-width: 18rem;
-    letter-spacing: -0.02em;
-  }
-  .home-projects-intro .lead-text {
-    max-width: var(--width-sm);
-  }
-  /* (The previous uniform auto-fit `.home-projects-grid` rule lived here; it is
-     replaced by the source's intro | divider | cards grid defined above.) */
+
   .home-project-preview-item {
     display: flex;
     flex-direction: column;
   }
+
   .home-project-preview-image-wrapper {
     display: block;
-    margin-bottom: var(--space-sm);
-    border-radius: var(--radius-card);
+    margin-bottom: 0.9rem;
     overflow: hidden;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 4 / 5;
+    background: var(--color-paper-deep);
   }
+
+  .home-project-preview-item:not(.featured) .home-project-preview-image-wrapper {
+    aspect-ratio: 3 / 4;
+  }
+
   .home-project-preview-image-wrapper :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+    transition: transform 600ms var(--ease-editorial);
   }
+
   @media (hover: hover) and (min-width: 992px) {
     .home-project-preview-item:hover .home-project-preview-image-wrapper :global(img) {
       transform: scale(1.04);
     }
   }
+
   .home-project-preview-content {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xxs);
+    gap: 0.25rem;
   }
+
   .home-project-preview-title-link {
     color: inherit;
     text-decoration: none;
   }
+
   .home-project-preview-meta {
     margin: 0;
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
+    font-size: var(--fs-mono-xs);
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
-    color: var(--color-ink);
+    opacity: 0.55;
   }
 
-  /* ---------- How we work ---------- */
+  /* ---------- How we work (ink band) ---------- */
+  .section-home-how {
+    margin-inline: calc(-1 * var(--frame-padding));
+    padding: var(--section-pad-y) var(--frame-padding);
+  }
+
+  .how-inner {
+    max-width: 52rem;
+  }
+
   :global(.how-eyebrow) {
-    margin-bottom: var(--space-xs);
+    margin-bottom: 1rem;
+    color: var(--color-on-ink);
+    opacity: 0.6;
   }
+
   :global(.how-heading) {
-    max-width: var(--width-2xl);
-    margin-bottom: var(--space-md);
+    max-width: 16ch;
+    margin-bottom: 1.5rem;
+    color: var(--color-on-ink);
   }
+
   .how-copy {
-    max-width: none;
+    max-width: 40rem;
+    color: color-mix(in srgb, var(--color-on-ink) 78%, transparent);
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
   }
 </style>

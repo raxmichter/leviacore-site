@@ -131,38 +131,35 @@ const posts = allPosts
     font-family: var(--font-body);
     font-size: var(--fs-xl);
     line-height: var(--lh-loose);
-    max-width: var(--width-lg);
+    max-width: var(--measure-lead);
+    color: var(--color-text-muted);
   }
 
   .blog-hero-grid {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.9fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: end;
+  }
+  @media screen and (max-width: 991px) {
+    .blog-hero-grid {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
   }
   .blog-hero-heading {
-    /* Source: `margin-bottom margin-xxhuge` around the heading resolves to a frozen 1rem in
-       that two-class combo (tokens.md BLOCKER-2), not the nominal --space-5xl (12rem) — same
-       resolved value projects.astro uses for its own hero heading. */
-    margin-bottom: 1rem;
-    max-width: var(--width-2xl);
+    margin: 0;
+    max-width: 10ch;
   }
 
-  .page-padding {
-    padding-inline: var(--page-padding);
-  }
-  .container-xxlarge {
-    width: 100%;
-    max-width: var(--container-3xl);
-    margin-inline: auto;
-  }
   .blog-posts-list {
     display: flex;
     flex-direction: column;
     padding-bottom: var(--space-xl);
   }
   .blog-posts-item {
-    padding-block: var(--space-lg);
-    border-top: var(--divider-width) solid var(--divider-color);
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
   }
   .blog-posts-item:first-child {
     border-top: none;

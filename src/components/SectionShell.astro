@@ -1,28 +1,19 @@
 ---
 /**
- * SectionShell — the universal outer wrapper nearly every `<section>` uses.
- *
- * Source: components.md #6. Pattern:
- *   section.<sectionClass> > .page-padding > .container-xxlarge > [.line] > .padding-vertical.padding-{large|xlarge}
- *
- * `withTopDivider` defaults true (most sections have the divider); the hero section on every
- * page and contact.html's single section omit it — pass `withTopDivider={false}` there.
- *
- * `padding-vertical padding-large` / `padding-vertical padding-xlarge` is a combo class, but
- * unlike the `margin-bottom.margin-*` trap (tokens.md BLOCKER-2) this combo is NOT restated
- * anywhere and carries no special-case rule — it resolves to the plain nominal scale
- * (`--space-lg` / `--space-xl`, both of which already carry their own responsive step-down).
+ * SectionShell — universal outer wrapper for page sections.
+ * Editorial redesign: more vertical air; top divider opt-in (default off)
+ * so section rhythm comes from space and type, not hairline fatigue.
  */
 interface Props {
   sectionClass: string
   padding?: 'large' | 'xlarge'
   withTopDivider?: boolean
   id?: string
-  /** Tasteful scroll fade-up for section content. Default on for sitewide polish. */
+  /** Tasteful scroll fade-up for section content. Default on. */
   reveal?: boolean
 }
 
-const { sectionClass, padding = 'xlarge', withTopDivider = true, id, reveal = true } = Astro.props
+const { sectionClass, padding = 'xlarge', withTopDivider = false, id, reveal = true } = Astro.props
 ---
 
 <section class={sectionClass} id={id}>
@@ -37,35 +28,15 @@ const { sectionClass, padding = 'xlarge', withTopDivider = true, id, reveal = tr
 </section>
 
 <style>
-  /* .page-padding and .container-xxlarge are declared globally in global.css —
-     the header and footer use the same class names, and scoping them here left
-     both unstyled. Do not re-declare them locally. */
-  /* .line / .line-vertical are global primitives in global.css — they appear in
-     five components plus page-local markup, and scoping them here left every
-     page-rendered divider invisible. Do not re-declare the base rule locally. */
-  /* `.padding-vertical.padding-large` has NO combo override in source, so the
-     plain responsive `.padding-large` applies: 3rem / 2.5rem @≤991 / 1.5rem @≤767,
-     which is exactly --space-lg. Verified against the source. */
   .padding-vertical.padding-large {
-    padding-block: var(--space-lg);
+    padding-block: var(--section-pad-y-sm);
   }
 
-  /* ⚠️ `.padding-vertical.padding-xlarge` IS a combo override (source line 1687):
-     a flat 2rem, and — verified — it is NOT restated in ANY media query. So it
-     stays 2rem at every viewport while the standalone `.padding-xlarge` scales
-     4rem → 3rem → 2rem.
-
-     This is the same trap tokens.md documents as BLOCKER-2 for the
-     `.margin-bottom.margin-*` combos. An earlier revision of this file used
-     var(--space-xl) here, which made every xlarge section 2rem too tall at
-     desktop and 1rem too tall at tablet. Port the RESOLVED value, not the
-     nominal scale. */
   .padding-vertical.padding-xlarge {
-    padding-block: 2rem;
+    padding-block: var(--section-pad-y);
   }
 
-  /* Same class of override, same reasoning (source line 1682), flat 4rem. */
   .padding-vertical.padding-xhuge {
-    padding-block: 4rem;
+    padding-block: clamp(4rem, 9vw, 7rem);
   }
 </style>

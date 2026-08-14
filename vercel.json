@@ -83,6 +83,16 @@
       "source": "/gcx",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/work",
+      "destination": "/projects",
+      "permanent": true
+    },
+    {
+      "source": "/about",
+      "destination": "/team",
+      "permanent": true
     }
   ]
 }
