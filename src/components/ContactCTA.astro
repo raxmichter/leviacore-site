@@ -43,7 +43,7 @@ import SocialBadge from './SocialBadge.astro'
 import ContactForm from './ContactForm.astro'
 
 interface SocialLink {
-  platform: 'twitter' | 'linkedin'
+  platform: 'x' | 'linkedin'
   href: string
   label: string
 }
@@ -53,7 +53,7 @@ interface Props {
   headingLevel?: 'h1' | 'h2'
   tagline: string
   /** Optional. Omitted by every page as of 2026-08-11: the footer already renders
-   * the same TW/IN pair directly below this block, so showing them here produced
+   * the same X/IN pair directly below this block, so showing them here produced
    * two identical badge rows stacked on top of each other. George: keep the space
    * for the form, drop the duplicate. A deliberate difference from live. */
   socialLinks?: SocialLink[]

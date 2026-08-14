@@ -38,28 +38,20 @@
   --shadow-color:           #0000001a;
 
   /* ---------- Typography: families ---------- */
-  --font-display:  Syne, sans-serif;         /* headings only — weight 400 */
-  --font-mono:     "Roboto Mono", sans-serif;/* nav, buttons, labels, meta — weight 400 */
-  --font-body:     Satoshi, sans-serif;      /* everything else */
+  --font-display:  "Playfair Display", Georgia, serif; /* headings / titles — weight 400 */
+  --font-mono:     "Roboto Mono", monospace;           /* nav, buttons, labels — weight 400 */
+  --font-body:     Jost, system-ui, sans-serif;        /* body, numerals, dates, counts */
 
   /* ---------- Typography: weights ----------
-     Satoshi ships ONE real file: Regular (400). Weights 300/500/600/700 below are
-     synthesised by the browser.
+     Jost is variable (100–900). Playfair Display ships 400 (+ italic) for titles.
+     Roboto Mono stays at 400 for UI chrome. */
+  --fw-light:     300;
+  --fw-regular:   400;
+  --fw-medium:    500;
+  --fw-semibold:  600;
+  --fw-bold:      700;
 
-     This is intentional and matches production. The live Webflow site declares both
-     of its @font-face blocks at weight 400 against that same single file, so its
-     <strong> tags have always rendered as faux-bold. Reproducing that is what makes
-     the rebuild pixel-identical.
-
-     DO NOT "fix" this by sourcing real Satoshi weights — it would change the design
-     and fail the Phase G visual regression gate. See build-context/OPEN.md item 6. */
-  --fw-light:     300;  /* synthesised — .form-radio-label */
-  --fw-regular:   400;  /* the one real Satoshi face */
-  --fw-medium:    500;  /* synthesised — blockquote, label, mobile nav */
-  --fw-semibold:  600;  /* synthesised — .text-rich-text strong */
-  --fw-bold:      700;  /* synthesised — <strong> (57 in export) */
-
-  /* ---------- Typography: display scale (Syne) ---------- */
+  /* ---------- Typography: display scale (Playfair Display) ---------- */
   --fs-display-3xl:  8rem;    /* .heading-xlarge  (10rem @>=1440) */
   --fs-display-2xl:  6rem;    /* .heading-large   ( 8rem @>=1440) */
   --fs-display-xl:   5rem;    /* .heading-medium  ( 6rem @>=1440) */

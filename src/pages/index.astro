@@ -27,6 +27,7 @@ import Button from '../components/Button.astro'
 import ClientLogoStrip from '../components/ClientLogoStrip.astro'
 import ValuesList from '../components/ValuesList.astro'
 import ContactCTA from '../components/ContactCTA.astro'
+import DisplayFigures from '../components/DisplayFigures.astro'
 
 import heroImage from '../assets/images/LC-Team-Final.jpg'
 import amazonGames from '../assets/images/amazon_games.png'
@@ -267,7 +268,7 @@ const featuredProjects = featuredProjectEntries
                   <div class="home-project-preview-content">
                     <a href={project.href} class="home-project-preview-title-link">
                       <SectionHeading as="h3" variant="h4" uppercase>
-                        {project.title}
+                        <DisplayFigures text={project.title} />
                       </SectionHeading>
                     </a>
                     <p class="home-project-preview-meta">{project.client}</p>
@@ -285,7 +286,7 @@ const featuredProjects = featuredProjectEntries
                     <div class="home-project-preview-content">
                       <a href={project.href} class="home-project-preview-title-link">
                         <SectionHeading as="h3" variant="h4" uppercase>
-                          {project.title}
+                          <DisplayFigures text={project.title} />
                         </SectionHeading>
                       </a>
                       <p class="home-project-preview-meta">{project.client}</p>

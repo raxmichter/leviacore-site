@@ -16,9 +16,7 @@
 
 * {
   /* Verbatim from the Webflow export's <head> embed ("Please keep this css
-     code to improve the font quality"). This is what makes Satoshi's
-     browser-synthesised 300/500/600/700 faux weights render identically to
-     the live site — see build-context/tokens.md §2b. */
+     code to improve the font quality"). */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -153,6 +151,14 @@ button {
   block-size: 50px;
 }
 
+/* ---------- DisplayFigures — Playfair has no lining figures; digits in titles
+   are wrapped in this class (see DisplayFigures.astro). Must stay global so the
+   rule is not scoped with data-astro-cid. Do NOT use on metric/stat bands. */
+.lining-figures {
+  display: inline-block;
+  transform: translateY(-0.15em);
+}
+
 /* ---------- Body ---------- */
 body {
   background: var(--color-bg);
@@ -237,8 +243,6 @@ p {
 }
 
 strong {
-  /* Inherits Satoshi from body and asks for 700, which the export does not
-     ship — browser-synthesised faux bold, same as the live site (§2b). */
   font-weight: var(--fw-bold);
 }
 
