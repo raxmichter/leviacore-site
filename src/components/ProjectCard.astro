@@ -23,6 +23,7 @@
 import { Image } from 'astro:assets'
 import type { ImageMetadata } from 'astro'
 import SectionHeading from './SectionHeading.astro'
+import DisplayFigures from './DisplayFigures.astro'
 import Button from './Button.astro'
 
 interface Props {
@@ -44,7 +45,9 @@ const { title, description, tags, image, imageAlt, href, ctaText = 'View Project
   <div class="project-card-content">
     <div class="project-card-text">
       <a href={href} class="project-card-title-link">
-        <SectionHeading as={headingLevel} variant="h1" uppercase>{title}</SectionHeading>
+        <SectionHeading as={headingLevel} variant="h1" uppercase>
+          <DisplayFigures text={title} />
+        </SectionHeading>
       </a>
       <p class="project-card-description">{description}</p>
       {

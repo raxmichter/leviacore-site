@@ -1,0 +1,19 @@
+---
+/**
+ * DisplayFigures — wrap digits in Playfair titles.
+ *
+ * Playfair Display has no lining figures; font-variant-numeric: lining-nums is a
+ * no-op. Digits in display titles are split into .lining-figures spans (global
+ * CSS in global.css) so they optically align with the surrounding serif.
+ *
+ * Do NOT use on metric/stat bands, Jost body, or mono UI chrome.
+ */
+interface Props {
+  text: string
+}
+
+const { text } = Astro.props
+const parts = text.split(/(\d+)/)
+---
+
+{parts.map((part, i) => (i % 2 === 1 ? <span class="lining-figures">{part}</span> : part))}

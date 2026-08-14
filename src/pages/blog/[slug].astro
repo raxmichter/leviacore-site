@@ -50,6 +50,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import SectionHeading from '../../components/SectionHeading.astro'
 import Button from '../../components/Button.astro'
 import Divider from '../../components/Divider.astro'
+import DisplayFigures from '../../components/DisplayFigures.astro'
 import { features } from '../../config'
 
 export async function getStaticPaths() {
@@ -98,7 +99,7 @@ const heroImage: ImageMetadata | undefined = post.data.heroImage
             </div>
             <div class="post-hero-heading-col">
               <SectionHeading as="h1" variant="display-xl" class="post-title">
-                {post.data.title}
+                <DisplayFigures text={post.data.title} />
               </SectionHeading>
               <p class="post-lead">{post.data.description}</p>
             </div>

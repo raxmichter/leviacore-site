@@ -64,6 +64,7 @@ import Eyebrow from '../../components/Eyebrow.astro'
 import Divider from '../../components/Divider.astro'
 import Button from '../../components/Button.astro'
 import icon02 from '../../assets/images/icon-02.svg'
+import DisplayFigures from '../../components/DisplayFigures.astro'
 // Decorative section icons, restored in Phase G. Source binds these at 60px wide:
 // icon-05 above Challenge, icon-06 above Solution, icon-07 above Metrics that Matter.
 // Marked alt="" — they carry no information the adjacent heading doesn't.
@@ -90,7 +91,9 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   <SectionShell sectionClass="section-project-hero" withTopDivider={false}>
     <div class="project-hero-grid">
       <div class="project-hero-intro">
-        <SectionHeading as="h1" variant="h1" uppercase class="project-title">{title}</SectionHeading>
+        <SectionHeading as="h1" variant="h1" uppercase class="project-title">
+          <DisplayFigures text={title} />
+        </SectionHeading>
         <p class="project-subtitle">{description}</p>
       </div>
       <Divider orientation="vertical" responsive="hide-mobile-landscape" />
@@ -441,7 +444,7 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
     gap: var(--space-xxs);
   }
   .project-metric-value {
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: var(--fs-h2);
     line-height: var(--lh-tight);
   }
