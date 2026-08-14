@@ -9,6 +9,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Cursor from '../components/Cursor.astro'
 import SectionShell from '../components/SectionShell.astro'
 import SectionHeading from '../components/SectionHeading.astro'
+import DisplayFigures from '../components/DisplayFigures.astro'
 import Eyebrow from '../components/Eyebrow.astro'
 import Button from '../components/Button.astro'
 import ClientLogoStrip from '../components/ClientLogoStrip.astro'
@@ -208,7 +209,7 @@ const featuredProjects = featuredProjectEntries
               <div class="home-project-preview-content">
                 <a href={project.href} class="home-project-preview-title-link">
                   <SectionHeading as="h3" variant={projectIndex === 0 ? 'h2' : 'h3'} uppercase>
-                    {project.title}
+                    <DisplayFigures text={project.title} />
                   </SectionHeading>
                 </a>
                 <p class="home-project-preview-meta">{project.client}</p>

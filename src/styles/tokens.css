@@ -1,7 +1,7 @@
 /* =========================================================================
    leviacore.com — design tokens
    Editorial agency system (2026 redesign). Brand DNA retained:
-   Syne + Satoshi + Roboto Mono, ink on warm paper. Values refined for
+   Playfair Display + Jost + Roboto Mono, ink on warm paper. Values refined for
    hierarchy and atmosphere — not a Webflow fidelity port.
    1rem = 16px (root never overridden).
    ========================================================================= */
@@ -45,20 +45,19 @@
   --shadow-color:           #0000001a;
 
   /* ---------- Typography: families ---------- */
-  --font-display:  Syne, sans-serif;
+  --font-display:  "Playfair Display", Georgia, serif;
   --font-mono:     "Roboto Mono", sans-serif;
-  --font-body:     Satoshi, sans-serif;
+  --font-body:     Jost, system-ui, sans-serif;
 
   /* ---------- Typography: weights ----------
-     Satoshi ships ONE real file: Regular (400). Weights 300/500/600/700 are
-     synthesised by the browser — matches licensed asset in public/fonts. */
+     Jost is variable (100–900). Playfair Display ships 400 (+ italic) for titles. */
   --fw-light:     300;
   --fw-regular:   400;
   --fw-medium:    500;
   --fw-semibold:  600;
   --fw-bold:      700;
 
-  /* ---------- Typography: display scale (Syne) ---------- */
+  /* ---------- Typography: display scale (Playfair Display) ---------- */
   --fs-display-3xl:  8rem;
   --fs-display-2xl:  6.5rem;
   --fs-display-xl:   5rem;

@@ -48,6 +48,7 @@ import { getCollection, render, type CollectionEntry } from 'astro:content'
 import { Image } from 'astro:assets'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import SectionHeading from '../../components/SectionHeading.astro'
+import DisplayFigures from '../../components/DisplayFigures.astro'
 import Button from '../../components/Button.astro'
 import { features } from '../../config'
 
@@ -97,7 +98,7 @@ const heroImage: ImageMetadata | undefined = post.data.heroImage
             </div>
             <div class="post-hero-heading-col">
               <SectionHeading as="h1" variant="display-xl" class="post-title">
-                {post.data.title}
+                <DisplayFigures text={post.data.title} />
               </SectionHeading>
               <p class="post-lead">{post.data.description}</p>
               <div class="post-hero-meta">
@@ -184,11 +185,12 @@ const heroImage: ImageMetadata | undefined = post.data.heroImage
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: var(--fs-mono-xs);
     letter-spacing: var(--ls-meta);
     text-transform: uppercase;
     color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
   }
   .post-meta-label {
     margin: 0;

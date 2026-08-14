@@ -124,6 +124,13 @@ button {
   }
 }
 
+/* ---------- DisplayFigures — Playfair has no lining figures; digits in titles
+   get this global class (must NOT be Astro-scoped / data-astro-cid). ---------- */
+.lining-figures {
+  display: inline-block;
+  transform: translateY(-0.15em);
+}
+
 /* ---------- Body ---------- */
 body {
   background-color: var(--color-bg);

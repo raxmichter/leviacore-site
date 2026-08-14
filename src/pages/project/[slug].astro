@@ -60,6 +60,7 @@ import { Image } from 'astro:assets'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import SectionShell from '../../components/SectionShell.astro'
 import SectionHeading from '../../components/SectionHeading.astro'
+import DisplayFigures from '../../components/DisplayFigures.astro'
 import Eyebrow from '../../components/Eyebrow.astro'
 import Button from '../../components/Button.astro'
 import icon02 from '../../assets/images/icon-02.svg'
@@ -89,7 +90,9 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   <SectionShell sectionClass="section-project-hero" withTopDivider={false}>
     <div class="project-hero-grid">
       <div class="project-hero-intro">
-        <SectionHeading as="h1" variant="display-lg" uppercase class="project-title">{title}</SectionHeading>
+        <SectionHeading as="h1" variant="display-lg" uppercase class="project-title">
+          <DisplayFigures text={title} />
+        </SectionHeading>
         <p class="project-subtitle">{description}</p>
       </div>
       <dl class="project-meta">
@@ -271,11 +274,12 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
   }
   .project-meta-value {
     margin: 0;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: var(--fs-mono-md);
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
     color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
   }
   .project-services-list {
     display: flex;
@@ -404,10 +408,11 @@ const { title, client, year, timeline, services, website, websiteLabel, heroImag
     gap: 0.25rem;
   }
   .project-metric-value {
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: clamp(2.5rem, 5vw, 3.5rem);
     line-height: var(--lh-tighter);
     letter-spacing: var(--ls-display);
+    font-variant-numeric: tabular-nums lining-nums;
   }
   .project-metric-label {
     font-family: var(--font-mono);
